@@ -527,6 +527,7 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_semm(config.single_extruder_multi_material.value),
     m_wipe_tower_pos(config.wipe_tower_x, config.wipe_tower_y),
     m_wipe_tower_width(float(config.wipe_tower_width)),
+    m_wipe_tower_length(float(config.wipe_tower_length)),
     m_wipe_tower_rotation_angle(float(config.wipe_tower_rotation_angle)),
     m_wipe_tower_brim_width(float(config.wipe_tower_brim_width)),
     m_wipe_tower_cone_angle(float(config.wipe_tower_cone_angle)),
@@ -1549,6 +1550,9 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         plan_tower();
     }
 
+    // adjust the depth and then recompute the m_plan.
+    make_wipe_tower_manual_depth();
+
     m_layer_info = m_plan.begin();
     m_current_height = 0.f;
 
@@ -1620,6 +1624,54 @@ std::vector<std::pair<float, float>> WipeTower::get_z_and_depth_pairs() const
     if (out.back().first < m_wipe_tower_height - WT_EPSILON)
         out.emplace_back(m_wipe_tower_height, 0.f);
     return out;
+}
+
+void WipeTower::make_wipe_tower_square()
+{
+	const float width = m_wipe_tower_width - 3 * m_perimeter_width;
+	const float depth = m_wipe_tower_depth - m_perimeter_width;
+	// area that we actually print into is width*depth
+	float side = sqrt(depth * width);
+
+	m_wipe_tower_width = side + 3 * m_perimeter_width;
+	m_wipe_tower_depth = side + 2 * m_perimeter_width;
+	// For all layers, find how depth changed and update all toolchange depths
+	for (auto &lay: m_plan)
+	{
+		side = sqrt(lay.depth * width);
+		float width_ratio = width / side;
+
+		for (auto &tch: lay.tool_changes)
+			tch.required_depth *= width_ratio;
+	}
+
+	plan_tower();	// propagate depth downwards again (width has changed)
+	for (auto& lay: m_plan)
+	{
+		// depths set, now the spacing
+		lay.extra_spacing = lay.depth / lay.toolchanges_depth();
+	}
+}
+
+void WipeTower::make_wipe_tower_manual_depth()
+{
+	// change the depth.
+	//
+
+	// For all layers, find how depth changed and update all toolchange depths
+	for (auto &lay: m_plan)
+	{
+		for (auto &tch: lay.tool_changes) {
+			tch.required_depth = m_wipe_tower_length;
+		}
+	}
+
+	plan_tower();	// propagate depth downwards again (width has changed)
+	for (auto& lay: m_plan)
+	{
+		// depths set, now the spacing
+		lay.extra_spacing = lay.depth / lay.toolchanges_depth();
+	}
 }
 
 } // namespace Slic3r

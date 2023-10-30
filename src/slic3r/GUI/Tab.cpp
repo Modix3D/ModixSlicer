@@ -1494,7 +1494,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("fuzzy_skin_thickness", category_path + "fuzzy-skin-thickness");
         optgroup->append_single_option_line("fuzzy_skin_point_dist", category_path + "fuzzy-skin-point-distance");
 
-    page = add_options_page(L("Infill"), "infill");
+	page = add_options_page(L("Infill"), "infill");
         category_path = "infill_42#";
         optgroup = page->new_optgroup(L("Infill"));
         optgroup->append_single_option_line("fill_density", category_path + "fill-density");
@@ -1596,6 +1596,8 @@ void TabPrint::build()
         optgroup->append_single_option_line("bridge_speed");
         optgroup->append_single_option_line("gap_fill_speed");
         optgroup->append_single_option_line("ironing_speed");
+        optgroup->append_single_option_line("wipe_tower_perimeter_speed");
+        optgroup->append_single_option_line("wipe_tower_infill_speed");
 
         optgroup = page->new_optgroup(L("Dynamic overhang speed"));
         optgroup->append_single_option_line("enable_dynamic_overhang_speeds");

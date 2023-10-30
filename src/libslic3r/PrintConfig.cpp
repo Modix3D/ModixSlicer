@@ -1668,6 +1668,15 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(80));
 
+    def = this->add("wipe_tower_infill_speed", coFloat);
+    def->label = L("Wipe tower infill");
+    def->category = L("Speed");
+    def->tooltip = L("Speed for printing the wipe tower's internal fill. Set to zero for auto.");
+    def->sidetext = L("mm/s");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60));
+
     def = this->add("inherits", coString);
     def->label = L("Inherits profile");
     def->tooltip = L("Name of the profile, from which this profile inherits.");
@@ -2156,6 +2165,15 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("Speed for perimeters (contours, aka vertical shells). Set to zero for auto.");
     def->sidetext = L("mm/s");
     def->aliases = { "perimeter_feed_rate" };
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60));
+
+    def = this->add("wipe_tower_perimeter_speed", coFloat);
+    def->label = L("Wipe tower perimeters");
+    def->category = L("Speed");
+    def->tooltip = L("Speed for wipe tower perimeters (contours, aka vertical shells). Set to zero for auto.");
+    def->sidetext = L("mm/s");
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(60));

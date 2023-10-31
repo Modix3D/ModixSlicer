@@ -99,7 +99,7 @@ public:
             ld(left        , bottom         ),
             lu(left        , bottom + height),
             rd(left + width, bottom         ),
-            ru(left + width, bottom + height) {}
+            ru(left + width, bottom + height) {}	
         box_coordinates(const Vec2f &pos, float width, float height) : box_coordinates(pos(0), pos(1), width, height) {}
         void translate(const Vec2f &shift) {
             ld += shift; lu += shift;
@@ -284,6 +284,7 @@ private:
 	float  m_perimeter_speed    = 0.f;
     float  m_first_layer_speed  = 0.f;
     size_t m_first_layer_idx    = size_t(-1);
+    size_t m_extra_perimeters   = 0;    // Extra perimeters to increase stability of the wipe tower
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;

@@ -541,7 +541,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_infill_speed(default_region_config.wipe_tower_infill_speed),
     m_perimeter_speed(default_region_config.wipe_tower_perimeter_speed),
     m_current_tool(initial_tool),
-    wipe_volumes(wiping_matrix)
+    wipe_volumes(wiping_matrix),
+    m_extra_perimeters(config.wipe_tower_extra_perimeters)
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -787,6 +788,9 @@ WipeTower::ToolChangeResult WipeTower::tool_change(size_t tool)
 		m_wipe_tower_width - m_perimeter_width,
         (tool != (unsigned int)(-1) ? wipe_area+m_depth_traversed-0.5f*m_perimeter_width
                                     : m_wipe_tower_depth-m_perimeter_width));
+
+    // make some room for the extra support perimeters
+    cleaning_box.expand( (float) -1.0f*m_extra_perimeters*m_perimeter_width );
 
 	WipeTowerWriter writer(m_layer_height, m_perimeter_width, m_gcode_flavor, m_filpar);
 	writer.set_extrusion_flow(m_extrusion_flow)
@@ -1331,10 +1335,26 @@ WipeTower::ToolChangeResult WipeTower::finish_layer()
 
     feedrate = first_layer ? m_first_layer_speed * 60.f : m_perimeter_speed * 60.f;
 
+    // make some room for the extra support perimeters
+    wt_box.expand( (float) -1.0f*m_extra_perimeters*m_perimeter_width );
+
     // outer contour (always)
     bool infill_cone = first_layer && m_wipe_tower_width > 2*spacing && m_wipe_tower_depth > 2*spacing;
     Polygon poly = supported_rectangle(wt_box, feedrate, infill_cone);
 
+    // extra perimeters for increased wipe tower stability (always)
+    for (size_t i = 0; i < m_extra_perimeters; ++ i) {
+        poly = offset(poly, scale_(spacing)).front();
+        int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
+        writer.travel(unscale(poly.points[cp]).cast<float>());
+        for (int i=cp+1; true; ++i ) {
+            if (i==int(poly.points.size()))
+                i = 0;
+            writer.extrude(unscale(poly.points[i]).cast<float>());
+            if (i == cp)
+                break;
+        }
+    }
 
     // brim (first layer only)
     if (first_layer) {

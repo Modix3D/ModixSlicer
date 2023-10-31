@@ -3274,6 +3274,13 @@ void PrintConfigDef::init_fff_params()
     def->min = 0.;
     def->set_default_value(new ConfigOptionFloat(2.));
 
+	def = this->add("wipe_tower_extra_perimeters", coInt);
+	def->label = L("Wipe tower extra perimeters");
+	def->tooltip = L("This option sets the number of extra perimeters for each layer of the wipe tower. The purpose of this option is to stabilize the wipe tower.");
+	def->mode = comAdvanced;
+	def->min = 0;
+	def->set_default_value(new ConfigOptionInt(0));
+
     def = this->add("wipe_tower_cone_angle", coFloat);
     def->label = L("Stabilization cone apex angle");
     def->tooltip = L("Angle at the apex of the cone that is used to stabilize the wipe tower. "

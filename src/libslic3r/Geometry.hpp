@@ -43,9 +43,10 @@ enum Orientation
 // As the points are limited to 30 bits + signum,
 // the temporaries u, v, w are limited to 61 bits + signum,
 // and d is limited to 63 bits + signum and we are good.
-template<typename T = __int128_t>
+#include <libslic3r/Int128.hpp>
 static inline Orientation orient(const Point &a, const Point &b, const Point &c)
 {
+	typedef Int128 T;
 
 	// Modix --
 	//
@@ -56,7 +57,9 @@ static inline Orientation orient(const Point &a, const Point &b, const Point &c)
 	T v = T(a.x()) * T(c.y()) - T(a.y()) * T(c.x());
 	T w = T(a.x()) * T(b.y()) - T(a.y()) * T(b.x());
 	T d = u - v + w;
-	return (d > 0) ? ORIENTATION_CCW : ((d == 0) ? ORIENTATION_COLINEAR : ORIENTATION_CW);
+	return (d > Int128(0)) ? ORIENTATION_CCW :
+							 ((d == Int128(0)) ? ORIENTATION_COLINEAR :
+												 ORIENTATION_CW);
 }
 
 // Return orientation of the polygon by checking orientation of the left bottom corner of the polygon

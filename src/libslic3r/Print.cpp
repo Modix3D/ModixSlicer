@@ -230,6 +230,7 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "wipe_tower_width"
             || opt_key == "wipe_tower_length"
             || opt_key == "wipe_tower_brim_width"
+            || opt_key == "wipe_tower_extra_perimeters"
             || opt_key == "wipe_tower_cone_angle"
             || opt_key == "wipe_tower_bridging"
             || opt_key == "wipe_tower_extra_spacing"

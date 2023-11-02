@@ -789,9 +789,6 @@ WipeTower::ToolChangeResult WipeTower::tool_change(size_t tool)
         (tool != (unsigned int)(-1) ? wipe_area+m_depth_traversed-0.5f*m_perimeter_width
                                     : m_wipe_tower_depth-m_perimeter_width));
 
-    // make some room for the extra support perimeters
-    cleaning_box.expand( (float) -1.0f*m_extra_perimeters*m_perimeter_width );
-
 	WipeTowerWriter writer(m_layer_height, m_perimeter_width, m_gcode_flavor, m_filpar);
 	writer.set_extrusion_flow(m_extrusion_flow)
 		.set_z(m_z_pos)
@@ -1334,9 +1331,6 @@ WipeTower::ToolChangeResult WipeTower::finish_layer()
     };
 
     feedrate = first_layer ? m_first_layer_speed * 60.f : m_perimeter_speed * 60.f;
-
-    // make some room for the extra support perimeters
-    wt_box.expand( (float) -1.0f*m_extra_perimeters*m_perimeter_width );
 
     // outer contour (always)
     bool infill_cone = first_layer && m_wipe_tower_width > 2*spacing && m_wipe_tower_depth > 2*spacing;

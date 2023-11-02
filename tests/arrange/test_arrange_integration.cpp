@@ -362,7 +362,7 @@ TEMPLATE_TEST_CASE("Common virtual bed handlers",
                              unscaled(bedbb.center()) - to_2d(modelbb.center()),
                              0.);
 
-    const auto vbed_gap = GENERATE(0, random_value(1, scaled(100.)));
+    const auto vbed_gap = GENERATE(0, random_value((coord_t)1, scaled(100.)));
 
     INFO("vbed_gap = " << unscaled(vbed_gap));
 
@@ -505,7 +505,7 @@ TEST_CASE("Virtual bed handlers - StriderVBedHandler", "[arrange2][integration][
 
         INFO("Instance pos at " << instance_pos << " of bed");
 
-        coord_t gap = GENERATE(0, random_value(1, scaled(100.)));
+        coord_t gap = GENERATE(0, random_value((coord_t)1, scaled(100.)));
 
         INFO("Gap is " << unscaled(gap));
 

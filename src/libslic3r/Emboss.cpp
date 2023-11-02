@@ -358,8 +358,8 @@ Points priv::collect_close_points(const ExPolygons &expolygons, double distance)
                 const Points &poly_pts = poly.points;
                 const Point &line_a = poly_pts[id.point_index];
                 const Point &line_b = (!ids.is_last_point(id)) ? poly_pts[id.point_index + 1] : poly_pts.front();
-                assert(line_a == lines[index].a.cast<int>());
-                assert(line_b == lines[index].b.cast<int>());
+                assert(line_a == lines[index].a.cast<coord_t>());
+                assert(line_b == lines[index].b.cast<coord_t>());
                 if (p == line_a || p == line_b) continue;
                 res.push_back(p);
             }
@@ -411,8 +411,8 @@ bool Emboss::divide_segments_for_close_point(ExPolygons &expolygons, double dist
                 const Points &poly_pts = poly.points;
                 const Point &line_a = poly_pts[id.point_index];
                 const Point &line_b = (!ids.is_last_point(id)) ? poly_pts[id.point_index + 1] : poly_pts.front();
-                assert(line_a == lines[index].a.cast<int>());
-                assert(line_b == lines[index].b.cast<int>());
+                assert(line_a == lines[index].a.cast<coord_t>());
+                assert(line_b == lines[index].b.cast<coord_t>());
                 if (p == line_a || p == line_b) continue;
 
                 divs.emplace_back(p, index);
@@ -584,7 +584,7 @@ void priv::visualize_heal(const std::string &svg_filepath, const ExPolygons &exp
     Points intersections;
     intersections.reserve(intersections_f.size());
     std::transform(intersections_f.begin(), intersections_f.end(), std::back_inserter(intersections),
-                   [](const Vec2d &p) { return p.cast<int>(); });
+                   [](const Vec2d &p) { return p.cast<coord_t>(); });
     svg.draw(intersections, "red", 8 / SHAPE_SCALE);
 }
 

@@ -171,9 +171,13 @@ public:
     using coord_type = coord_t;
 
     Point() : Vec2crd(0, 0) {}
-    Point(int32_t x, int32_t y) : Vec2crd(coord_t(x), coord_t(y)) {}
-    Point(int64_t x, int64_t y) : Vec2crd(coord_t(x), coord_t(y)) {}
-    Point(double x, double y) : Vec2crd(coord_t(std::round(x)), coord_t(std::round(y))) {}
+	template<typename T1, typename T2>
+    Point(T1 x, T2 y) : Vec2crd(0, 0) {
+		this->x() = std::is_floating_point<T1>::value ?
+						std::round(coord_t(x)) : coord_t(x);
+		this->y() = std::is_floating_point<T2>::value ?
+						std::round(coord_t(y)) : coord_t(y);
+	}
     Point(const Point &rhs) { *this = rhs; }
 	explicit Point(const Vec2d& rhs) : Vec2crd(coord_t(std::round(rhs.x())), coord_t(std::round(rhs.y()))) {}
 	// This constructor allows you to construct Point from Eigen expressions

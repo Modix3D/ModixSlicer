@@ -23,7 +23,7 @@ std::vector<Vec3f> NormalUtils::create_triangle_normals(
 {
     std::vector<Vec3f> normals;
     normals.reserve(its.indices.size());
-    for (const Vec3crd &index : its.indices) {
+    for (const Vec3i &index : its.indices) {
         normals.push_back(create_triangle_normal(index, its.vertices));
     }
     return normals;
@@ -35,7 +35,7 @@ NormalUtils::Normals NormalUtils::create_normals_average_neighbor(
     size_t             count_vertices = its.vertices.size();
     std::vector<Vec3f> normals(count_vertices, Vec3f(.0f, .0f, .0f));
     std::vector<unsigned int> count(count_vertices, 0);
-    for (const Vec3crd &indice : its.indices) {
+    for (const Vec3i &indice : its.indices) {
         Vec3f normal = create_triangle_normal(indice, its.vertices);
         for (int i = 0; i < 3; ++i) {
             normals[indice[i]] += normal;
@@ -78,11 +78,13 @@ NormalUtils::Normals NormalUtils::create_normals_angle_weighted(
     size_t             count_vertices = its.vertices.size();
     std::vector<Vec3f> normals(count_vertices, Vec3f(.0f, .0f, .0f));
     std::vector<float> count(count_vertices, 0.f);
-    for (const Vec3crd &indice : its.indices) {
+    for (const Vec3i &indice : its.indices) {
         Vec3f normal = create_triangle_normal(indice, its.vertices);
-        Vec3f angles(indice_angle(0, indice, its.vertices),
-                     indice_angle(1, indice, its.vertices), 0.f);
+        Vec3f angles(indice_angle(0, indice.cast<coord_t>(), its.vertices),
+                     indice_angle(1, indice.cast<coord_t>(), its.vertices), 0.f);
         angles[2] = (M_PI - angles[0] - angles[1]);
+
+
         for (int i = 0; i < 3; ++i) {
             const float &weight = angles[i];
             normals[indice[i]] += normal * weight;
@@ -104,7 +106,7 @@ NormalUtils::Normals NormalUtils::create_normals_nelson_weighted(
     std::vector<Vec3f> normals(count_vertices, Vec3f(.0f, .0f, .0f));
     std::vector<float> count(count_vertices, 0.f);
     const std::vector<stl_vertex> &vertices = its.vertices;
-    for (const Vec3crd &indice : its.indices) {
+    for (const Vec3i &indice : its.indices) {
         Vec3f normal = create_triangle_normal(indice, vertices);
 
         const stl_vertex &v0 = vertices[indice[0]];

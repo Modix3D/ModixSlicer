@@ -54,7 +54,7 @@ void BedShape::append_option_line(ConfigOptionsGroupShp optgroup, Parameter para
         def.type = coPoints;
         def.set_default_value(new ConfigOptionPoints{ Vec2d(200, 200) });
         def.min = 0;
-        def.max = 1200;
+        def.max = 10000;
         def.label = get_option_label(param);
         def.tooltip = L("Size in X and Y of the rectangular plate.");
         key = "rect_size";
@@ -62,8 +62,8 @@ void BedShape::append_option_line(ConfigOptionsGroupShp optgroup, Parameter para
     case Parameter::RectOrigin:
         def.type = coPoints;
         def.set_default_value(new ConfigOptionPoints{ Vec2d(0, 0) });
-        def.min = -600;
-        def.max = 600;
+        def.min = -5000;
+        def.max = 5000;
         def.label = get_option_label(param);
         def.tooltip = L("Distance of the 0,0 G-code coordinate from the front left corner of the rectangle.");
         key = "rect_origin";

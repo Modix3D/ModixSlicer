@@ -17,5 +17,6 @@ local-lib
 /.vscode/
 build-linux/*
 deps/build-linux/*
+deps/build/*
 **/.DS_Store
 **/.idea/

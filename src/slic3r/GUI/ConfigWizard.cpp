@@ -1863,7 +1863,7 @@ PageBuildVolume::PageBuildVolume(ConfigWizard* parent)
 
     build_volume->Bind(wxEVT_KILL_FOCUS, [this](wxFocusEvent& e) { 
         double def_value = 200.0;
-        double max_value = 1200.0;
+        double max_value = 10000.0;
         e.Skip();
         wxString str = build_volume->GetValue();
 

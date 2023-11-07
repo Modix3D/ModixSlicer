@@ -593,33 +593,6 @@ bool HorzSegmentsOverlap(cInt seg1a, cInt seg1b, cInt seg2a, cInt seg2b)
 // ClipperBase class methods ...
 //------------------------------------------------------------------------------
 
-#ifdef CLIPPERLIB_INT32
-static inline void RangeTest(const IntPoint &pt)
-{
-#ifndef NDEBUG
-    static constexpr const int32_t hi = 65536 * 16383;
-    if (pt.x() > hi || pt.y() > hi || -pt.x() > hi || -pt.y() > hi) 
-      throw clipperException("Coordinate outside allowed range");
-#endif // NDEBUG
-}
-#else // CLIPPERLIB_INT32
-// Called from ClipperBase::AddPath() to verify the scale of the input polygon coordinates.
-static inline void RangeTest(const IntPoint& Pt, bool& useFullRange)
-{
-  if (useFullRange)
-  {
-    if (Pt.x() > hiRange || Pt.y() > hiRange || -Pt.x() > hiRange || -Pt.y() > hiRange) 
-      throw clipperException("Coordinate outside allowed range");
-  }
-  else if (Pt.x() > loRange|| Pt.y() > loRange || -Pt.x() > loRange || -Pt.y() > loRange) 
-  {
-    useFullRange = true;
-    RangeTest(Pt, useFullRange);
-  }
-}
-#endif // CLIPPERLIB_INT32
-//------------------------------------------------------------------------------
-
 // Called from ClipperBase::AddPath() to construct the Local Minima List.
 // Find a local minimum edge on the path starting with E.
 inline TEdge* FindNextLocMin(TEdge* E)
@@ -796,22 +769,10 @@ bool ClipperBase::AddPathInternal(const Path &pg, int highI, PolyType PolyTyp, b
   try
   {
     edges[1].Curr = pg[1];
-#ifdef CLIPPERLIB_INT32
-    RangeTest(pg[0]);
-    RangeTest(pg[highI]);
-#else
-    RangeTest(pg[0], m_UseFullRange);
-    RangeTest(pg[highI], m_UseFullRange);
-#endif // CLIPPERLIB_INT32
     InitEdge(&edges[0], &edges[1], &edges[highI], pg[0]);
     InitEdge(&edges[highI], &edges[0], &edges[highI-1], pg[highI]);
     for (int i = highI - 1; i >= 1; --i)
     {
-#ifdef CLIPPERLIB_INT32
-      RangeTest(pg[i]);
-#else
-      RangeTest(pg[i], m_UseFullRange);
-#endif // CLIPPERLIB_INT32
       InitEdge(&edges[i], &edges[i+1], &edges[i-1], pg[i]);
     }
   }

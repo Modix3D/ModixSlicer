@@ -62,6 +62,9 @@
 #include <functional>
 #include <queue>
 
+#include <boost/cstdint.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
+
 #ifdef CLIPPERLIB_NAMESPACE_PREFIX
   namespace CLIPPERLIB_NAMESPACE_PREFIX {
 #endif // CLIPPERLIB_NAMESPACE_PREFIX
@@ -92,11 +95,7 @@ enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
   using CrossProductType = int64_t;
 #else
   using cInt = int64_t;
-  using CrossProductType = double;
-  // Maximum cInt value to allow a cross product calculation using 32bit expressions.
-  static constexpr cInt const loRange = 0x3FFFFFFF; // 0x3FFFFFFF = 1 073 741 823
-  // Maximum allowed cInt value.
-  static constexpr cInt const hiRange = 0x3FFFFFFFFFFFFFFFLL;
+  using CrossProductType = boost::multiprecision::int128_t;
 #endif // CLIPPERLIB_INT32
 
 #ifdef CLIPPERLIB_INTPOINT_TYPE
@@ -135,8 +134,8 @@ typedef std::function<void(const IntPoint& e1bot, const IntPoint& e1top, const I
 #endif
 
 enum InitOptions {ioReverseSolution = 1, ioStrictlySimple = 2, ioPreserveCollinear = 4};
-enum JoinType {jtSquare, jtRound, jtMiter};
-enum EndType {etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRound};
+enum JoinType : int {jtSquare, jtRound, jtMiter};
+enum EndType : int {etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRound};
 
 class PolyNode;
 typedef std::vector<PolyNode*, Allocator<PolyNode*>> PolyNodes;
@@ -144,7 +143,7 @@ typedef std::vector<PolyNode*, Allocator<PolyNode*>> PolyNodes;
 class PolyNode 
 { 
 public:
-    PolyNode() : Childs(), Parent(0), Index(0), m_IsOpen(false) {}
+    PolyNode() : Childs(), Parent(0), Index(0), m_IsOpen(false), m_jointype((JoinType)0), m_endtype((EndType)0) {}
     virtual ~PolyNode(){};
     Path Contour;
     PolyNodes Childs;

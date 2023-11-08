@@ -135,7 +135,7 @@ public:
 #ifdef __APPLE__
             wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP
 #else
-            wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR
+            wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP
 #endif // !__APPLE__
         )
     {
@@ -3333,32 +3333,6 @@ bool GUI_App::open_browser_with_warning_dialog(const wxString& url, wxWindow* pa
 
     return  launch && wxLaunchDefaultBrowser(url, flags);
 }
-
-// static method accepting a wxWindow object as first parameter
-// void warning_catcher{
-//     my($self, $message_dialog) = @_;
-//     return sub{
-//         my $message = shift;
-//         return if $message = ~/ GLUquadricObjPtr | Attempt to free unreferenced scalar / ;
-//         my @params = ($message, 'Warning', wxOK | wxICON_WARNING);
-//         $message_dialog
-//             ? $message_dialog->(@params)
-//             : Wx::MessageDialog->new($self, @params)->ShowModal;
-//     };
-// }
-
-// Do we need this function???
-// void GUI_App::notify(message) {
-//     auto frame = GetTopWindow();
-//     // try harder to attract user attention on OS X
-//     if (!frame->IsActive())
-//         frame->RequestUserAttention(defined(__WXOSX__/*&Wx::wxMAC */)? wxUSER_ATTENTION_ERROR : wxUSER_ATTENTION_INFO);
-// 
-//     // There used to be notifier using a Growl application for OSX, but Growl is dead.
-//     // The notifier also supported the Linux X D - bus notifications, but that support was broken.
-//     //TODO use wxNotificationMessage ?
-// }
-
 
 #ifdef __WXMSW__
 void GUI_App::associate_3mf_files()

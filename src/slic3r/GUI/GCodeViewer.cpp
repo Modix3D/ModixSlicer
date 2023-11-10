@@ -2327,7 +2327,7 @@ void GCodeViewer::load_wipetower_shell(const Print& print)
             const WipeTowerData& wipe_tower_data = print.wipe_tower_data(extruders_count);
             const float brim_width = wipe_tower_data.brim_width;
 
-            m_shells.volumes.load_wipe_tower_preview(config.wipe_tower_x, config.wipe_tower_y, config.wipe_tower_width, config.wipe_tower_length,
+            m_shells.volumes.load_wipe_tower_preview(config.wipe_tower_x, config.wipe_tower_y, config.wipe_tower_width, config.wipe_tower_depth,
                 max_z, config.wipe_tower_cone_angle, config.wipe_tower_rotation_angle, false, brim_width);
             GLVolume* volume = m_shells.volumes.volumes.back();
             volume->color.a(0.25f);

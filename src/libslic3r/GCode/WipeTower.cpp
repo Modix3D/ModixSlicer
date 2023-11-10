@@ -527,11 +527,10 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_semm(config.single_extruder_multi_material.value),
     m_wipe_tower_pos(config.wipe_tower_x, config.wipe_tower_y),
     m_wipe_tower_width(float(config.wipe_tower_width)),
-    m_wipe_tower_length(float(config.wipe_tower_length)),
     m_wipe_tower_rotation_angle(float(config.wipe_tower_rotation_angle)),
     m_wipe_tower_brim_width(float(config.wipe_tower_brim_width)),
     m_wipe_tower_cone_angle(float(config.wipe_tower_cone_angle)),
-    m_extra_spacing(float(config.wipe_tower_extra_spacing/100.)),
+    m_extra_spacing(float(1.0f)),
     m_y_shift(0.f),
     m_z_pos(0.f),
     m_bridging(float(config.wipe_tower_bridging)),
@@ -542,7 +541,9 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_perimeter_speed(default_region_config.wipe_tower_perimeter_speed),
     m_current_tool(initial_tool),
     wipe_volumes(wiping_matrix),
-    m_extra_perimeters(config.wipe_tower_extra_perimeters)
+    m_extra_perimeters( std::max(0, config.wipe_tower_perimeters -1) ),
+	m_wipe_tower_minimum_depth(float(config.wipe_tower_depth)),
+	m_wipe_tower_density(float(config.wipe_tower_density))
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -1071,12 +1072,8 @@ void WipeTower::toolchange_Wipe(
 	const float& xl = cleaning_box.ld.x();
 	const float& xr = cleaning_box.rd.x();
 
-	// Variables x_to_wipe and traversed_x are here to be able to make sure it always wipes at least
-    //   the ordered volume, even if it means violating the box. This can later be removed and simply
     // wipe until the end of the assigned area.
-
-	float x_to_wipe = volume_to_length(wipe_volume, m_perimeter_width, m_layer_height) * (is_first_layer() ? m_extra_spacing : 1.f);
-	float dy = (is_first_layer() ? 1.f : m_extra_spacing) * m_perimeter_width; // Don't use the extra spacing for the first layer.
+	float dy = (is_first_layer() ? 1.f : 100.f / m_wipe_tower_density) * m_perimeter_width; // Don't use the extra spacing for the first layer.
     // All the calculations in all other places take the spacing into account for all the layers.
 
     const float target_speed = is_first_layer() ? m_first_layer_speed * 60.f : m_infill_speed * 60.f;
@@ -1097,21 +1094,14 @@ void WipeTower::toolchange_Wipe(
             else wipe_speed = std::min(target_speed, wipe_speed + 50.f);
 		}
 
-		float traversed_x = writer.x();
 		if (m_left_to_right)
             writer.extrude(xr - (i % 4 == 0 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
 		else
             writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
 
-        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_perimeter_width)
+        if (writer.y()+float(EPSILON)+dy > cleaning_box.lu.y()-0.5f*m_perimeter_width)
             break;		// in case next line would not fit
 
-		traversed_x -= writer.x();
-        x_to_wipe -= std::abs(traversed_x);
-		if (x_to_wipe < WT_EPSILON) {
-            writer.travel(m_left_to_right ? xl + 1.5f*m_perimeter_width : xr - 1.5f*m_perimeter_width, writer.y(), 7200);
-			break;
-		}
 		// stepping to the next line:
         writer.extrude(writer.x() + (i % 4 == 0 ? -1.f : (i % 4 == 1 ? 1.f : 0.f)) * 1.5f*m_perimeter_width, writer.y() + dy);
 		m_left_to_right = !m_left_to_right;
@@ -1460,6 +1450,7 @@ void WipeTower::plan_toolchange(float z_par, float layer_height_par, unsigned in
 
 	depth += (int(length_to_extrude / width) + 1) * m_perimeter_width;
 	depth *= m_extra_spacing;
+	depth  = std::max(depth, m_wipe_tower_minimum_depth - 1*m_perimeter_width);
 
 	m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, new_tool, depth, ramming_depth, first_wipe_line, wipe_volume));
 }
@@ -1478,6 +1469,7 @@ void WipeTower::plan_tower()
     for (int layer_index = int(m_plan.size()) - 1; layer_index >= 0; --layer_index)
 	{
 		float this_layer_depth = std::max(m_plan[layer_index].depth, m_plan[layer_index].toolchanges_depth());
+		this_layer_depth = std::max(this_layer_depth, m_wipe_tower_minimum_depth);
 		m_plan[layer_index].depth = this_layer_depth;
 		
 		if (this_layer_depth > m_wipe_tower_depth - m_perimeter_width)
@@ -1564,9 +1556,6 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         plan_tower();
     }
 
-    // adjust the depth and then recompute the m_plan.
-    make_wipe_tower_manual_depth();
-
     m_layer_info = m_plan.begin();
     m_current_height = 0.f;
 
@@ -1638,54 +1627,6 @@ std::vector<std::pair<float, float>> WipeTower::get_z_and_depth_pairs() const
     if (out.back().first < m_wipe_tower_height - WT_EPSILON)
         out.emplace_back(m_wipe_tower_height, 0.f);
     return out;
-}
-
-void WipeTower::make_wipe_tower_square()
-{
-	const float width = m_wipe_tower_width - 3 * m_perimeter_width;
-	const float depth = m_wipe_tower_depth - m_perimeter_width;
-	// area that we actually print into is width*depth
-	float side = sqrt(depth * width);
-
-	m_wipe_tower_width = side + 3 * m_perimeter_width;
-	m_wipe_tower_depth = side + 2 * m_perimeter_width;
-	// For all layers, find how depth changed and update all toolchange depths
-	for (auto &lay: m_plan)
-	{
-		side = sqrt(lay.depth * width);
-		float width_ratio = width / side;
-
-		for (auto &tch: lay.tool_changes)
-			tch.required_depth *= width_ratio;
-	}
-
-	plan_tower();	// propagate depth downwards again (width has changed)
-	for (auto& lay: m_plan)
-	{
-		// depths set, now the spacing
-		lay.extra_spacing = lay.depth / lay.toolchanges_depth();
-	}
-}
-
-void WipeTower::make_wipe_tower_manual_depth()
-{
-	// change the depth.
-	//
-
-	// For all layers, find how depth changed and update all toolchange depths
-	for (auto &lay: m_plan)
-	{
-		for (auto &tch: lay.tool_changes) {
-			tch.required_depth = m_wipe_tower_length;
-		}
-	}
-
-	plan_tower();	// propagate depth downwards again (width has changed)
-	for (auto& lay: m_plan)
-	{
-		// depths set, now the spacing
-		lay.extra_spacing = lay.depth / lay.toolchanges_depth();
-	}
 }
 
 } // namespace Slic3r

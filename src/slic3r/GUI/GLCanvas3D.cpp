@@ -2519,7 +2519,7 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
             const float x = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_x"))->value;
             const float y = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_y"))->value;
             const float w = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_width"))->value;
-            const float l = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_length"))->value;
+            const float d = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_depth"))->value;
             const float a = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_rotation_angle"))->value;
             const float bw = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_brim_width"))->value;
             const float ca = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_cone_angle"))->value;
@@ -2532,11 +2532,11 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
 
 #if ENABLE_OPENGL_ES
             int volume_idx_wipe_tower_new = m_volumes.load_wipe_tower_preview(
-                x, y, w, l, (float)height, ca, a, false,
+                x, y, w, d, (float)height, ca, a, false,
                 bw, &m_wipe_tower_mesh);
 #else
             int volume_idx_wipe_tower_new = m_volumes.load_wipe_tower_preview(
-                x, y, w, l, (float)height, ca, a, false,
+                x, y, w, d, (float)height, ca, a, false,
                 bw);
 #endif // ENABLE_OPENGL_ES
             if (volume_idx_wipe_tower_old != -1)

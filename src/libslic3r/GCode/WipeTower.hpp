@@ -99,7 +99,7 @@ public:
             ld(left        , bottom         ),
             lu(left        , bottom + height),
             rd(left + width, bottom         ),
-            ru(left + width, bottom + height) {}	
+            ru(left + width, bottom + height) {}
         box_coordinates(const Vec2f &pos, float width, float height) : box_coordinates(pos(0), pos(1), width, height) {}
         void translate(const Vec2f &shift) {
             ld += shift; lu += shift;
@@ -266,11 +266,10 @@ private:
 	bool   m_semm               = true; // Are we using a single extruder multimaterial printer?
     Vec2f  m_wipe_tower_pos; 			// Left front corner of the wipe tower in mm.
 	float  m_wipe_tower_width; 			// Width of the wipe tower.
-	float  m_wipe_tower_length; 			// Length of the wipe tower.
 	float  m_wipe_tower_depth 	= 0.f; 	// Depth of the wipe tower
 	float  m_wipe_tower_height  = 0.f;
 	float  m_wipe_tower_cone_angle = 0.f;
-    float  m_wipe_tower_brim_width      = 0.f; 	// Width of brim (mm) from config
+	float  m_wipe_tower_brim_width      = 0.f; 	// Width of brim (mm) from config
     float  m_wipe_tower_brim_width_real = 0.f; 	// Width of brim (mm) after generation
 	float  m_wipe_tower_rotation_angle = 0.f; // Wipe tower rotation angle in degrees (with respect to x axis)
     float  m_internal_rotation  = 0.f;
@@ -285,6 +284,8 @@ private:
     float  m_first_layer_speed  = 0.f;
     size_t m_first_layer_idx    = size_t(-1);
     size_t m_extra_perimeters   = 0;    // Extra perimeters to increase stability of the wipe tower
+	float  m_wipe_tower_minimum_depth = 0.f;  // the size set in config options
+	float  m_wipe_tower_density = 0.f;        // the density of the wipe lines
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;
@@ -347,10 +348,6 @@ private:
 
 	// Goes through m_plan and recalculates depths and width of the WT to make it exactly square - experimental
 	void make_wipe_tower_square();
-
-	// Similar to make_wipe_tower_square() but the wipe tower is sized
-	// according to a configuration option
-	void make_wipe_tower_manual_depth();
 
     // Goes through m_plan, calculates border and finish_layer extrusions and subtracts them from last wipe
     void save_on_last_wipe();

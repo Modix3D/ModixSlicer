@@ -605,6 +605,12 @@ void WipeTower::set_extruder(size_t idx, const PrintConfig& config)
     m_filpar[idx].temperature = config.temperature.get_at(idx);
     m_filpar[idx].first_layer_temperature = config.first_layer_temperature.get_at(idx);
 
+	// Modix ---
+	//   Don't want the wipe tower to change depending on the soluble type,
+	// just print a full wipe tower every time.
+	//
+    m_filpar[idx].is_soluble = 1;
+
     // If this is a single extruder MM printer, we will use all the SE-specific config values.
     // Otherwise, the defaults will be used to turn off the SE stuff.
     if (m_semm) {

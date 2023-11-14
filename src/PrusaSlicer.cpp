@@ -809,7 +809,7 @@ bool CLI::setup(int argc, char **argv)
 void CLI::print_help(bool include_print_options, PrinterTechnology printer_technology) const
 {
     boost::nowide::cout
-        << SLIC3R_BUILD_ID << " " << "based on Slic3r"
+        << SLIC3R_BUILD_ID << " " << "based on Slic3r & PrusaSlicer"
 #ifdef SLIC3R_GUI
         << " (with GUI support)"
 #else /* SLIC3R_GUI */

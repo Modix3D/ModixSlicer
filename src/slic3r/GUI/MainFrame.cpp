@@ -718,7 +718,7 @@ void MainFrame::update_title()
 
     title += wxString(build_id);
     if (wxGetApp().is_editor())
-        title += (" " + _L("based on Slic3r"));
+        title += (" " + _L("based on Slic3r & PrusaSlicer"));
 
     SetTitle(title);
 }

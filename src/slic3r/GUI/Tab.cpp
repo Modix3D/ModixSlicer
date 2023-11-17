@@ -1660,6 +1660,10 @@ void TabPrint::build()
         optgroup->append_single_option_line("top_infill_extrusion_width");
         optgroup->append_single_option_line("support_material_extrusion_width");
 
+        optgroup = page->new_optgroup(L("Extrusion width (Wipe tower)"));
+        optgroup->append_single_option_line("wipe_tower_perimeter_extrusion_width");
+        optgroup->append_single_option_line("wipe_tower_infill_extrusion_width");
+
         optgroup = page->new_optgroup(L("Overlap"));
         optgroup->append_single_option_line("infill_overlap");
 

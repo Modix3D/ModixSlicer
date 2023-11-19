@@ -286,6 +286,7 @@ AboutDialog::AboutDialog()
             "<html>"
             "<body bgcolor= %1% link= %2%>"
             "<font color=%3%>"
+            "%4% &copy; 2023      Modix Modular Technologies Ltd. <br />"
             "%4% &copy; 2016-2023 Prusa Research. <br />"
             "%5% &copy; 2011-2018 Alessandro Ranellucci. <br />"
             "<a href=\"http://slic3r.org/\">Slic3r</a> %6% "

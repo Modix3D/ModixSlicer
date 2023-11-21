@@ -257,11 +257,6 @@ public:
 	void progress_indicator_set_progress(int pr);
 	void progress_indicator_set_status_text(const char*); // utf8 char array
 	int  progress_indicator_get_range() const;
-	// Hint (did you know) notification
-	void push_hint_notification(bool open_next);
-	bool is_hint_notification_open();
-	// Forces Hints to reload its content when next hint should be showed
-	void deactivate_loaded_hints();
 	// Adds counter to existing UpdatedItemsInfo notification or opens new one
 	void push_updated_item_info_notification(InfoItemType type);
 	// Close old notification ExportFinished.

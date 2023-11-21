@@ -2345,7 +2345,7 @@ Tab* GUI_App::get_tab(Preset::Type type)
 ConfigOptionMode GUI_App::get_mode()
 {
     if (!app_config->has("view_mode"))
-        return comSimple;
+        return comExpert;
 
     const auto mode = app_config->get("view_mode");
     return mode == "expert" ? comExpert : 

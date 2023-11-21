@@ -816,10 +816,6 @@ void GUI_App::post_init()
             this->mainframe->load_config(this->init_params->extra_config);
     }
 
-    // show "Did you know" notification
-    if (app_config->get_bool("show_hints") && ! is_gcode_viewer())
-        plater_->get_notification_manager()->push_hint_notification(true);
-
     // The extra CallAfter() is needed because of Mac, where this is the only way
     // to popup a modal dialog on start without screwing combo boxes.
     // This is ugly but I honestly found no better way to do it.

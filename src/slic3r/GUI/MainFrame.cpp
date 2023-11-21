@@ -1215,12 +1215,6 @@ static wxMenu* generate_help_menu()
 #ifndef __APPLE__
     append_about_menu_item(helpMenu);
 #endif // __APPLE__
-    append_menu_item(helpMenu, wxID_ANY, _L("Show Tip of the Day")
-#if 0//debug
-        + "\tCtrl+Shift+T"
-#endif
-        ,_L("Opens Tip of the day notification in bottom right corner or shows another tip if already opened."),
-        [](wxCommandEvent&) { wxGetApp().plater()->get_notification_manager()->push_hint_notification(false); });
     helpMenu->AppendSeparator();
     append_menu_item(helpMenu, wxID_ANY, _L("Keyboard Shortcuts") + sep + "&?", _L("Show the list of the keyboard shortcuts"),
         [](wxCommandEvent&) { wxGetApp().keyboard_shortcuts(); });

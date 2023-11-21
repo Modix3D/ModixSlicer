@@ -2288,8 +2288,6 @@ Plater::priv::~priv()
 {
     if (config != nullptr)
         delete config;
-    // Saves the database of visited (already shown) hints into hints.ini.
-    notification_manager->deactivate_loaded_hints();
 }
 
 void Plater::priv::update(unsigned int flags)

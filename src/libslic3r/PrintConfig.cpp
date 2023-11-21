@@ -2698,7 +2698,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Prime all printing extruders");
     def->tooltip = L("If enabled, all printing extruders will be primed at the front edge of the print bed at the start of the print.");
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBool(true));
+    def->set_default_value(new ConfigOptionBool(false));
 
     def = this->add("wipe_tower_no_sparse_layers", coBool);
     def->label = L("No sparse layers (EXPERIMENTAL)");

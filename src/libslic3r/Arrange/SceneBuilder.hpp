@@ -296,8 +296,8 @@ class XStriderVBedHandler final : public VirtualBedHandler
 
 public:
     explicit XStriderVBedHandler(const BoundingBox &bedbb, coord_t xgap)
-        : m_stride_scaled{bedbb.size().x() + 2 * std::max(0, xgap)},
-          m_start{bedbb.min.x() - std::max(0, xgap)}
+        : m_stride_scaled{bedbb.size().x() + 2 * std::max<coord_t>(0, xgap)},
+          m_start{bedbb.min.x() - std::max<coord_t>(0, xgap)}
     {
     }
 
@@ -325,8 +325,8 @@ public:
     coord_t stride_scaled() const { return m_stride_scaled; }
 
     explicit YStriderVBedHandler(const BoundingBox &bedbb, coord_t ygap)
-        : m_stride_scaled{bedbb.size().y() + 2 * std::max(0, ygap)}
-        , m_start{bedbb.min.y() - std::max(0, ygap)}
+        : m_stride_scaled{bedbb.size().y() + 2 * std::max<coord_t>(0, ygap)}
+        , m_start{bedbb.min.y() - std::max<coord_t>(0, ygap)}
     {}
 
     int get_bed_index(const VBedPlaceable &obj) const override;

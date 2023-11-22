@@ -722,16 +722,16 @@ std::string Print::validate(std::vector<std::string>* warnings) const
                            "all nozzles have to be of the same diameter.");
                 }
                 if (this->has_wipe_tower() && object->config().support_material_style != smsOrganic) {
-    				if (object->config().support_material_contact_distance == 0) {
-    					// Soluble interface
-    					if (! object->config().support_material_synchronize_layers)
-    						return _u8L("For the Wipe Tower to work with the soluble supports, the support layers need to be synchronized with the object layers.");
-    				} else {
-    					// Non-soluble interface
-    					if (object->config().support_material_extruder != 0 || object->config().support_material_interface_extruder != 0)
-    						return _u8L("The Wipe Tower currently supports the non-soluble supports only if they are printed with the current extruder without triggering a tool change. "
-    							     "(both support_material_extruder and support_material_interface_extruder need to be set to 0).");
-    				}
+    				//if (object->config().support_material_contact_distance == 0) {
+    				//	// Soluble interface
+    				//	if (! object->config().support_material_synchronize_layers)
+    				//		return _u8L("For the Wipe Tower to work with the soluble supports, the support layers need to be synchronized with the object layers.");
+    				//} else {
+    				//	// Non-soluble interface
+    				//	if (object->config().support_material_extruder != 0 || object->config().support_material_interface_extruder != 0)
+    				//		return _u8L("The Wipe Tower currently supports the non-soluble supports only if they are printed with the current extruder without triggering a tool change. "
+    				//			     "(both support_material_extruder and support_material_interface_extruder need to be set to 0).");
+    				//}
                 }
                 if (object->config().support_material_style == smsOrganic) {
                     float extrusion_width = std::min(

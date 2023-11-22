@@ -578,11 +578,6 @@ void PreferencesDialog::build()
 
 		m_optgroup_gui->append_separator();
 */
-		append_bool_option(m_optgroup_gui, "show_hints",
-			L("Show \"Tip of the day\" notification after start"),
-			L("If enabled, useful hints are displayed at startup."),
-			app_config->get_bool("show_hints"));
-
 		append_enum_option<NotifyReleaseMode>(m_optgroup_gui, "notify_release",
 			L("Notify about new releases"),
 			L("You will be notified about new release after startup acordingly: All = Regular release and alpha / beta releases. Release only = regular release."),

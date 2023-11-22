@@ -43,14 +43,21 @@ enum Orientation
 // As the points are limited to 30 bits + signum,
 // the temporaries u, v, w are limited to 61 bits + signum,
 // and d is limited to 63 bits + signum and we are good.
+#include <libslic3r/Int128.hpp>
 static inline Orientation orient(const Point &a, const Point &b, const Point &c)
 {
-    static_assert(sizeof(coord_t) * 2 == sizeof(int64_t), "orient works with 32 bit coordinates");
-    int64_t u = int64_t(b.x()) * int64_t(c.y()) - int64_t(b.y()) * int64_t(c.x());
-    int64_t v = int64_t(a.x()) * int64_t(c.y()) - int64_t(a.y()) * int64_t(c.x());
-    int64_t w = int64_t(a.x()) * int64_t(b.y()) - int64_t(a.y()) * int64_t(b.x());
-    int64_t d = u - v + w;
-    return (d > 0) ? ORIENTATION_CCW : ((d == 0) ? ORIENTATION_COLINEAR : ORIENTATION_CW);
+    typedef Int128 T;
+
+    // Modix --
+    //
+    //   Experimental implementation - support for 64-bit coordinate system.
+    //
+
+    T u = T(b.x()) * T(c.y()) - T(b.y()) * T(c.x());
+    T v = T(a.x()) * T(c.y()) - T(a.y()) * T(c.x());
+    T w = T(a.x()) * T(b.y()) - T(a.y()) * T(b.x());
+    T d = u - v + w;
+	return (d > Int128(0)) ? ORIENTATION_CCW : ((d == Int128(0)) ? ORIENTATION_COLINEAR : ORIENTATION_CW);
 }
 
 // Return orientation of the polygon by checking orientation of the left bottom corner of the polygon

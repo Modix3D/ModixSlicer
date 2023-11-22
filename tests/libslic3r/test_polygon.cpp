@@ -221,10 +221,10 @@ TEST_CASE("Indexing expolygons", "[ExPolygon]")
         const Point &p          = pts[id.point_index];
         CHECK(points[i] == p);
         CHECK(lines[i].a == p);
-        CHECK(linesf[i].a.cast<int>() == p);
+        CHECK(linesf[i].a.cast<coord_t>() == p);
         CHECK(ids.cvt(id) == i);
         const Point &p_b = ids.is_last_point(id) ? pts.front() : pts[id.point_index + 1];
         CHECK(lines[i].b == p_b);
-        CHECK(linesf[i].b.cast<int>() == p_b);
+        CHECK(linesf[i].b.cast<coord_t>() == p_b);
     }
 }

@@ -146,7 +146,7 @@ void AppConfig::set_defaults()
             set("use_binary_gcode_when_supported", "1");
  
        if (get("notify_release").empty())
-           set("notify_release", "all"); // or "none" or "release"
+           set("notify_release", "none"); // or "none" or "release"
 
 #if ENABLE_ENVIRONMENT_MAP
         if (get("use_environment_map").empty())

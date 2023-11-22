@@ -120,43 +120,43 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
     if (config->opt_bool("wipe_tower") && config->opt_bool("support_material") && 
         // Organic supports are always synchronized with object layers as of now.
         config->opt_enum<SupportMaterialStyle>("support_material_style") != smsOrganic) {
-        if (config->opt_float("support_material_contact_distance") == 0) {
-            if (!config->opt_bool("support_material_synchronize_layers")) {
-                wxString msg_text = _(L("For the Wipe Tower to work with the soluble supports, the support layers\n"
-                                        "need to be synchronized with the object layers."));
-                if (is_global_config)
-                    msg_text += "\n\n" + _(L("Shall I synchronize support layers in order to enable the Wipe Tower?"));
-                MessageDialog dialog(m_msg_dlg_parent, msg_text, _(L("Wipe Tower")),
-                                       wxICON_WARNING | (is_global_config ? wxYES | wxNO : wxOK));
-                DynamicPrintConfig new_conf = *config;
-                auto answer = dialog.ShowModal();
-                if (!is_global_config || answer == wxID_YES) {
-                    new_conf.set_key_value("support_material_synchronize_layers", new ConfigOptionBool(true));
-                }
-                else
-                    new_conf.set_key_value("wipe_tower", new ConfigOptionBool(false));
-                apply(config, &new_conf);
-            }
-        } else {
-            if ((config->opt_int("support_material_extruder") != 0 || config->opt_int("support_material_interface_extruder") != 0)) {
-                wxString msg_text = _(L("The Wipe Tower currently supports the non-soluble supports only "
-                                        "if they are printed with the current extruder without triggering a tool change. "
-                                        "(both support_material_extruder and support_material_interface_extruder need to be set to 0)."));
-                if (is_global_config)
-                    msg_text += "\n\n" + _(L("Shall I adjust those settings in order to enable the Wipe Tower?"));
-                MessageDialog dialog (m_msg_dlg_parent, msg_text, _(L("Wipe Tower")),
-                                        wxICON_WARNING | (is_global_config ? wxYES | wxNO : wxOK));
-                DynamicPrintConfig new_conf = *config;
-                auto answer = dialog.ShowModal();
-                if (!is_global_config || answer == wxID_YES) {
-                    new_conf.set_key_value("support_material_extruder", new ConfigOptionInt(0));
-                    new_conf.set_key_value("support_material_interface_extruder", new ConfigOptionInt(0));
-                }
-                else
-                    new_conf.set_key_value("wipe_tower", new ConfigOptionBool(false));
-                apply(config, &new_conf);
-            }
-        }
+        //if (config->opt_float("support_material_contact_distance") == 0) {
+        //    if (!config->opt_bool("support_material_synchronize_layers")) {
+        //        wxString msg_text = _(L("For the Wipe Tower to work with the soluble supports, the support layers\n"
+        //                                "need to be synchronized with the object layers."));
+        //        if (is_global_config)
+        //            msg_text += "\n\n" + _(L("Shall I synchronize support layers in order to enable the Wipe Tower?"));
+        //        MessageDialog dialog(m_msg_dlg_parent, msg_text, _(L("Wipe Tower")),
+        //                               wxICON_WARNING | (is_global_config ? wxYES | wxNO : wxOK));
+        //        DynamicPrintConfig new_conf = *config;
+        //        auto answer = dialog.ShowModal();
+        //        if (!is_global_config || answer == wxID_YES) {
+        //            new_conf.set_key_value("support_material_synchronize_layers", new ConfigOptionBool(true));
+        //        }
+        //        else
+        //            new_conf.set_key_value("wipe_tower", new ConfigOptionBool(false));
+        //        apply(config, &new_conf);
+        //    }
+        //} else {
+        //    if ((config->opt_int("support_material_extruder") != 0 || config->opt_int("support_material_interface_extruder") != 0)) {
+        //        wxString msg_text = _(L("The Wipe Tower currently supports the non-soluble supports only "
+        //                                "if they are printed with the current extruder without triggering a tool change. "
+        //                                "(both support_material_extruder and support_material_interface_extruder need to be set to 0)."));
+        //        if (is_global_config)
+        //            msg_text += "\n\n" + _(L("Shall I adjust those settings in order to enable the Wipe Tower?"));
+        //        MessageDialog dialog (m_msg_dlg_parent, msg_text, _(L("Wipe Tower")),
+        //                                wxICON_WARNING | (is_global_config ? wxYES | wxNO : wxOK));
+        //        DynamicPrintConfig new_conf = *config;
+        //        auto answer = dialog.ShowModal();
+        //        if (!is_global_config || answer == wxID_YES) {
+        //            new_conf.set_key_value("support_material_extruder", new ConfigOptionInt(0));
+        //            new_conf.set_key_value("support_material_interface_extruder", new ConfigOptionInt(0));
+        //        }
+        //        else
+        //            new_conf.set_key_value("wipe_tower", new ConfigOptionBool(false));
+        //        apply(config, &new_conf);
+        //    }
+        //}
     }
 
     // Check "support_material" and "overhangs" relations only on global settings level

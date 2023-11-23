@@ -662,6 +662,8 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloat,                top_solid_min_thickness))
     ((ConfigOptionFloatOrPercent,       top_solid_infill_speed))
     ((ConfigOptionBool,                 wipe_into_infill))
+    ((ConfigOptionFloat,                wipe_tower_perimeter_extrusion_width))
+    ((ConfigOptionFloat,                wipe_tower_infill_extrusion_width))
 )
 
 PRINT_CONFIG_CLASS_DEFINE(

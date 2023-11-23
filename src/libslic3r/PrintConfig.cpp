@@ -3343,6 +3343,13 @@ void PrintConfigDef::init_fff_params()
     def->max = 300.;
     def->set_default_value(new ConfigOptionPercent(100.));
 
+	def = this->add("wipe_tower_perimeters", coInt);
+	def->label = L("Wipe tower perimeters");
+	def->tooltip = L("This option sets the number of perimeters for each layer of the wipe tower. The purpose of this option is to stabilize the wipe tower.");
+	def->mode = comAdvanced;
+	def->min = 1;
+	def->set_default_value(new ConfigOptionInt(2));
+
     def = this->add("wipe_into_infill", coBool);
     def->category = L("Wipe options");
     def->label = L("Wipe into this object's infill");

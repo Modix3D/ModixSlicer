@@ -542,7 +542,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_perimeter_speed(default_region_config.perimeter_speed),
     m_current_tool(initial_tool),
     wipe_volumes(wiping_matrix),
-	m_extra_perimeters(std::max(0, config.wipe_tower_perimeters-1))
+	m_extra_perimeters(std::max(0, config.wipe_tower_perimeters-1)),
+	m_minimum_depth(float(config.wipe_tower_depth))
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -1074,11 +1075,8 @@ void WipeTower::toolchange_Wipe(
 	const float& xl = cleaning_box.ld.x();
 	const float& xr = cleaning_box.rd.x();
 
-	// Variables x_to_wipe and traversed_x are here to be able to make sure it always wipes at least
-    //   the ordered volume, even if it means violating the box. This can later be removed and simply
     // wipe until the end of the assigned area.
 
-	float x_to_wipe = volume_to_length(wipe_volume, m_perimeter_width, m_layer_height) * (is_first_layer() ? m_extra_spacing : 1.f);
 	float dy = (is_first_layer() ? 1.f : m_extra_spacing) * m_perimeter_width; // Don't use the extra spacing for the first layer.
     // All the calculations in all other places take the spacing into account for all the layers.
 
@@ -1100,21 +1098,14 @@ void WipeTower::toolchange_Wipe(
             else wipe_speed = std::min(target_speed, wipe_speed + 50.f);
 		}
 
-		float traversed_x = writer.x();
 		if (m_left_to_right)
             writer.extrude(xr - (i % 4 == 0 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
 		else
             writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
 
-        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_perimeter_width)
+        if (writer.y()+float(EPSILON)+dy > cleaning_box.lu.y()-0.5f*m_perimeter_width)
             break;		// in case next line would not fit
 
-		traversed_x -= writer.x();
-        x_to_wipe -= std::abs(traversed_x);
-		if (x_to_wipe < WT_EPSILON) {
-            writer.travel(m_left_to_right ? xl + 1.5f*m_perimeter_width : xr - 1.5f*m_perimeter_width, writer.y(), 7200);
-			break;
-		}
 		// stepping to the next line:
         writer.extrude(writer.x() + (i % 4 == 0 ? -1.f : (i % 4 == 1 ? 1.f : 0.f)) * 1.5f*m_perimeter_width, writer.y() + dy);
 		m_left_to_right = !m_left_to_right;
@@ -1461,8 +1452,12 @@ void WipeTower::plan_toolchange(float z_par, float layer_height_par, unsigned in
     length_to_extrude += volume_to_length(wipe_volume, m_perimeter_width, layer_height_par);
     length_to_extrude = std::max(length_to_extrude,0.f);
 
+#if 0
 	depth += (int(length_to_extrude / width) + 1) * m_perimeter_width;
 	depth *= m_extra_spacing;
+#else
+	depth  = m_minimum_depth - m_perimeter_width;
+#endif
 
 	m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, new_tool, depth, ramming_depth, first_wipe_line, wipe_volume));
 }
@@ -1477,7 +1472,13 @@ void WipeTower::plan_tower()
 		layer.depth = 0.f;
     m_wipe_tower_height = m_plan.empty() ? 0.f : m_plan.back().z;
     m_current_height = 0.f;
-	
+
+	for (auto& layer: m_plan) {
+		layer.depth = m_minimum_depth;
+	}
+	m_wipe_tower_depth = m_minimum_depth + m_perimeter_width;
+
+#if 0
     for (int layer_index = int(m_plan.size()) - 1; layer_index >= 0; --layer_index)
 	{
 		float this_layer_depth = std::max(m_plan[layer_index].depth, m_plan[layer_index].toolchanges_depth());
@@ -1492,6 +1493,7 @@ void WipeTower::plan_tower()
 				m_plan[i].depth = this_layer_depth;
 		}
 	}
+#endif
 }
 
 void WipeTower::save_on_last_wipe()

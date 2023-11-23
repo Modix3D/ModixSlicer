@@ -284,6 +284,7 @@ private:
 	float  m_perimeter_speed    = 0.f;
     float  m_first_layer_speed  = 0.f;
     size_t m_first_layer_idx    = size_t(-1);
+	size_t m_extra_perimeters   = 0;     // Extra perimeters to increase stability of the wipe tower
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;

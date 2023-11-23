@@ -541,7 +541,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_infill_speed(default_region_config.infill_speed),
     m_perimeter_speed(default_region_config.perimeter_speed),
     m_current_tool(initial_tool),
-    wipe_volumes(wiping_matrix)
+    wipe_volumes(wiping_matrix),
+	m_extra_perimeters(std::max(0, config.wipe_tower_perimeters-1))
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -1338,6 +1339,19 @@ WipeTower::ToolChangeResult WipeTower::finish_layer()
     bool infill_cone = first_layer && m_wipe_tower_width > 2*spacing && m_wipe_tower_depth > 2*spacing;
     Polygon poly = supported_rectangle(wt_box, feedrate, infill_cone);
 
+	// extra perimeters for increased wipe tower stability (always)
+	for (size_t i = 0; i < m_extra_perimeters; ++ i) {
+		poly = offset(poly, scale_(spacing)).front();
+		int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
+		writer.travel(unscale(poly.points[cp]).cast<float>());
+		for (int i=cp+1; true; ++i ) {
+			if (i==int(poly.points.size()))
+				i = 0;
+			writer.extrude(unscale(poly.points[i]).cast<float>());
+			if (i == cp)
+				break;
+		}
+	}
 
     // brim (first layer only)
     if (first_layer) {

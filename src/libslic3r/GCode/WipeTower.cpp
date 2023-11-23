@@ -529,7 +529,7 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_wipe_tower_width(float(config.wipe_tower_width)),
     m_wipe_tower_rotation_angle(float(config.wipe_tower_rotation_angle)),
     m_wipe_tower_brim_width(float(config.wipe_tower_brim_width)),
-    m_wipe_tower_cone_angle(float(config.wipe_tower_cone_angle)),
+    m_wipe_tower_cone_angle(float(0.)),
     m_extra_spacing(float(config.wipe_tower_extra_spacing/100.)),
     m_y_shift(0.f),
     m_z_pos(0.f),

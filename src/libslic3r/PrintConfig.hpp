@@ -871,6 +871,7 @@ PRINT_CONFIG_CLASS_DERIVED_DEFINE(
     ((ConfigOptionFloat,              wipe_tower_x))
     ((ConfigOptionFloat,              wipe_tower_y))
     ((ConfigOptionFloat,              wipe_tower_width))
+	((ConfigOptionFloat,              wipe_tower_depth))
 	((ConfigOptionInt,                wipe_tower_perimeters))
     ((ConfigOptionFloat,              wipe_tower_per_color_wipe))
     ((ConfigOptionFloat,              wipe_tower_rotation_angle))

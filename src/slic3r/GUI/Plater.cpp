@@ -2106,7 +2106,7 @@ Plater::priv::priv(Plater *q, MainFrame *main_frame)
         "brim_width", "perimeters", "perimeter_extruder", "fill_density", "infill_extruder", "top_solid_layers", 
         "support_material", "support_material_extruder", "support_material_interface_extruder", 
         "support_material_contact_distance", "support_material_bottom_contact_distance", "raft_layers",
-		"wipe_tower_perimeters"
+		"wipe_tower_perimeters", "wipe_tower_depth"
         }))
     , sidebar(new Sidebar(q))
     , notification_manager(std::make_unique<NotificationManager>(q))

@@ -3319,6 +3319,14 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(60.));
 
+	def = this->add("wipe_tower_depth", coFloat);
+	def->label = L("Depth");
+	def->tooltip = L("Depth of the wipe tower");
+	def->sidetext = L("mm");
+	def->min = 1;
+	def->mode = comAdvanced;
+	def->set_default_value(new ConfigOptionFloat(60.));
+
     def = this->add("wipe_tower_rotation_angle", coFloat);
     def->label = L("Wipe tower rotation angle");
     def->tooltip = L("Wipe tower rotation angle with respect to x-axis.");

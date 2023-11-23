@@ -1650,6 +1650,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("wipe_tower_x");
         optgroup->append_single_option_line("wipe_tower_y");
         optgroup->append_single_option_line("wipe_tower_width");
+		optgroup->append_single_option_line("wipe_tower_depth");
 		optgroup->append_single_option_line("wipe_tower_perimeters");
         optgroup->append_single_option_line("wipe_tower_rotation_angle");
         optgroup->append_single_option_line("wipe_tower_brim_width");

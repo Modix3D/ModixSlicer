@@ -2531,7 +2531,7 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
             const float w = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_width"))->value;
             const float a = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_rotation_angle"))->value;
             const float bw = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_brim_width"))->value;
-            const float ca = dynamic_cast<const ConfigOptionFloat*>(m_config->option("wipe_tower_cone_angle"))->value;
+            const float ca = 0.f;
 
             const Print *print = m_process->fff_print();
             const float depth = print->wipe_tower_data(extruders_count).depth;

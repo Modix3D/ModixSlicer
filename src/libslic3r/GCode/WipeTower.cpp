@@ -543,7 +543,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     m_current_tool(initial_tool),
     wipe_volumes(wiping_matrix),
 	m_extra_perimeters(std::max(0, config.wipe_tower_perimeters-1)),
-	m_minimum_depth(float(config.wipe_tower_depth))
+	m_minimum_depth(float(config.wipe_tower_depth)),
+	m_density(float(config.wipe_tower_density))
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -1077,7 +1078,7 @@ void WipeTower::toolchange_Wipe(
 
     // wipe until the end of the assigned area.
 
-	float dy = (is_first_layer() ? 1.f : m_extra_spacing) * m_perimeter_width; // Don't use the extra spacing for the first layer.
+	float dy = (is_first_layer() ? 1.f : 100.f/m_density) * m_perimeter_width; // Don't use the extra spacing for the first layer.
     // All the calculations in all other places take the spacing into account for all the layers.
 
     const float target_speed = is_first_layer() ? m_first_layer_speed * 60.f : m_infill_speed * 60.f;
@@ -1103,7 +1104,7 @@ void WipeTower::toolchange_Wipe(
 		else
             writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
 
-        if (writer.y()+float(EPSILON)+dy > cleaning_box.lu.y()-0.5f*m_perimeter_width)
+        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_perimeter_width)
             break;		// in case next line would not fit
 
 		// stepping to the next line:
@@ -1187,7 +1188,7 @@ WipeTower::ToolChangeResult WipeTower::finish_layer()
         solid_infill |= first_layer && m_adhesion;
 
         if (solid_infill) {
-            float sparse_factor = 1.5f; // 1=solid, 2=every other line, etc.
+            float sparse_factor = 100.f/m_density; // 1=solid, 2=every other line, etc.
             if (first_layer) { // the infill should touch perimeters
                 left  -= m_perimeter_width;
                 right += m_perimeter_width;

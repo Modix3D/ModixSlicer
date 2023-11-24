@@ -1656,7 +1656,6 @@ void TabPrint::build()
         optgroup->append_single_option_line("wipe_tower_rotation_angle");
         optgroup->append_single_option_line("wipe_tower_brim_width");
         optgroup->append_single_option_line("wipe_tower_bridging");
-        optgroup->append_single_option_line("wipe_tower_extra_spacing");
         optgroup->append_single_option_line("wipe_tower_no_sparse_layers");
         // see 'Remove 'Prime all printing extruders.''
         //optgroup->append_single_option_line("single_extruder_multi_material_priming");
@@ -2285,8 +2284,11 @@ void TabFilament::build()
         };
         optgroup->append_line(line);
 
-        optgroup = page->new_optgroup(L("Wipe tower parameters"));
-        optgroup->append_single_option_line("filament_minimal_purge_on_wipe_tower");
+		// Modix --
+		//   Don't use this parameter, wipe until the end.
+		//
+        //optgroup = page->new_optgroup(L("Wipe tower parameters"));
+        //optgroup->append_single_option_line("filament_minimal_purge_on_wipe_tower");
 
         optgroup = page->new_optgroup(L("Toolchange parameters with single extruder MM printers"));
         optgroup->append_single_option_line("filament_loading_speed_start");

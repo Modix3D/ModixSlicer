@@ -3318,6 +3318,14 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(60.));
 
+	def = this->add("wipe_tower_depth", coFloat);
+	def->label = L("Depth");
+	def->tooltip = L("Depth of the wipe tower");
+	def->sidetext = L("mm");
+	def->min = 1;
+	def->mode = comAdvanced;
+	def->set_default_value(new ConfigOptionFloat(60.));
+
     def = this->add("wipe_tower_rotation_angle", coFloat);
     def->label = L("Wipe tower rotation angle");
     def->tooltip = L("Wipe tower rotation angle with respect to x-axis.");
@@ -3333,16 +3341,6 @@ void PrintConfigDef::init_fff_params()
     def->min = 0.;
     def->set_default_value(new ConfigOptionFloat(2.));
 
-    def = this->add("wipe_tower_cone_angle", coFloat);
-    def->label = L("Stabilization cone apex angle");
-    def->tooltip = L("Angle at the apex of the cone that is used to stabilize the wipe tower. "
-                     "Larger angle means wider base.");
-    def->sidetext = L("°");
-    def->mode = comAdvanced;
-    def->min = 0.;
-    def->max = 90.;
-    def->set_default_value(new ConfigOptionFloat(0.));
-
     def = this->add("wipe_tower_extra_spacing", coPercent);
     def->label = L("Wipe tower purge lines spacing");
     def->tooltip = L("Spacing of purge lines on the wipe tower.");
@@ -3351,6 +3349,22 @@ void PrintConfigDef::init_fff_params()
     def->min = 100.;
     def->max = 300.;
     def->set_default_value(new ConfigOptionPercent(100.));
+
+	def = this->add("wipe_tower_perimeters", coInt);
+	def->label = L("Wipe tower perimeters");
+	def->tooltip = L("This option sets the number of perimeters for each layer of the wipe tower. The purpose of this option is to stabilize the wipe tower.");
+	def->mode = comAdvanced;
+	def->min = 1;
+	def->set_default_value(new ConfigOptionInt(2));
+
+	def = this->add("wipe_tower_density", coPercent);
+	def->label = L("Wipe tower purge lines density");
+	def->tooltip = L("Density of purge lines on the wipe tower.");
+	def->sidetext = L("%");
+	def->mode = comAdvanced; 
+	def->min = 5;
+	def->max = 100;
+	def->set_default_value(new ConfigOptionPercent(100.));
 
     def = this->add("wipe_into_infill", coBool);
     def->category = L("Wipe options");

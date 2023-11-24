@@ -3358,6 +3358,15 @@ void PrintConfigDef::init_fff_params()
 	def->min = 1;
 	def->set_default_value(new ConfigOptionInt(2));
 
+	def = this->add("wipe_tower_density", coPercent);
+	def->label = L("Wipe tower purge lines density");
+	def->tooltip = L("Density of purge lines on the wipe tower.");
+	def->sidetext = L("%");
+	def->mode = comAdvanced; 
+	def->min = 5;
+	def->max = 100;
+	def->set_default_value(new ConfigOptionPercent(100.));
+
     def = this->add("wipe_into_infill", coBool);
     def->category = L("Wipe options");
     def->label = L("Wipe into this object's infill");

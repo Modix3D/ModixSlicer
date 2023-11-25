@@ -596,7 +596,7 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
 
 
 
-void WipeTower::set_extruder(size_t idx, const PrintConfig& config)
+void WipeTower::set_extruder(size_t idx, const PrintConfig& config, const PrintRegionConfig& default_region_config)
 {
     //while (m_filpar.size() < idx+1)   // makes sure the required element is in the vector
     m_filpar.push_back(FilamentParameters());
@@ -627,7 +627,14 @@ void WipeTower::set_extruder(size_t idx, const PrintConfig& config)
     if (max_vol_speed!= 0.f)
         m_filpar[idx].max_e_speed = (max_vol_speed / filament_area());
 
-    m_perimeter_width = nozzle_diameter * Width_To_Nozzle_Ratio; // all extruders are now assumed to have the same diameter
+	m_perimeter_width = float(default_region_config.wipe_tower_perimeter_extrusion_width);
+	m_infill_width = float(default_region_config.wipe_tower_infill_extrusion_width);
+	if (m_perimeter_width < WT_EPSILON) {
+		m_perimeter_width = nozzle_diameter;
+	}
+	if (m_infill_width < WT_EPSILON) {
+		m_infill_width = nozzle_diameter;
+	}
 
     if (m_semm) {
         std::istringstream stream{config.filament_ramming_parameters.get_at(idx)};
@@ -1070,23 +1077,30 @@ void WipeTower::toolchange_Wipe(
 	const box_coordinates  &cleaning_box,
 	float wipe_volume)
 {
+    // Modix --
+    //
+    //   This section switches to infill extrusion parameters.
+    // Once wiping is done, switch back to perimeters extrusion parameters.
+    //
+
+	writer.change_analyzer_line_width(m_infill_width);
 	// Increase flow on first layer, slow down print.
-    writer.set_extrusion_flow(m_extrusion_flow * (is_first_layer() ? 1.18f : 1.f))
+    writer.set_extrusion_flow(m_infill_extrusion_flow * (is_first_layer() ? 1.18f : 1.f))
 		  .append("; CP TOOLCHANGE WIPE\n");
 	const float& xl = cleaning_box.ld.x();
 	const float& xr = cleaning_box.rd.x();
 
     // wipe until the end of the assigned area.
 
-	float dy = (is_first_layer() ? 1.f : 100.f/m_density) * m_perimeter_width; // Don't use the extra spacing for the first layer.
+	float dy = (is_first_layer() ? 1.f : 100.f/m_density) * m_infill_width; // Don't use the extra spacing for the first layer.
     // All the calculations in all other places take the spacing into account for all the layers.
 
     const float target_speed = is_first_layer() ? m_first_layer_speed * 60.f : m_infill_speed * 60.f;
     float wipe_speed = 0.33f * target_speed;
 
-    // if there is less than 2.5*m_perimeter_width to the edge, advance straightaway (there is likely a blob anyway)
-    if ((m_left_to_right ? xr-writer.x() : writer.x()-xl) < 2.5f*m_perimeter_width) {
-        writer.travel((m_left_to_right ? xr-m_perimeter_width : xl+m_perimeter_width),writer.y()+dy);
+    // if there is less than 2.5*m_infill_width to the edge, advance straightaway (there is likely a blob anyway)
+    if ((m_left_to_right ? xr-writer.x() : writer.x()-xl) < 2.5f*m_infill_width) {
+        writer.travel((m_left_to_right ? xr-m_infill_width : xl+m_perimeter_width),writer.y()+dy);
         m_left_to_right = !m_left_to_right;
     }
     
@@ -1100,15 +1114,15 @@ void WipeTower::toolchange_Wipe(
 		}
 
 		if (m_left_to_right)
-            writer.extrude(xr - (i % 4 == 0 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
+            writer.extrude(xr - (i % 4 == 0 ? 0 : 1.5f*m_infill_width), writer.y(), wipe_speed);
 		else
-            writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_perimeter_width), writer.y(), wipe_speed);
+            writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_infill_width), writer.y(), wipe_speed);
 
-        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_perimeter_width)
+        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_infill_width)
             break;		// in case next line would not fit
 
 		// stepping to the next line:
-        writer.extrude(writer.x() + (i % 4 == 0 ? -1.f : (i % 4 == 1 ? 1.f : 0.f)) * 1.5f*m_perimeter_width, writer.y() + dy);
+        writer.extrude(writer.x() + (i % 4 == 0 ? -1.f : (i % 4 == 1 ? 1.f : 0.f)) * 1.5f*m_infill_width, writer.y() + dy);
 		m_left_to_right = !m_left_to_right;
 	}
 
@@ -1121,6 +1135,7 @@ void WipeTower::toolchange_Wipe(
     if (m_layer_info != m_plan.end() && m_current_tool != m_layer_info->tool_changes.back().new_tool)
         m_left_to_right = !m_left_to_right;
 
+    writer.change_analyzer_line_width(m_perimeter_width);
     writer.set_extrusion_flow(m_extrusion_flow); // Reset the extrusion flow.
 }
 

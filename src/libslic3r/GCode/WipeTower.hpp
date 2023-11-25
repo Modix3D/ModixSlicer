@@ -141,7 +141,7 @@ public:
 
 
 	// Set the extruder properties.
-    void set_extruder(size_t idx, const PrintConfig& config);
+    void set_extruder(size_t idx, const PrintConfig& config, const PrintRegionConfig& default_region_config);
 
 	// Appends into internal structure m_plan containing info about the future wipe tower
 	// to be used before building begins. The entries must be added ordered in z.
@@ -190,7 +190,8 @@ public:
             ++ m_num_layer_changes;
 		
 		// Calculate extrusion flow from desired line width, nozzle diameter, filament diameter and layer_height:
-		m_extrusion_flow = extrusion_flow(layer_height);
+		m_perimeter_extrusion_flow = extrusion_flow(layer_height);
+		m_infill_extrusion_flow = extrusion_flow(layer_height, true);
 	}
 
 	// Return the wipe tower position.
@@ -308,8 +309,9 @@ private:
     float m_bed_width; // width of the bed bounding box
     Vec2f m_bed_bottom_left; // bottom-left corner coordinates (for rectangular beds)
 
-	float m_perimeter_width = 0.4f * Width_To_Nozzle_Ratio; // Width of an extrusion line, also a perimeter spacing for 100% infill.
-	float m_extrusion_flow = 0.038f; //0.029f;// Extrusion flow is derived from m_perimeter_width, layer height and filament diameter.
+	float m_perimeter_width, m_infill_width;
+	float m_perimeter_extrusion_flow, m_infill_extrusion_flow;
+	const float& m_extrusion_flow = m_perimeter_extrusion_flow;		// make an alias for the default
 
 	// Extruder specific parameters.
     std::vector<FilamentParameters> m_filpar;
@@ -332,13 +334,17 @@ private:
     bool is_first_layer() const { return size_t(m_layer_info - m_plan.begin()) == m_first_layer_idx; }
 
 	// Calculates extrusion flow needed to produce required line width for given layer height
-	float extrusion_flow(float layer_height = -1.f) const	// negative layer_height - return current m_extrusion_flow
+	//
+	//    layer_height:  if negative, return the current extrusion flow.
+	//    infill:        use parameters for infill's width instead.
+	//
+	float extrusion_flow(float layer_height = -1.f, bool infill = false) const	// negative layer_height - return current m_perimeter_extrusion_flow
 	{
 		if ( layer_height < 0 )
 			return m_extrusion_flow;
-		return layer_height * ( m_perimeter_width - layer_height * (1.f-float(M_PI)/4.f)) / filament_area();
+		return layer_height * ( (infill? m_infill_width : m_perimeter_width) - layer_height * (1.f-float(M_PI)/4.f)) / filament_area();
 	}
-
+	
 	// Calculates length of extrusion line to extrude given volume
 	float volume_to_length(float volume, float line_width, float layer_height) const {
 		return std::max(0.f, volume / (layer_height * (line_width - layer_height * (1.f - float(M_PI) / 4.f))));

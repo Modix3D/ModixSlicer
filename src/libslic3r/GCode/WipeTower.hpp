@@ -90,7 +90,7 @@ public:
 			return e_length;
 		}
 
-		bool force_travel = false;
+		bool force_travel = true;
 	};
 
     struct box_coordinates
@@ -164,13 +164,7 @@ public:
 		// Print height of this layer.
 		float print_z,
 		// Layer height, used to calculate extrusion the rate.
-		float layer_height,
-		// Maximum number of tool changes on this layer or the layers below.
-		size_t max_tool_changes,
-		// Is this the first layer of the print? In that case print the brim first. (OBSOLETE)
-		bool /*is_first_layer*/,
-		// Is this the last layer of the waste tower?
-		bool is_last_layer)
+		float layer_height)
 	{
 		m_z_pos 				= print_z;
 		m_layer_height			= layer_height;
@@ -210,14 +204,6 @@ public:
 		// If true, the last priming are will be the same as the other priming areas, and the rest of the wipe will be performed inside the wipe tower.
 		// If false, the last priming are will be large enough to wipe the last extruder sufficiently.
 		bool 						last_wipe_inside_wipe_tower);
-
-	// Returns gcode for a toolchange and a final print head position.
-	// On the first layer, extrude a brim around the future wipe tower first.
-    ToolChangeResult tool_change(size_t new_tool);
-
-	// Fill the unfilled space with a sparse infill.
-	// Call this method only if layer_finished() is false.
-	ToolChangeResult finish_layer();
 
 	// Is the current layer finished?
 	bool 			 layer_finished() const {
@@ -288,6 +274,7 @@ private:
 	size_t m_extra_perimeters   = 0;     // Extra perimeters to increase stability of the wipe tower
 	float  m_minimum_depth      = 0.f;
 	float  m_density            = 0.f;
+	int    m_perimeter_extruder = 0;
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;
@@ -350,38 +337,29 @@ private:
 		return std::max(0.f, volume / (layer_height * (line_width - layer_height * (1.f - float(M_PI) / 4.f))));
 	}
 
-	// Calculates depth for all layers and propagates them downwards
-	void plan_tower();
-
-	// Goes through m_plan and recalculates depths and width of the WT to make it exactly square - experimental
-	void make_wipe_tower_square();
-
-    // Goes through m_plan, calculates border and finish_layer extrusions and subtracts them from last wipe
-    void save_on_last_wipe();
-
-
     // to store information about tool changes for a given layer
 	struct WipeTowerInfo{
 		struct ToolChange {
-            size_t old_tool;
-            size_t new_tool;
-			float required_depth;
-            float ramming_depth;
-            float first_wipe_line;
-            float wipe_volume;
-            ToolChange(size_t old, size_t newtool, float depth=0.f, float ramming_depth=0.f, float fwl=0.f, float wv=0.f)
-            : old_tool{old}, new_tool{newtool}, required_depth{depth}, ramming_depth{ramming_depth}, first_wipe_line{fwl}, wipe_volume{wv} {}
+            int old_tool;
+            int new_tool;
+            ToolChange(int _old_tool, int _new_tool)
+            : old_tool{_old_tool}, new_tool{_new_tool}
+			{}
 		};
 		float z;		// z position of the layer
 		float height;	// layer height
-		float depth;	// depth of the layer based on all layers above
-		float extra_spacing;
-		float toolchanges_depth() const { float sum = 0.f; for (const auto &a : tool_changes) sum += a.required_depth; return sum; }
 
 		std::vector<ToolChange> tool_changes;
 
-		WipeTowerInfo(float z_par, float layer_height_par)
-			: z{z_par}, height{layer_height_par}, depth{0}, extra_spacing{1.f} {}
+		WipeTowerInfo(float _z, float _height)
+			: z{_z}, height{_height}
+		{}
+
+		void debug() const
+		{
+			printf("<wtinfo tool-changes=%d z=%f height=%f\n", (int)tool_changes.size(), z, height);
+			printf("        %d->%d                       >\n", tool_changes[0].old_tool, tool_changes[0].new_tool);
+		}
 	};
 
 	std::vector<WipeTowerInfo> m_plan; 	// Stores information about all layers and toolchanges for the future wipe tower (filled by plan_toolchange(...))
@@ -393,11 +371,6 @@ private:
 
     // Stores information about used filament length per extruder:
     std::vector<float> m_used_filament_length;
-
-    // Return index of first toolchange that switches to non-soluble extruder
-    // ot -1 if there is no such toolchange.
-    int first_toolchange_to_nonsoluble(
-            const std::vector<WipeTowerInfo::ToolChange>& tool_changes) const;
 
 	void toolchange_Unload(
 		WipeTowerWriter &writer,
@@ -418,6 +391,9 @@ private:
 		WipeTowerWriter &writer,
 		const box_coordinates  &cleaning_box,
 		float wipe_volume);
+
+	void wipe_lines_1(WipeTowerWriter& writer);
+
 };
 
 

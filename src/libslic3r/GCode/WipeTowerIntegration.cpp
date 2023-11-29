@@ -14,8 +14,10 @@ static inline Point wipe_tower_point_to_object_point(GCodeGenerator &gcodegen, c
 
 std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const WipeTower::ToolChangeResult& tcr, int new_extruder_id, double z) const
 {
-    if (new_extruder_id != -1 && new_extruder_id != tcr.new_tool)
-        throw Slic3r::InvalidArgument("Error: WipeTowerIntegration::append_tcr was asked to do a toolchange it didn't expect.");
+    if (new_extruder_id != -1 && new_extruder_id != tcr.new_tool) {
+        printf("%d!=%d\n", new_extruder_id, tcr.new_tool);
+        //throw Slic3r::InvalidArgument("Error: WipeTowerIntegration::append_tcr was asked to do a toolchange it didn't expect.");
+    }
 
     std::string gcode;
 
@@ -214,6 +216,9 @@ std::string WipeTowerIntegration::prime(GCodeGenerator &gcodegen)
 
 std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extruder_id, bool finish_layer)
 {
+    printf("WipeTowerIntegration::tool_change  extruder=%d finish_layer=%d   m_layer_idx=%d  ", extruder_id, (int)finish_layer, (int)m_layer_idx);
+    printf("need_toolchange=%d \n", gcodegen.writer().need_toolchange(extruder_id));
+
     std::string gcode;
     assert(m_layer_idx >= 0);
     if (gcodegen.writer().need_toolchange(extruder_id) || finish_layer) {
@@ -245,12 +250,12 @@ std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extr
 std::string WipeTowerIntegration::finalize(GCodeGenerator &gcodegen)
 {
     std::string gcode;
-    if (std::abs(gcodegen.writer().get_position().z() - m_final_purge.print_z) > EPSILON)
-        gcode += gcodegen.generate_travel_gcode(
-            {{gcodegen.last_pos().x(), gcodegen.last_pos().y(), scaled(m_final_purge.print_z)}},
-            "move to safe place for purging"
-        );
-    gcode += append_tcr(gcodegen, m_final_purge, -1);
+    // if (std::abs(gcodegen.writer().get_position().z() - m_final_purge.print_z) > EPSILON)
+    //     gcode += gcodegen.generate_travel_gcode(
+    //         {{gcodegen.last_pos().x(), gcodegen.last_pos().y(), scaled(m_final_purge.print_z)}},
+    //         "move to safe place for purging"
+    //     );
+    // gcode += append_tcr(gcodegen, m_final_purge, -1);
     return gcode;
 }
 

@@ -1572,17 +1572,17 @@ void Print::_make_wipe_tower()
         if (wipe_tower.layer_finished()) {
             // The wipe tower is printed to the top of the print and it has no space left for the final extruder purge.
             // Lift Z to the next layer.
-            wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z + layer_height), float(layer_height), 0, false, true);
+            wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z + layer_height), float(layer_height));
         } else {
             // There is yet enough space at this layer of the wipe tower for the final purge.
         }
     } else {
         // The wipe tower does not reach the last print layer, perform the pruge at the last print layer.
         assert(m_wipe_tower_data.tool_ordering.back().wipe_tower_partitions == 0);
-        wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z), float(layer_height), 0, false, true);
+        wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z), float(layer_height));
     }
-    m_wipe_tower_data.final_purge = Slic3r::make_unique<WipeTower::ToolChangeResult>(
-        wipe_tower.tool_change((unsigned int)(-1)));
+    // m_wipe_tower_data.final_purge = Slic3r::make_unique<WipeTower::ToolChangeResult>(
+    //     wipe_tower.tool_change((unsigned int)(-1)));
 
     m_wipe_tower_data.used_filament = wipe_tower.get_used_filament();
     m_wipe_tower_data.number_of_toolchanges = wipe_tower.get_number_of_toolchanges();

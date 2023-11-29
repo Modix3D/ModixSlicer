@@ -52,7 +52,7 @@ void BedShape::append_option_line(ConfigOptionsGroupShp optgroup, Parameter para
     switch (param) {
     case Parameter::RectSize:
         def.type = coPoints;
-        def.set_default_value(new ConfigOptionPoints{ Vec2d(200, 200) });
+        def.set_default_value(new ConfigOptionPoints{ Vec2d(600, 600) });
         def.min = 0;
         def.max = 10000;
         def.label = get_option_label(param);
@@ -70,7 +70,7 @@ void BedShape::append_option_line(ConfigOptionsGroupShp optgroup, Parameter para
         break;
     case Parameter::Diameter:
         def.type = coFloat;
-        def.set_default_value(new ConfigOptionFloat(200));
+        def.set_default_value(new ConfigOptionFloat(600));
         def.sidetext = L("mm");
         def.label = get_option_label(param);
         def.tooltip = L("Diameter of the print bed. It is assumed that origin (0,0) is located in the center.");

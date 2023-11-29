@@ -292,7 +292,7 @@ void PrintConfigDef::init_common_params()
     def = this->add("bed_shape", coPoints);
     def->label = L("Bed shape");
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionPoints{ Vec2d(0, 0), Vec2d(200, 0), Vec2d(200, 200), Vec2d(0, 200) });
+    def->set_default_value(new ConfigOptionPoints{ Vec2d(0, 0), Vec2d(600, 0), Vec2d(600, 600), Vec2d(0, 600) });
 
     def = this->add("bed_custom_texture", coString);
     def->label = L("Bed custom texture");
@@ -345,7 +345,7 @@ void PrintConfigDef::init_common_params()
     def->min = 0;
     def->max = 10000;
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionFloat(200.0));
+    def->set_default_value(new ConfigOptionFloat(600.0));
 
     def = this->add("print_host", coString);
     def->label = L("Hostname, IP or URL");

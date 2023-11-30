@@ -396,11 +396,6 @@ private:
     // Returns true if the configuration is fine. 
     // Returns true if the configuration is not compatible and the user decided to rather close the slicer instead of reconfiguring.
 	bool            check_updates(const bool verbose);
-    void            on_version_read(wxCommandEvent& evt);
-    // if the data from version file are already downloaded, shows dialogs to start download of new version of app
-    void            app_updater(bool from_user);
-    // inititate read of version file online in separate thread
-    void            app_version_check(bool from_user);
 
     bool                    m_datadir_redefined { false }; 
     bool                    m_wifi_config_dialog_shown { false };

@@ -1221,12 +1221,6 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionStrings { "PLA" });
 
-    def = this->add("filament_soluble", coBools);
-    def->label = L("Soluble material");
-    def->tooltip = L("Soluble material is most likely used for a soluble support.");
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBools { false });
-
     def = this->add("filament_cost", coFloats);
     def->label = L("Cost");
     def->tooltip = L("Enter your filament cost per kg here. This is only for statistical information.");

@@ -279,7 +279,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig* config)
     bool have_support_material = config->opt_bool("support_material") || have_raft;
     bool have_support_material_auto = have_support_material && config->opt_bool("support_material_auto");
     bool have_support_interface = config->opt_int("support_material_interface_layers") > 0;
-    bool have_support_soluble = have_support_material && config->opt_float("support_material_contact_distance") == 0;
+    bool have_support_soluble = have_support_material;
     auto support_material_style = config->opt_enum<SupportMaterialStyle>("support_material_style");
     for (auto el : { "support_material_style", "support_material_pattern", "support_material_with_sheath",
                     "support_material_spacing", "support_material_angle", 

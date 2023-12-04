@@ -2248,7 +2248,6 @@ void TabFilament::build()
         Option option = optgroup->get_option("filament_type");
         option.opt.width = Field::def_width();
         optgroup->append_single_option_line(option);
-        optgroup->append_single_option_line("filament_soluble");
 
         optgroup = page->new_optgroup(L("Print speed override"));
         optgroup->append_single_option_line("filament_max_volumetric_speed", "max-volumetric-speed_127176");

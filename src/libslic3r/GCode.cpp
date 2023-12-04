@@ -2403,17 +2403,9 @@ void GCodeGenerator::process_layer_single_object(
             // Shall the support interface be printed with the active extruder, preferably with non-soluble, to avoid tool changes?
             bool            interface_dontcare = interface_extruder == std::numeric_limits<unsigned int>::max();
             if (support_dontcare || interface_dontcare) {
-                // Some support will be printed with "don't care" material, preferably non-soluble.
-                // Is the current extruder assigned a soluble filament?
-                auto it_nonsoluble = std::find_if(layer_tools.extruders.begin(), layer_tools.extruders.end(), 
-                    [&soluble = std::as_const(print.config().filament_soluble)](unsigned int extruder_id) { return ! soluble.get_at(extruder_id); });
-                // There should be a non-soluble extruder available.
-                assert(it_nonsoluble != layer_tools.extruders.end());
-                unsigned int dontcare_extruder = it_nonsoluble == layer_tools.extruders.end() ? layer_tools.extruders.front() : *it_nonsoluble;
-                if (support_dontcare)
-                    support_extruder = dontcare_extruder;
-                if (interface_dontcare)
-                    interface_extruder = dontcare_extruder;
+				// Modix hack.
+				support_extruder = layer_tools.extruders.front();
+				interface_extruder = layer_tools.extruders.front();
             }
             bool extrude_support   = has_support && support_extruder == extruder_id;
             bool extrude_interface = has_interface && interface_extruder == extruder_id;

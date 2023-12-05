@@ -170,10 +170,7 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
 		        
 		        // Calculate the actual flow we'll be using for this infill.
 		        params.bridge = is_bridge || Fill::use_bridge_flow(params.pattern);
-				params.flow   = params.bridge ?
-					// Always enable thick bridges for internal bridges.
-					layerm.bridging_flow(extrusion_role, surface.is_bridge() && ! surface.is_external()) :
-					layerm.flow(extrusion_role, (surface.thickness == -1) ? layer.height : surface.thickness);
+				params.flow   = layerm.flow(extrusion_role, (surface.thickness == -1) ? layer.height : surface.thickness);
 
 				// Calculate flow spacing for infill pattern generation.
 		        if (surface.is_solid() || is_bridge) {

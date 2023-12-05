@@ -172,8 +172,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/RammingChart.hpp
     GUI/RemovableDriveManager.cpp
     GUI/RemovableDriveManager.hpp
-    GUI/SendSystemInfoDialog.cpp
-    GUI/SendSystemInfoDialog.hpp
     GUI/SurfaceDrag.cpp
     GUI/SurfaceDrag.hpp
     GUI/TextLines.cpp

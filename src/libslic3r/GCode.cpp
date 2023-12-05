@@ -1118,7 +1118,7 @@ void GCodeGenerator::_do_export(Print& print, GCodeOutputStream &file, Thumbnail
             // No object to print was found, cancel the G-code export.
             throw Slic3r::SlicingError(_u8L("No extrusions were generated for objects."));
         has_wipe_tower = print.has_wipe_tower() && tool_ordering.has_wipe_tower();
-        initial_extruder_id = (has_wipe_tower && ! print.config().single_extruder_multi_material_priming) ?
+        initial_extruder_id = (has_wipe_tower) ?
             // The priming towers will be skipped.
             tool_ordering.all_extruders().back() :
             // Don't skip the priming towers.
@@ -1162,7 +1162,6 @@ void GCodeGenerator::_do_export(Print& print, GCodeOutputStream &file, Thumbnail
     this->placeholder_parser().set("current_object_idx", 0);
     // For the start / end G-code to do the priming and final filament pull in case there is no wipe tower provided.
     this->placeholder_parser().set("has_wipe_tower", has_wipe_tower);
-    this->placeholder_parser().set("has_single_extruder_multi_material_priming", has_wipe_tower && print.config().single_extruder_multi_material_priming);
     this->placeholder_parser().set("total_toolchanges", tool_ordering.toolchanges_count());
     {
         BoundingBoxf bbox(print.config().bed_shape.values);
@@ -1227,11 +1226,9 @@ void GCodeGenerator::_do_export(Print& print, GCodeOutputStream &file, Thumbnail
     std::function<void(void)> throw_if_canceled_func = [&print]() { print.throw_if_canceled();};
     m_seam_placer.init(print, throw_if_canceled_func);
 
-    if (! (has_wipe_tower && print.config().single_extruder_multi_material_priming)) {
-        // Set initial extruder only after custom start G-code.
-        // Ugly hack: Do not set the initial extruder if the extruder is primed using the MMU priming towers at the edge of the print bed.
-        file.write(this->set_extruder(initial_extruder_id, 0.));
-    }
+	// Set initial extruder only after custom start G-code.
+	// Ugly hack: Do not set the initial extruder if the extruder is primed using the MMU priming towers at the edge of the print bed.
+	file.write(this->set_extruder(initial_extruder_id, 0.));
 
     GCode::SmoothPathCache smooth_path_cache_global = smooth_path_interpolate_global(print);
 
@@ -1296,42 +1293,6 @@ void GCodeGenerator::_do_export(Print& print, GCodeOutputStream &file, Thumbnail
         if (has_wipe_tower && ! layers_to_print.empty()) {
             m_wipe_tower = std::make_unique<GCode::WipeTowerIntegration>(print.config(), *print.wipe_tower_data().priming.get(), print.wipe_tower_data().tool_changes, *print.wipe_tower_data().final_purge.get());
             file.write(m_writer.travel_to_z(first_layer_height + m_config.z_offset.value, "Move to the first layer height"));
-            if (print.config().single_extruder_multi_material_priming) {
-                file.write(m_wipe_tower->prime(*this));
-                // Verify, whether the print overaps the priming extrusions.
-                BoundingBoxf bbox_print(get_print_extrusions_extents(print));
-                coordf_t twolayers_printz = ((layers_to_print.size() == 1) ? layers_to_print.front() : layers_to_print[1]).first + EPSILON;
-                for (const PrintObject *print_object : print.objects())
-                    bbox_print.merge(get_print_object_extrusions_extents(*print_object, twolayers_printz));
-                bbox_print.merge(get_wipe_tower_extrusions_extents(print, twolayers_printz));
-                BoundingBoxf bbox_prime(get_wipe_tower_priming_extrusions_extents(print));
-                bbox_prime.offset(0.5f);
-                bool overlap = bbox_prime.overlap(bbox_print);
-
-                if (print.config().gcode_flavor == gcfMarlinLegacy || print.config().gcode_flavor == gcfMarlinFirmware) {
-                    file.write(this->retract_and_wipe());
-                    file.write("M300 S800 P500\n"); // Beep for 500ms, tone 800Hz.
-                    if (overlap) {
-                        // Wait for the user to remove the priming extrusions.
-                        file.write("M1 Remove priming towers and click button.\n");
-                    } else {
-                        // Just wait for a bit to let the user check, that the priming succeeded.
-                        //TODO Add a message explaining what the printer is waiting for. This needs a firmware fix.
-                        file.write("M1 S10\n");
-                    }
-                } else {
-                    // This is not Marlin, M1 command is probably not supported.
-                    // (See https://github.com/prusa3d/PrusaSlicer/issues/5441.)
-                    if (overlap) {
-                        print.active_step_add_warning(PrintStateBase::WarningLevel::CRITICAL,
-                            _u8L("Your print is very close to the priming regions. "
-                              "Make sure there is no collision."));
-                    } else {
-                        // Just continue printing, no action necessary.
-                    }
-
-                }
-            }
             print.throw_if_canceled();
         }
         // Process all layers of all objects (non-sequential mode) with a parallel pipeline:

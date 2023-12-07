@@ -8,6 +8,7 @@
 #include "libslic3r/Format/STL.hpp"
 
 #include <cstdlib>
+#include <fstream>
 #include <string>
 
 #include <boost/nowide/cstdio.hpp>

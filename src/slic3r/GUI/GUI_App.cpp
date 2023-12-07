@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <iterator>
 #include <exception>
+#include <fstream>
 #include <cstdlib>
 #include <regex>
 #include <string_view>

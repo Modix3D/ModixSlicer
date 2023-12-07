@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/dll.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/nowide/fstream.hpp>

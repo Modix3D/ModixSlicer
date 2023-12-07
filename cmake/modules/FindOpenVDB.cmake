@@ -363,19 +363,6 @@ set(_EXCLUDE_SYSTEM_PREREQUISITES 1)
 set(_RECURSE_PREREQUISITES 0)
 set(_OPENVDB_PREREQUISITE_LIST)
 
-if(NOT OPENVDB_USE_STATIC_LIBS)
-get_prerequisites(${OpenVDB_openvdb_LIBRARY}
-  _OPENVDB_PREREQUISITE_LIST
-  ${_EXCLUDE_SYSTEM_PREREQUISITES}
-  ${_RECURSE_PREREQUISITES}
-  ""
-  "${SYSTEM_LIBRARY_PATHS}"
-)
-endif()
-
-unset(_EXCLUDE_SYSTEM_PREREQUISITES)
-unset(_RECURSE_PREREQUISITES)
-
 # As the way we resolve optional libraries relies on library file names, use
 # the configuration options from the main CMakeLists.txt to allow users
 # to manually identify the requirements of OpenVDB builds if they know them.

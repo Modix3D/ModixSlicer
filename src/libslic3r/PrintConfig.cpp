@@ -2997,8 +2997,8 @@ void PrintConfigDef::init_fff_params()
                      "will create more stable supports, while snug support towers will save material and reduce "
                      "object scarring.");
     def->set_enum<SupportMaterialStyle>({
-        //{ "grid", L("Grid") }, 
-        //{ "snug", L("Snug") },
+        { "grid", L("Grid") }, 
+        { "snug", L("Snug") },
         { "organic", L("Organic") }
     });
     def->mode = comAdvanced;

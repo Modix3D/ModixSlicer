@@ -288,6 +288,7 @@ private:
 	size_t m_extra_perimeters   = 0;     // Extra perimeters to increase stability of the wipe tower
 	float  m_minimum_depth      = 0.f;
 	float  m_density            = 0.f;
+	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;

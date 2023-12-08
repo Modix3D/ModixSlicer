@@ -3346,7 +3346,7 @@ void PrintConfigDef::init_fff_params()
     def->sidetext = L("mm");
     def->mode = comAdvanced;
     def->min = 0.;
-    def->set_default_value(new ConfigOptionFloat(2.));
+    def->set_default_value(new ConfigOptionFloat(8.));
 
     def = this->add("wipe_tower_extra_spacing", coPercent);
     def->label = L("Wipe tower purge lines spacing");
@@ -3404,6 +3404,18 @@ void PrintConfigDef::init_fff_params()
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInt(0));
+
+    def = this->add("wipe_tower_brim_layers", coPercent);
+    def->label = L("Add layers to the brim");
+    def->tooltip = L("This feature adds a number of layers to the brim. In cases where the prime tower is very"
+		    " tall, and you still want to keep the tower small, this feature can provide additional"
+		    " rigidity to the tower.  Zero to disable. You can set this to a value from 0% to 100%"
+		    " of the wipe tower to support with extra brim layers.");
+    def->sidetext = L("%");
+    def->min = 0;
+    def->max = 100;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionPercent(5));
 
     def = this->add("solid_infill_every_layers", coInt);
     def->label = L("Solid infill every");

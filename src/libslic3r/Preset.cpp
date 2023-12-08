@@ -473,8 +473,9 @@ static std::vector<std::string> s_Preset_print_options {
     "mmu_segmented_region_interlocking_depth", "wipe_tower_extruder", "wipe_tower_no_sparse_layers", "wipe_tower_extra_spacing", "compatible_printers", "compatible_printers_condition", "inherits",
     "perimeter_generator", "wall_transition_length", "wall_transition_filter_deviation", "wall_transition_angle",
     "wall_distribution_count", "min_feature_size", "min_bead_width",
-	"wipe_tower_perimeters", "wipe_tower_depth", "wipe_tower_density",
-	"wipe_tower_perimeter_extrusion_width", "wipe_tower_infill_extrusion_width"
+    "wipe_tower_perimeters", "wipe_tower_depth", "wipe_tower_density",
+    "wipe_tower_perimeter_extrusion_width", "wipe_tower_infill_extrusion_width",
+    "wipe_tower_brim_layers"
 };
 
 static std::vector<std::string> s_Preset_filament_options {

@@ -543,7 +543,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     wipe_volumes(wiping_matrix),
 	m_extra_perimeters(std::max(0, config.wipe_tower_perimeters-1)),
 	m_minimum_depth(float(config.wipe_tower_depth)),
-	m_density(float(config.wipe_tower_density))
+	m_density(float(config.wipe_tower_density)),
+	m_brim_layers(float(config.wipe_tower_brim_layers/100.f))
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -1379,6 +1380,32 @@ WipeTower::ToolChangeResult WipeTower::finish_layer()
         // Save actual brim width to be later passed to the Print object, which will use it
         // for skirt calculation and pass it to GLCanvas for precise preview box
         m_wipe_tower_brim_width_real = loops_num * spacing;
+    }
+
+    // add number of layers to the brim
+    float reinforce_max_z = m_brim_layers * m_wipe_tower_height;
+    int brim_loops = (m_wipe_tower_brim_width + spacing/2.f) / spacing;
+    auto _loops_num = [brim_loops, reinforce_max_z](auto z) -> int {
+        float p = z / reinforce_max_z;
+        // int y = brim_loops - (std::pow(p, 1.2f)) * brim_loops;
+        int y = brim_loops - p*brim_loops;
+        return std::max(y, 0);
+    };
+    if (!first_layer && (m_z_pos < reinforce_max_z)) {
+        size_t loops_num = _loops_num(m_z_pos);
+
+        for (size_t i = 0; i < loops_num; ++ i) {
+            poly = offset(poly, scale_(spacing)).front();
+            int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
+            writer.travel(unscale(poly.points[cp]).cast<float>());
+            for (int i=cp+1; true; ++i ) {
+                if (i==int(poly.points.size()))
+                    i = 0;
+                writer.extrude(unscale(poly.points[i]).cast<float>());
+                if (i == cp)
+                    break;
+            }
+        }
     }
 
     // Now prepare future wipe.

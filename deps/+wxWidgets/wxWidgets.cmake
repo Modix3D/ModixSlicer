@@ -34,7 +34,7 @@ add_cmake_project(wxWidgets
         -DwxUSE_LIBXPM=builtin
         -DwxUSE_LIBJPEG=sys
         -DwxUSE_LIBTIFF=sys
-        -DwxUSE_EXPAT=sys
+	-DwxUSE_EXPAT=OFF
         -DwxUSE_LIBSDL=OFF
         -DwxUSE_XTEST=OFF
         -DwxUSE_GLCANVAS_EGL=OFF

@@ -1190,7 +1190,7 @@ static wxMenu* generate_help_menu()
         [](wxCommandEvent&) { wxGetApp().system_info(); });
     append_menu_item(helpMenu, wxID_ANY, _L("Show &Configuration Folder"), _L("Show user configuration folder (datadir)"),
         [](wxCommandEvent&) { Slic3r::GUI::desktop_open_datadir_folder(); });
-    append_menu_item(helpMenu, wxID_ANY, _L("Support Request"), _L("Support &Request"),
+    append_menu_item(helpMenu, wxID_ANY, _L("Support &Request"), _L("Open the support request website in your browser"),
         [](wxCommandEvent&) { wxGetApp().open_browser_with_warning_dialog("https://www.modix3d.com/support", nullptr, false); });
 #ifndef __APPLE__
     append_about_menu_item(helpMenu);

@@ -197,8 +197,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/MsgDialog.hpp
     GUI/UpdateDialogs.cpp
     GUI/UpdateDialogs.hpp
-    GUI/FirmwareDialog.cpp
-    GUI/FirmwareDialog.hpp
     GUI/PrintHostDialogs.cpp
     GUI/PrintHostDialogs.hpp
     GUI/WifiConfigDialog.cpp

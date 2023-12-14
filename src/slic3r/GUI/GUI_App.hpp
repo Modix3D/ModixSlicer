@@ -99,7 +99,6 @@ enum ConfigMenuIDs {
     ConfigMenuModeAdvanced,
     ConfigMenuModeExpert,
     ConfigMenuLanguage,
-    ConfigMenuFlashFirmware,
     ConfigMenuCnt,
     ConfigMenuWifiConfigFile
 };

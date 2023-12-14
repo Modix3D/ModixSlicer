@@ -80,7 +80,6 @@
 #include "../Utils/WinRegistry.hpp"
 #include "slic3r/Config/Snapshot.hpp"
 #include "ConfigSnapshotDialog.hpp"
-#include "FirmwareDialog.hpp"
 #include "Preferences.hpp"
 #include "Tab.hpp"
 #include "SysInfoDialog.hpp"
@@ -2460,12 +2459,6 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
     }
     local_menu->AppendSeparator();
     local_menu->Append(config_id_base + ConfigMenuLanguage, _L("&Language"));
-    if (is_editor()) {
-        local_menu->AppendSeparator();
-        local_menu->Append(config_id_base + ConfigMenuFlashFirmware, _L("Flash Printer &Firmware"), _L("Upload a firmware image into an Arduino based printer"));
-        // TODO: for when we're able to flash dictionaries
-        // local_menu->Append(config_id_base + FirmwareMenuDict,  _L("Flash Language File"),    _L("Upload a language dictionary file into a Prusa printer"));
-    }
     local_menu->Append(config_id_base + ConfigMenuWifiConfigFile, _L("Wi-Fi Configuration File"), _L("Generate a file to be loaded by a Prusa printer to configure its Wi-Fi connection."));
 
     local_menu->Bind(wxEVT_MENU, [this, config_id_base](wxEvent &event) {
@@ -2559,9 +2552,6 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
             switch_language();
             break;
         }
-        case ConfigMenuFlashFirmware:
-            FirmwareDialog::run(mainframe);
-            break;
         case ConfigMenuWifiConfigFile:
         {
             open_wifi_config_dialog(true);

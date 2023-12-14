@@ -199,8 +199,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/UpdateDialogs.hpp
     GUI/PrintHostDialogs.cpp
     GUI/PrintHostDialogs.hpp
-    GUI/WifiConfigDialog.cpp
-    GUI/WifiConfigDialog.hpp
     GUI/Jobs/Job.hpp
     GUI/Jobs/Worker.hpp
     GUI/Jobs/BoostThreadWorker.hpp

@@ -90,8 +90,8 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
     assert(deretraction_str.empty() || deretraction_str.back() == '\n');
 
     // Insert the toolchange and deretraction gcode into the generated gcode.
-    boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", toolchange_gcode_str);
-    boost::replace_first(tcr_rotated_gcode, "[deretraction_from_wipe_tower_generator]", deretraction_str);
+    boost::replace_all(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", toolchange_gcode_str);
+    boost::replace_all(tcr_rotated_gcode, "[deretraction_from_wipe_tower_generator]", deretraction_str);
     std::string tcr_gcode;
     unescape_string_cstyle(tcr_rotated_gcode, tcr_gcode);
     gcode += tcr_gcode;
@@ -245,12 +245,12 @@ std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extr
 std::string WipeTowerIntegration::finalize(GCodeGenerator &gcodegen)
 {
     std::string gcode;
-    if (std::abs(gcodegen.writer().get_position().z() - m_final_purge.print_z) > EPSILON)
-        gcode += gcodegen.generate_travel_gcode(
-            {{gcodegen.last_pos().x(), gcodegen.last_pos().y(), scaled(m_final_purge.print_z)}},
-            "move to safe place for purging"
-        );
-    gcode += append_tcr(gcodegen, m_final_purge, -1);
+    // if (std::abs(gcodegen.writer().get_position().z() - m_final_purge.print_z) > EPSILON)
+    //     gcode += gcodegen.generate_travel_gcode(
+    //         {{gcodegen.last_pos().x(), gcodegen.last_pos().y(), scaled(m_final_purge.print_z)}},
+    //         "move to safe place for purging"
+    //     );
+    // gcode += append_tcr(gcodegen, m_final_purge, -1);
     return gcode;
 }
 

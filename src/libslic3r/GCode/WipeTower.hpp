@@ -149,6 +149,11 @@ public:
 
 	// Iterates through prepared m_plan, generates ToolChangeResults and appends them to "result"
 	void generate(std::vector<std::vector<ToolChangeResult>> &result);
+	void change_tool(WipeTowerWriter& writer, int new_tool);
+	void wipe_lines_1(WipeTowerWriter& writer);
+	void wipe_contour_1(WipeTowerWriter& writer, float offset);
+	void wipe_contour_2(WipeTowerWriter& writer, int loops);
+
 
     float get_depth() const { return m_wipe_tower_depth; }
 	std::vector<std::pair<float, float>> get_z_and_depth_pairs() const;
@@ -177,7 +182,7 @@ public:
 		m_depth_traversed  = 0.f;
         m_current_layer_finished = false;
 
-		
+
         // Advance m_layer_info iterator, making sure we got it right
 		while (!m_plan.empty() && m_layer_info->z < print_z - WT_EPSILON && m_layer_info+1 != m_plan.end())
 			++m_layer_info;
@@ -188,7 +193,7 @@ public:
             m_num_tool_changes 	= 0;
         } else
             ++ m_num_layer_changes;
-		
+
 		// Calculate extrusion flow from desired line width, nozzle diameter, filament diameter and layer_height:
 		m_perimeter_extrusion_flow = extrusion_flow(layer_height);
 		m_infill_extrusion_flow = extrusion_flow(layer_height, true);
@@ -204,7 +209,7 @@ public:
 	// Returns gcode to prime the nozzles at the front edge of the print bed.
 	std::vector<ToolChangeResult> prime(
 		// print_z of the first layer.
-		float 						first_layer_height, 
+		float 						first_layer_height,
 		// Extruder indices, in the order to be primed. The last extruder will later print the wipe tower brim, print brim and the object.
 		const std::vector<unsigned int> &tools,
 		// If true, the last priming are will be the same as the other priming areas, and the rest of the wipe will be performed inside the wipe tower.
@@ -289,6 +294,7 @@ private:
 	float  m_minimum_depth      = 0.f;
 	float  m_density            = 0.f;
 	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
+	int    m_wipe_tower_extruder;
 
 	// G-code generator parameters.
     float           m_cooling_tube_retraction   = 0.f;
@@ -345,7 +351,7 @@ private:
 			return m_extrusion_flow;
 		return layer_height * ( (infill? m_infill_width : m_perimeter_width) - layer_height * (1.f-float(M_PI)/4.f)) / filament_area();
 	}
-	
+
 	// Calculates length of extrusion line to extrude given volume
 	float volume_to_length(float volume, float line_width, float layer_height) const {
 		return std::max(0.f, volume / (layer_height * (line_width - layer_height * (1.f - float(M_PI) / 4.f))));
@@ -353,9 +359,6 @@ private:
 
 	// Calculates depth for all layers and propagates them downwards
 	void plan_tower();
-
-	// Goes through m_plan and recalculates depths and width of the WT to make it exactly square - experimental
-	void make_wipe_tower_square();
 
     // Goes through m_plan, calculates border and finish_layer extrusions and subtracts them from last wipe
     void save_on_last_wipe();
@@ -402,7 +405,7 @@ private:
 
 	void toolchange_Unload(
 		WipeTowerWriter &writer,
-		const box_coordinates  &cleaning_box, 
+		const box_coordinates  &cleaning_box,
 		const std::string&	 	current_material,
 		const int 				new_temperature);
 
@@ -410,11 +413,11 @@ private:
 		WipeTowerWriter &writer,
         const size_t		new_tool,
 		const std::string& 		new_material);
-	
+
 	void toolchange_Load(
 		WipeTowerWriter &writer,
 		const box_coordinates  &cleaning_box);
-	
+
 	void toolchange_Wipe(
 		WipeTowerWriter &writer,
 		const box_coordinates  &cleaning_box,
@@ -426,4 +429,4 @@ private:
 
 } // namespace Slic3r
 
-#endif // slic3r_GCode_WipeTower_hpp_ 
+#endif // slic3r_GCode_WipeTower_hpp_

@@ -1428,7 +1428,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
-            writer.extrude(unscale(poly.points[i]).cast<float>());
+            writer.extrude(unscale(poly.points[i]).cast<float>(), m_perimeter_speed * 60.f);
             if (i == cp)
                 break;
         }
@@ -1445,7 +1445,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
             for (int i=cp+1; true; ++i ) {
                 if (i==int(poly.points.size()))
                     i = 0;
-                writer.extrude(unscale(poly.points[i]).cast<float>());
+                writer.extrude(unscale(poly.points[i]).cast<float>(), m_perimeter_speed * 60.f);
                 if (i == cp)
                     break;
             }

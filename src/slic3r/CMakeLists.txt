@@ -283,26 +283,13 @@ set(SLIC3R_GUI_SOURCES
     Utils/Http.hpp
     Utils/FixModelByWin10.cpp
     Utils/FixModelByWin10.hpp
-    Utils/Moonraker.cpp
-    Utils/Moonraker.hpp
-    Utils/OctoPrint.cpp
-    Utils/OctoPrint.hpp
-    Utils/Duet.cpp
-    Utils/Duet.hpp
     Utils/EmbossStyleManager.cpp
     Utils/EmbossStyleManager.hpp
-    Utils/FlashAir.cpp
-    Utils/FlashAir.hpp
     Utils/FontConfigHelp.cpp
     Utils/FontConfigHelp.hpp
-    Utils/AstroBox.cpp
-    Utils/AstroBox.hpp
-    Utils/Repetier.cpp
-    Utils/Repetier.hpp
     Utils/PrintHost.cpp
     Utils/PrintHost.hpp
     Utils/Bonjour.cpp
-    Utils/Bonjour.hpp
     Utils/PresetUpdater.cpp
     Utils/PresetUpdater.hpp
     Utils/Process.cpp
@@ -315,8 +302,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/HexFile.hpp
     Utils/TCPConsole.cpp
     Utils/TCPConsole.hpp
-    Utils/MKS.cpp
-    Utils/MKS.hpp
     Utils/WinRegistry.cpp
     Utils/WinRegistry.hpp
     Utils/WxFontUtils.cpp

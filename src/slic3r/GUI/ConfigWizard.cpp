@@ -1674,7 +1674,7 @@ PageMode::PageMode(ConfigWizard *parent)
     radio_advanced = new wxRadioButton(this, wxID_ANY, _L("Advanced mode"));
     radio_expert = new wxRadioButton(this, wxID_ANY, _L("Expert mode"));
 
-    std::string mode { "simple" };
+    std::string mode { "expert" };
     wxGetApp().app_config->get("", "view_mode", mode);
 
     if (mode == "advanced") { radio_advanced->SetValue(true); }

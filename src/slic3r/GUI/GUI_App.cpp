@@ -73,7 +73,6 @@
 #include "GLCanvas3D.hpp"
 
 #include "../Utils/PresetUpdater.hpp"
-#include "../Utils/PrintHost.hpp"
 #include "../Utils/Process.hpp"
 #include "../Utils/MacDarkMode.hpp"
 #include "../Utils/AppUpdater.hpp"
@@ -91,10 +90,8 @@
 #include "NotificationManager.hpp"
 #include "UnsavedChangesDialog.hpp"
 #include "SavePresetDialog.hpp"
-#include "PrintHostDialogs.hpp"
 #include "DesktopIntegrationDialog.hpp"
 #include "Downloader.hpp"
-#include "PhysicalPrinterDialog.hpp"
 
 #include "BitmapCache.hpp"
 #include "Notebook.hpp"
@@ -1310,8 +1307,6 @@ bool GUI_App::on_init_inner()
 
     plater_->init_notification_manager();
 
-    m_printhost_job_queue.reset(new PrintHostJobQueue(mainframe->printhost_queue_dlg()));
-
     if (is_gcode_viewer()) {
         mainframe->update_layout();
         if (plater_ != nullptr)
@@ -1859,7 +1854,6 @@ void GUI_App::recreate_GUI(const wxString& msg_name)
     old_main_frame->Destroy();
 
     dlg.Update(80, _L("Loading of current presets") + dots);
-    m_printhost_job_queue.reset(new PrintHostJobQueue(mainframe->printhost_queue_dlg()));
     load_current_presets();
     mainframe->Show(true);
 
@@ -1965,7 +1959,6 @@ void GUI_App::update_ui_from_settings()
         mainframe->force_color_changed();
         mainframe->diff_dialog.force_color_changed();
         mainframe->preferences_dialog->force_color_changed();
-        mainframe->printhost_queue_dlg()->force_color_changed();
 #ifdef _MSW_DARK_MODE
         update_scrolls(mainframe);
         if (mainframe->is_dlg_layout()) {
@@ -2790,8 +2783,6 @@ bool GUI_App::check_print_host_queue()
 {
     wxString dirty;
     std::vector<std::pair<std::string, std::string>> jobs;
-    // Get ongoing jobs from dialog
-    mainframe->m_printhost_queue_dlg->get_active_jobs(jobs);
     if (jobs.empty())
         return true;
     // Show dialog
@@ -2809,8 +2800,6 @@ bool GUI_App::check_print_host_queue()
     if (dialog.ShowModal() == wxID_YES)
         return true;
 
-    // TODO: If already shown, bring forward
-    mainframe->m_printhost_queue_dlg->Show();
     return false;
 }
 

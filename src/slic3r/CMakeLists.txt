@@ -124,8 +124,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/EditGCodeDialog.cpp
     GUI/SavePresetDialog.hpp
     GUI/SavePresetDialog.cpp
-    GUI/PhysicalPrinterDialog.hpp
-    GUI/PhysicalPrinterDialog.cpp
     GUI/GUI_Factories.cpp
     GUI/GUI_Factories.hpp
     GUI/GUI_ObjectList.cpp
@@ -197,8 +195,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/MsgDialog.hpp
     GUI/UpdateDialogs.cpp
     GUI/UpdateDialogs.hpp
-    GUI/PrintHostDialogs.cpp
-    GUI/PrintHostDialogs.hpp
     GUI/Jobs/Job.hpp
     GUI/Jobs/Worker.hpp
     GUI/Jobs/BoostThreadWorker.hpp
@@ -287,8 +283,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/EmbossStyleManager.hpp
     Utils/FontConfigHelp.cpp
     Utils/FontConfigHelp.hpp
-    Utils/PrintHost.cpp
-    Utils/PrintHost.hpp
     Utils/Bonjour.cpp
     Utils/PresetUpdater.cpp
     Utils/PresetUpdater.hpp

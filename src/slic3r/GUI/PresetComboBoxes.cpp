@@ -42,7 +42,6 @@
 #include "../Utils/FixModelByWin10.hpp"
 #include "../Utils/UndoRedo.hpp"
 #include "BitmapCache.hpp"
-#include "PhysicalPrinterDialog.hpp"
 #include "MsgDialog.hpp"
 
 #include "Widgets/ComboBox.hpp"
@@ -364,59 +363,6 @@ void PresetComboBox::update(std::string select_preset_name)
     
     update_selection();
     Thaw();
-}
-
-void PresetComboBox::edit_physical_printer()
-{
-    if (!m_preset_bundle->physical_printers.has_selection())
-        return;
-
-    PhysicalPrinterDialog dlg(this->GetParent(),this->GetString(this->GetSelection()));
-    if (dlg.ShowModal() == wxID_OK)
-        update();
-}
-
-void PresetComboBox::add_physical_printer()
-{
-    if (PhysicalPrinterDialog(this->GetParent(), wxEmptyString).ShowModal() == wxID_OK)
-        update();
-}
-
-void PresetComboBox::open_physical_printer_url()
-{
-    const PhysicalPrinter& pp = m_preset_bundle->physical_printers.get_selected_printer();
-    std::string host = pp.config.opt_string("print_host");
-    assert(!host.empty());
-    wxGetApp().open_browser_with_warning_dialog(host);
-}
-
-bool PresetComboBox::del_physical_printer(const wxString& note_string/* = wxEmptyString*/)
-{
-    const std::string& printer_name = m_preset_bundle->physical_printers.get_selected_full_printer_name();
-    if (printer_name.empty())
-        return false;
-
-    wxString msg;
-    if (!note_string.IsEmpty())
-        msg += note_string + "\n";
-    msg += format_wxstr(_L("Are you sure you want to delete \"%1%\" printer?"), printer_name);
-
-    if (MessageDialog(this, msg, _L("Delete Physical Printer"), wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION).ShowModal() != wxID_YES)
-        return false;
-
-    m_preset_bundle->physical_printers.delete_selected_printer();
-
-    this->update();
-
-    if (dynamic_cast<PlaterPresetComboBox*>(this) != nullptr)
-        wxGetApp().get_tab(m_type)->update_preset_choice();
-    else if (dynamic_cast<TabPresetComboBox*>(this) != nullptr)
-    {
-        wxGetApp().get_tab(m_type)->update_btns_enabling();
-        wxGetApp().plater()->sidebar().update_presets(m_type);
-    }
-
-    return true;
 }
 
 void PresetComboBox::show_all(bool show_all)
@@ -769,13 +715,6 @@ void PlaterPresetComboBox::show_add_menu()
             wxTheApp->CallAfter([]() { run_wizard(ConfigWizard::SP_PRINTERS); });
         }, "edit_uni", menu, []() { return true; }, wxGetApp().plater());
 
-    append_menu_item(menu, wxID_ANY, _L("Add physical printer"), "",
-        [this](wxCommandEvent&) {
-            PhysicalPrinterDialog dlg(this->GetParent(), wxEmptyString);
-            if (dlg.ShowModal() == wxID_OK)
-                update();
-        }, "edit_uni", menu, []() { return true; }, wxGetApp().plater());
-
     wxGetApp().plater()->PopupMenu(menu);
 }
 
@@ -799,29 +738,10 @@ void PlaterPresetComboBox::show_edit_menu()
         return;
     }
 
-    if (this->is_selected_physical_printer()) {
-        append_menu_item(menu, wxID_ANY, _L("Edit physical printer"), "",
-            [this](wxCommandEvent&) { this->edit_physical_printer(); }, "cog", menu, []() { return true; }, wxGetApp().plater());
-
-        const PhysicalPrinter& pp = m_preset_bundle->physical_printers.get_selected_printer();
-        std::string host = pp.config.opt_string("print_host");
-        if (!host.empty()) {
-            append_menu_item(menu, wxID_ANY, _L("Open the physical printer URL"), "",
-                [this](wxCommandEvent&) { this->open_physical_printer_url(); }, "open_browser", menu, []() { return true; }, wxGetApp().plater());
-        }
-        
-
-        append_menu_item(menu, wxID_ANY, _L("Delete physical printer"), "",
-            [this](wxCommandEvent&) { this->del_physical_printer(); }, "cross", menu, []() { return true; }, wxGetApp().plater());
-    }
-    else
-        append_menu_item(menu, wxID_ANY, _L("Add/Remove presets"), "",
-            [](wxCommandEvent&) {
-                wxTheApp->CallAfter([]() { run_wizard(ConfigWizard::SP_PRINTERS); });
-            }, "edit_uni", menu, []() { return true; }, wxGetApp().plater());
-
-    append_menu_item(menu, wxID_ANY, _L("Add physical printer"), "",
-        [this](wxCommandEvent&) { this->add_physical_printer(); }, "edit_uni", menu, []() { return true; }, wxGetApp().plater());
+    append_menu_item(menu, wxID_ANY, _L("Add/Remove presets"), "",
+        [](wxCommandEvent&) {
+    	wxTheApp->CallAfter([]() { run_wizard(ConfigWizard::SP_PRINTERS); });
+        }, "edit_uni", menu, []() { return true; }, wxGetApp().plater());
 
     wxGetApp().plater()->PopupMenu(menu);
 }
@@ -993,47 +913,6 @@ void PlaterPresetComboBox::update()
         }
     }
 
-    if (m_type == Preset::TYPE_PRINTER)
-    {
-        // add Physical printers, if any exists
-        if (!m_preset_bundle->physical_printers.empty()) {
-            set_label_marker(Append(separator(L("Physical printers")), NullBitmapBndl()));
-            const PhysicalPrinterCollection& ph_printers = m_preset_bundle->physical_printers;
-
-            // Sort Physical printers in preset_data vector and than Append it in correct order
-            struct PhysicalPrinterPresetData
-            {
-                wxString lower_name; // just for sorting
-                std::string name; // preset_name
-                std::string fullname; // full name
-                bool selected; // is selected
-            };
-            std::vector<PhysicalPrinterPresetData> preset_data;
-            for (PhysicalPrinterCollection::ConstIterator it = ph_printers.begin(); it != ph_printers.end(); ++it) {
-                for (const std::string& preset_name : it->get_preset_names()) {
-                    preset_data.push_back({ wxString::FromUTF8(it->get_full_name(preset_name)).Lower(), preset_name, it->get_full_name(preset_name), ph_printers.is_selected(it, preset_name) });
-                }
-            }
-            std::sort(preset_data.begin(), preset_data.end(), [](const PhysicalPrinterPresetData& a, const PhysicalPrinterPresetData& b) {
-                return a.lower_name < b.lower_name;
-                });
-
-            for (const PhysicalPrinterPresetData& data : preset_data)
-            {
-                Preset* preset = m_collection->find_preset(data.name);
-                if (!preset || !preset->is_visible)
-                    continue;
-                std::string main_icon_name = preset->printer_technology() == ptSLA ? "sla_printer" : m_main_bitmap_name;
-
-                auto bmp = get_bmp(main_icon_name, main_icon_name, "", true, true, false);
-                assert(bmp);
-
-                set_label_marker(Append(from_u8(data.fullname + suffix(preset)), *bmp), LABEL_ITEM_PHYSICAL_PRINTER);
-                validate_selection(data.selected);
-            }
-        }
-    }
-
     if (m_type == Preset::TYPE_PRINTER || m_type == Preset::TYPE_FILAMENT || m_type == Preset::TYPE_SLA_MATERIAL) {
         auto bmp = get_bmp("edit_preset_list", wide_icons, "edit_uni");
         assert(bmp);
@@ -1110,11 +989,6 @@ void TabPresetComboBox::OnSelect(wxCommandEvent &evt)
         if (marker == LABEL_ITEM_WIZARD_PRINTERS)
             wxTheApp->CallAfter([this]() {
             run_wizard(ConfigWizard::SP_PRINTERS);
-
-            // update combobox if its parent is a PhysicalPrinterDialog
-            PhysicalPrinterDialog* parent = dynamic_cast<PhysicalPrinterDialog*>(this->GetParent());
-            if (parent != nullptr)
-                update();
         });
     }
     else if (on_selection_changed && (m_last_selected != selected_item || m_collection->current_is_dirty())) {

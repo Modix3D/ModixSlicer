@@ -1498,10 +1498,10 @@ PageDownloader::PageDownloader(ConfigWizard* parent)
 
         const wxString link = format_wxstr("<a href = \"%1%\">%1%</a>", "printables.com");
 
-        // TRN ConfigWizard : Downloader : %1% = "printables.com", %2% = "PrusaSlicer"
+        // TRN ConfigWizard : Downloader : %1% = "printables.com".
         const wxString main_text = format_wxstr(_L("If enabled, you will be able to open models from the %1% "
-                                                   "online database with a single click (using a %2% logo button)."
-        ), link, SLIC3R_APP_NAME);
+                                                   "online database with a single click."
+        ), link);
 
         const wxFont& font = this->GetFont();
         const int fs = font.GetPointSize();
@@ -1665,7 +1665,7 @@ PageFilesAssociation::PageFilesAssociation(ConfigWizard* parent)
 PageMode::PageMode(ConfigWizard *parent)
     : ConfigWizardPage(parent, _L("View mode"), _L("View mode"))
 {
-    append_text(_L("PrusaSlicer's user interfaces comes in three variants:\nSimple, Advanced, and Expert.\n"
+    append_text(_L("ModixSlicer's user interfaces comes in three variants:\nSimple, Advanced, and Expert.\n"
         "The Simple mode shows only the most frequently used settings relevant for regular 3D printing. "
         "The other two offer progressively more sophisticated fine-tuning, "
         "they are suitable for advanced and expert users, respectively."));

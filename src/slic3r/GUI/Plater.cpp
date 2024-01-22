@@ -112,10 +112,8 @@
 #include "Jobs/PlaterWorker.hpp"
 #include "Jobs/BoostThreadWorker.hpp"
 #include "BackgroundSlicingProcess.hpp"
-#include "PrintHostDialogs.hpp"
 #include "ConfigWizard.hpp"
 #include "../Utils/ASCIIFolding.hpp"
-#include "../Utils/PrintHost.hpp"
 #include "../Utils/FixModelByWin10.hpp"
 #include "../Utils/UndoRedo.hpp"
 #include "../Utils/PresetUpdater.hpp"
@@ -147,7 +145,6 @@ using boost::optional;
 namespace fs = boost::filesystem;
 using Slic3r::_3DScene;
 using Slic3r::Preset;
-using Slic3r::PrintHostJob;
 using Slic3r::GUI::format_wxstr;
 
 static const std::pair<unsigned int, unsigned int> THUMBNAIL_SIZE_3MF = { 256, 256 };
@@ -1975,7 +1972,7 @@ struct Plater::priv
 			GUI::show_error(this->q, msg);
 		}
 	}
-    void export_gcode(fs::path output_path, bool output_path_on_removable_media, PrintHostJob upload_job);
+    void export_gcode(fs::path output_path, bool output_path_on_removable_media);
     void reload_from_disk();
     bool replace_volume_with_stl(int object_idx, int volume_idx, const fs::path& new_path, const wxString& snapshot = "");
     void replace_with_stl();
@@ -3508,9 +3505,9 @@ bool Plater::priv::restart_background_process(unsigned int state)
     return false;
 }
 
-void Plater::priv::export_gcode(fs::path output_path, bool output_path_on_removable_media, PrintHostJob upload_job)
+void Plater::priv::export_gcode(fs::path output_path, bool output_path_on_removable_media)
 {
-    wxCHECK_RET(!(output_path.empty() && upload_job.empty()), "export_gcode: output_path and upload_job empty");
+    wxCHECK_RET(!(output_path.empty()), "export_gcode: output_path and upload_job empty");
     
     if (model.objects.empty())
         return;
@@ -3533,7 +3530,6 @@ void Plater::priv::export_gcode(fs::path output_path, bool output_path_on_remova
         background_process.schedule_export(output_path.string(), output_path_on_removable_media);
         notification_manager->push_delayed_notification(NotificationType::ExportOngoing, []() {return true; }, 1000, 0);
     } else {
-        background_process.schedule_upload(std::move(upload_job));
     }
 
     // If the SLA processing of just a single object's supports is running, restart slicing for the whole object.
@@ -6816,7 +6812,7 @@ void Plater::export_gcode(bool prefer_removable)
         p->exporting_status = path_on_removable_media ? ExportingStatus::EXPORTING_TO_REMOVABLE : ExportingStatus::EXPORTING_TO_LOCAL;
         p->last_output_path = output_path.string();
         p->last_output_dir_path = output_path.parent_path().string();
-        p->export_gcode(output_path, path_on_removable_media, PrintHostJob());
+        p->export_gcode(output_path, path_on_removable_media);
         // Storing a path to AppConfig either as path to removable media or a path to internal media.
         // is_path_on_removable_drive() is called with the "true" parameter to update its internal database as the user may have shuffled the external drives
         // while the dialog was open.
@@ -7304,86 +7300,6 @@ void Plater::reslice_SLA_until_step(SLAPrintObjectStep step, const ModelObject &
 
 void Plater::send_gcode()
 {
-    // if physical_printer is selected, send gcode for this printer
-    DynamicPrintConfig* physical_printer_config = wxGetApp().preset_bundle->physical_printers.get_selected_printer_config();
-    if (! physical_printer_config || p->model.objects.empty())
-        return;
-
-    PrintHostJob upload_job(physical_printer_config);
-    if (upload_job.empty())
-        return;
-
-    // Obtain default output path
-    fs::path default_output_file;
-    try {
-        // Update the background processing, so that the placeholder parser will get the correct values for the ouput file template.
-        // Also if there is something wrong with the current configuration, a pop-up dialog will be shown and the export will not be performed.
-        unsigned int state = this->p->update_restart_background_process(false, false);
-        if (state & priv::UPDATE_BACKGROUND_PROCESS_INVALID)
-            return;
-        default_output_file = this->p->background_process.output_filepath_for_project(into_path(get_project_filename(".3mf")));
-    } catch (const Slic3r::PlaceholderParserError& ex) {
-        // Show the error with monospaced font.
-        show_error(this, ex.what(), true);
-        return;
-    } catch (const std::exception& ex) {
-        show_error(this, ex.what(), false);
-        return;
-    }
-    default_output_file = fs::path(Slic3r::fold_utf8_to_ascii(default_output_file.string()));
-
-    // Repetier specific: Query the server for the list of file groups.
-    wxArrayString groups;
-    {
-        wxBusyCursor wait;
-        upload_job.printhost->get_groups(groups);
-    }
-    // PrusaLink specific: Query the server for the list of file groups.
-    wxArrayString storage_paths;
-    wxArrayString storage_names;
-    {
-        wxBusyCursor wait;
-        try {
-            upload_job.printhost->get_storage(storage_paths, storage_names);
-        } catch (const Slic3r::IOError& ex) {
-            show_error(this, ex.what(), false);
-            return;
-        }
-    }
-
-    PrintHostSendDialog dlg(default_output_file, upload_job.printhost->get_post_upload_actions(), groups, storage_paths, storage_names);
-    if (dlg.ShowModal() == wxID_OK) {
-
-        if (printer_technology() == ptFFF) {
-            const std::string ext = boost::algorithm::to_lower_copy(dlg.filename().extension().string());
-            const bool        binary_output = wxGetApp().preset_bundle->printers.get_edited_preset().config.opt_bool("binary_gcode") &&
-                                       wxGetApp().app_config->get_bool("use_binary_gcode_when_supported");
-            const wxString error_str = check_binary_vs_ascii_gcode_extension(printer_technology(), ext, binary_output);
-            if (! error_str.IsEmpty()) {
-                ErrorDialog(this, error_str, t_kill_focus([](const std::string& key) -> void { wxGetApp().sidebar().jump_to_option(key); })).ShowModal();
-                return;
-            }
-
-            bool supports_binary = wxGetApp().preset_bundle->printers.get_edited_preset().config.opt_bool("binary_gcode");
-            bool uses_binary = wxGetApp().app_config->get_bool("use_binary_gcode_when_supported");
-            alert_when_exporting_binary_gcode(supports_binary && uses_binary,
-                wxGetApp().preset_bundle->printers.get_edited_preset().config.opt_string("printer_notes"));
-        }
-
-        upload_job.upload_data.upload_path = dlg.filename();
-        upload_job.upload_data.post_action = dlg.post_action();
-        upload_job.upload_data.group       = dlg.group();
-        upload_job.upload_data.storage     = dlg.storage();
-
-        // Show "Is printer clean" dialog for PrusaConnect - Upload and print.
-        if (std::string(upload_job.printhost->get_name()) == "PrusaConnect" && upload_job.upload_data.post_action == PrintHostPostUploadAction::StartPrint) {
-            GUI::MessageDialog dlg(nullptr, _L("Is the printer ready? Is the print sheet in place, empty and clean?"), _L("Upload and Print"), wxOK | wxCANCEL);
-            if (dlg.ShowModal() != wxID_OK)
-                return;
-        }
-
-        p->export_gcode(fs::path(), false, std::move(upload_job));
-    }
 }
 
 // Called when the Eject button is pressed.

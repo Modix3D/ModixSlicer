@@ -1,25 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-<g id="cooling">
-	<path fill="#808080" d="M14,1H2C1.45,1,1,1.45,1,2v12c0,0.55,0.45,1,1,1h12c0.55,0,1-0.45,1-1V2C15,1.45,14.55,1,14,1z M8,14
-		c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S11.31,14,8,14z"/>
-	<g>
-		<path fill="#ED6B21" d="M7.86,7.14C7.94,7.41,8,7.7,8,8c0,1.66-1.34,3-3,3c-0.3,0-0.59-0.06-0.86-0.14C4.51,12.09,5.64,13,7,13
-			c1.66,0,3-1.34,3-3C10,8.64,9.09,7.51,7.86,7.14z"/>
+
+<svg
+   version="1.0"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 16 16"
+   enable-background="new 0 0 16 16"
+   xml:space="preserve"
+   sodipodi:docname="cooling.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs24" /><sodipodi:namedview
+   id="namedview22"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="46.4375"
+   inkscape:cx="7.9892328"
+   inkscape:cy="7.9892328"
+   inkscape:window-width="1920"
+   inkscape:window-height="1007"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<g
+   id="cooling">
+	<path
+   fill="#808080"
+   d="M14,1H2C1.45,1,1,1.45,1,2v12c0,0.55,0.45,1,1,1h12c0.55,0,1-0.45,1-1V2C15,1.45,14.55,1,14,1z M8,14   c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S11.31,14,8,14z"
+   id="path2" />
+	<g
+   id="g6">
+		<path
+   fill="#ED6B21"
+   d="M7.86,7.14C7.94,7.41,8,7.7,8,8c0,1.66-1.34,3-3,3c-0.3,0-0.59-0.06-0.86-0.14C4.51,12.09,5.64,13,7,13    c1.66,0,3-1.34,3-3C10,8.64,9.09,7.51,7.86,7.14z"
+   id="path4"
+   style="fill:#bf0021;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M8,8C6.34,8,5,6.66,5,5c0-0.3,0.06-0.59,0.14-0.86C3.91,4.51,3,5.64,3,7c0,1.66,1.34,3,3,3
-			c1.36,0,2.49-0.91,2.86-2.14C8.59,7.94,8.3,8,8,8z"/>
+	<g
+   id="g10">
+		<path
+   fill="#ED6B21"
+   d="M8,8C6.34,8,5,6.66,5,5c0-0.3,0.06-0.59,0.14-0.86C3.91,4.51,3,5.64,3,7c0,1.66,1.34,3,3,3    c1.36,0,2.49-0.91,2.86-2.14C8.59,7.94,8.3,8,8,8z"
+   id="path8"
+   style="fill:#bf0021;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M10,6C8.64,6,7.51,6.91,7.14,8.14C7.41,8.06,7.7,8,8,8c1.66,0,3,1.34,3,3c0,0.3-0.06,0.59-0.14,0.86
-			C12.09,11.49,13,10.36,13,9C13,7.34,11.66,6,10,6z"/>
+	<g
+   id="g14">
+		<path
+   fill="#ED6B21"
+   d="M10,6C8.64,6,7.51,6.91,7.14,8.14C7.41,8.06,7.7,8,8,8c1.66,0,3,1.34,3,3c0,0.3-0.06,0.59-0.14,0.86    C12.09,11.49,13,10.36,13,9C13,7.34,11.66,6,10,6z"
+   id="path12"
+   style="fill:#bf0021;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M8,8c0-1.66,1.34-3,3-3c0.3,0,0.59,0.06,0.86,0.14C11.49,3.91,10.36,3,9,3C7.34,3,6,4.34,6,6
-			c0,1.36,0.91,2.49,2.14,2.86C8.06,8.59,8,8.3,8,8z"/>
+	<g
+   id="g18">
+		<path
+   fill="#ED6B21"
+   d="M8,8c0-1.66,1.34-3,3-3c0.3,0,0.59,0.06,0.86,0.14C11.49,3.91,10.36,3,9,3C7.34,3,6,4.34,6,6    c0,1.36,0.91,2.49,2.14,2.86C8.06,8.59,8,8.3,8,8z"
+   id="path16"
+   style="fill:#bf0021;fill-opacity:1" />
 	</g>
 </g>
 </svg>

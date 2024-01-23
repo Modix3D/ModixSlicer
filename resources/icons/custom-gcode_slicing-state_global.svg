@@ -1,3 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?><svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g id="b">
-  <path d="m13.77,6.39c-.13-.47-.32-.92-.55-1.33l.43-1.3-1.41-1.41-1.3.43c-.42-.23-.86-.42-1.33-.55l-.61-1.23h-2l-.61,1.23c-.47.13-.92.31-1.33.55l-1.3-.43-1.42,1.41.43,1.3c-.23.41-.41.86-.54,1.33l-1.23.61v2l1.23.61c.13.47.32.92.55,1.33l-.43,1.3,1.41,1.41,1.3-.43c.42.23.86.42,1.33.55l.61,1.23h2l.61-1.23c.47-.13.92-.32,1.33-.55l1.3.43,1.41-1.41-.43-1.3c.23-.42.42-.86.55-1.33l1.23-.61v-2l-1.23-.61Zm-5.77,6.61c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5-2.24,5-5,5Z" style="fill:#808080"/>
-</g><circle cx="8" cy="8" r="2" style="fill:#ed6b21; isolation:isolate; opacity:1;"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="a"
+   viewBox="0 0 16 16"
+   version="1.1"
+   sodipodi:docname="custom-gcode_slicing-state_global.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="46.4375"
+     inkscape:cx="7.9892328"
+     inkscape:cy="7.9892328"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="a" />
+  <g
+     id="b">
+    <path
+       d="m13.77,6.39c-.13-.47-.32-.92-.55-1.33l.43-1.3-1.41-1.41-1.3.43c-.42-.23-.86-.42-1.33-.55l-.61-1.23h-2l-.61,1.23c-.47.13-.92.31-1.33.55l-1.3-.43-1.42,1.41.43,1.3c-.23.41-.41.86-.54,1.33l-1.23.61v2l1.23.61c.13.47.32.92.55,1.33l-.43,1.3,1.41,1.41,1.3-.43c.42.23.86.42,1.33.55l.61,1.23h2l.61-1.23c.47-.13.92-.32,1.33-.55l1.3.43,1.41-1.41-.43-1.3c.23-.42.42-.86.55-1.33l1.23-.61v-2l-1.23-.61Zm-5.77,6.61c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5-2.24,5-5,5Z"
+       style="fill:#808080"
+       id="path2" />
+  </g>
+  <circle
+     cx="8"
+     cy="8"
+     r="2"
+     style="fill:#bf0021;isolation:isolate;opacity:1;fill-opacity:1"
+     id="circle5" />
+</svg>

@@ -1,36 +1,104 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-<g id="test">
-	<g>
-		<path fill="#808080" d="M13,1.5h-1.5v1h1v12h-9v-12h1v-1H3C2.72,1.5,2.5,1.72,2.5,2v13c0,0.28,0.22,0.5,0.5,0.5h10
-			c0.28,0,0.5-0.22,0.5-0.5V2C13.5,1.72,13.28,1.5,13,1.5z"/>
+
+<svg
+   version="1.0"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 16 16"
+   enable-background="new 0 0 16 16"
+   xml:space="preserve"
+   sodipodi:docname="test.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs40" /><sodipodi:namedview
+   id="namedview38"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="46.4375"
+   inkscape:cx="8"
+   inkscape:cy="7.9892328"
+   inkscape:window-width="1920"
+   inkscape:window-height="1007"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<g
+   id="test">
+	<g
+   id="g4">
+		<path
+   fill="#808080"
+   d="M13,1.5h-1.5v1h1v12h-9v-12h1v-1H3C2.72,1.5,2.5,1.72,2.5,2v13c0,0.28,0.22,0.5,0.5,0.5h10    c0.28,0,0.5-0.22,0.5-0.5V2C13.5,1.72,13.28,1.5,13,1.5z"
+   id="path2" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M8,8.5H5C4.72,8.5,4.5,8.28,4.5,8V5c0-0.28,0.22-0.5,0.5-0.5h3c0.28,0,0.5,0.22,0.5,0.5v3
-			C8.5,8.28,8.28,8.5,8,8.5z M5.5,7.5h2v-2h-2V7.5z"/>
+	<g
+   id="g8">
+		<path
+   fill="#ED6B21"
+   d="M8,8.5H5C4.72,8.5,4.5,8.28,4.5,8V5c0-0.28,0.22-0.5,0.5-0.5h3c0.28,0,0.5,0.22,0.5,0.5v3    C8.5,8.28,8.28,8.5,8,8.5z M5.5,7.5h2v-2h-2V7.5z"
+   id="path6"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M8,13.5H5c-0.28,0-0.5-0.22-0.5-0.5v-3c0-0.28,0.22-0.5,0.5-0.5h3c0.28,0,0.5,0.22,0.5,0.5v3
-			C8.5,13.28,8.28,13.5,8,13.5z M5.5,12.5h2v-2h-2V12.5z"/>
+	<g
+   id="g12">
+		<path
+   fill="#ED6B21"
+   d="M8,13.5H5c-0.28,0-0.5-0.22-0.5-0.5v-3c0-0.28,0.22-0.5,0.5-0.5h3c0.28,0,0.5,0.22,0.5,0.5v3    C8.5,13.28,8.28,13.5,8,13.5z M5.5,12.5h2v-2h-2V12.5z"
+   id="path10"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M11,5.5h-1C9.72,5.5,9.5,5.28,9.5,5S9.72,4.5,10,4.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,5.5,11,5.5z"/>
+	<g
+   id="g16">
+		<path
+   fill="#ED6B21"
+   d="M11,5.5h-1C9.72,5.5,9.5,5.28,9.5,5S9.72,4.5,10,4.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,5.5,11,5.5z"
+   id="path14"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M11,7.5h-1C9.72,7.5,9.5,7.28,9.5,7S9.72,6.5,10,6.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,7.5,11,7.5z"/>
+	<g
+   id="g20">
+		<path
+   fill="#ED6B21"
+   d="M11,7.5h-1C9.72,7.5,9.5,7.28,9.5,7S9.72,6.5,10,6.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,7.5,11,7.5z"
+   id="path18"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M11,10.5h-1c-0.28,0-0.5-0.22-0.5-0.5S9.72,9.5,10,9.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,10.5,11,10.5z"/>
+	<g
+   id="g24">
+		<path
+   fill="#ED6B21"
+   d="M11,10.5h-1c-0.28,0-0.5-0.22-0.5-0.5S9.72,9.5,10,9.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,10.5,11,10.5z"
+   id="path22"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<path fill="#ED6B21" d="M11,12.5h-1c-0.28,0-0.5-0.22-0.5-0.5s0.22-0.5,0.5-0.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,12.5,11,12.5z"/>
+	<g
+   id="g28">
+		<path
+   fill="#ED6B21"
+   d="M11,12.5h-1c-0.28,0-0.5-0.22-0.5-0.5s0.22-0.5,0.5-0.5h1c0.28,0,0.5,0.22,0.5,0.5S11.28,12.5,11,12.5z"
+   id="path26"
+   style="fill:#bf0000;fill-opacity:1" />
 	</g>
-	<g>
-		<g>
-			<path fill="#808080" d="M11,3.5H5C4.72,3.5,4.5,3.28,4.5,3V1c0-0.28,0.22-0.5,0.5-0.5h6c0.28,0,0.5,0.22,0.5,0.5v2
-				C11.5,3.28,11.28,3.5,11,3.5z M5.5,2.5h5v-1h-5V2.5z"/>
+	<g
+   id="g34">
+		<g
+   id="g32">
+			<path
+   fill="#808080"
+   d="M11,3.5H5C4.72,3.5,4.5,3.28,4.5,3V1c0-0.28,0.22-0.5,0.5-0.5h6c0.28,0,0.5,0.22,0.5,0.5v2     C11.5,3.28,11.28,3.5,11,3.5z M5.5,2.5h5v-1h-5V2.5z"
+   id="path30" />
 		</g>
 	</g>
 </g>

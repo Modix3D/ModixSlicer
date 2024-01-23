@@ -5,8 +5,8 @@
    height="16px"
    version="1.1"
    id="svg12"
-   sodipodi:docname="vertic_center.svg"
-   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   sodipodi:docname="align_vertical_center.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,12 +24,12 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
      inkscape:zoom="41.7193"
-     inkscape:cx="12.356391"
+     inkscape:cx="12.368376"
      inkscape:cy="8.5092511"
      inkscape:window-width="1920"
-     inkscape:window-height="1129"
-     inkscape:window-x="1912"
-     inkscape:window-y="-8"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg12">
     <inkscape:grid
@@ -40,7 +40,7 @@
      fill="#ed6b21"
      d="m 2,6.5 c 0,0 -1,0 -1,1.5 0,1.5 1,1.5 1,1.5 h 12 c 0,0 1,0 1,-1.5 0,-1.5 -1,-1.5 -1,-1.5 z"
      id="path2"
-     style="stroke-width:1.22474" />
+     style="stroke-width:1.22474;fill:#bf0000;fill-opacity:1" />
   <path
      fill="#808080"
      d="M 3,3 H 13 V 4 H 3 Z"

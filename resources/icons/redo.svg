@@ -1,12 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 23.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-<g id="redo">
-	<path fill="none" stroke="#ED6B21" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M13.39,11
-		c-0.91,1.78-2.76,3-4.89,3C5.46,14,3,11.54,3,8.5C3,5.46,5.46,3,8.5,3C8.67,3,8.84,3.01,9,3.03"/>
+
+<svg
+   version="1.0"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 16 16"
+   enable-background="new 0 0 16 16"
+   xml:space="preserve"
+   sodipodi:docname="redo.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs10" /><sodipodi:namedview
+   id="namedview8"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="46.4375"
+   inkscape:cx="8.0215343"
+   inkscape:cy="7.9892328"
+   inkscape:window-width="1920"
+   inkscape:window-height="1007"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<g
+   id="redo">
+	<path
+   fill="none"
+   stroke="#ED6B21"
+   stroke-width="2"
+   stroke-linecap="round"
+   stroke-miterlimit="10"
+   d="M13.39,11   c-0.91,1.78-2.76,3-4.89,3C5.46,14,3,11.54,3,8.5C3,5.46,5.46,3,8.5,3C8.67,3,8.84,3.01,9,3.03"
+   id="path2"
+   style="stroke:#bf0000;stroke-opacity:1" />
 	
-		<polygon fill="#ED6B21" stroke="#ED6B21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-		9,1 9,5 12,3 	"/>
+		<polygon
+   fill="#ED6B21"
+   stroke="#ED6B21"
+   stroke-width="2"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   stroke-miterlimit="10"
+   points="   9,1 9,5 12,3  "
+   id="polygon4"
+   style="stroke:#bf0000;stroke-opacity:1;fill:#bf0000;fill-opacity:1" />
 </g>
 </svg>

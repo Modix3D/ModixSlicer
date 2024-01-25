@@ -53,7 +53,7 @@ public:
             str << ";" << GCodeProcessor::reserved_tag(GCodeProcessor::ETags::Role) << gcode_extrusion_role_to_string(GCodeExtrusionRole::WipeTower) << "\n";
             m_gcode += str.str();
             change_analyzer_line_width(line_width);
-    }
+        }
 
     WipeTowerWriter& change_analyzer_line_width(float line_width) {
         // adds tag for analyzer:
@@ -1267,8 +1267,6 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
                 // 3. above the support reinforcement, but keep extra perimeters
                 int loops3 = std::max( int(1+m_extra_perimeters) , loops - loops2);
 
-                std::cout << "" << "\n";
-
                 writer.change_analyzer_line_width(m_perimeter_width);
                 wipe_contour_2(writer, loops3 * alpha);
             }
@@ -1317,6 +1315,8 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     if (new_tool != -1) {
         writer.comment_with_value(" toolchange #", m_num_tool_changes + 1); // the number is zero-based
         writer.append(std::string("; material : " + (m_current_tool < m_filpar.size() ? m_filpar[m_current_tool].material : "(NONE)") + " -> " + m_filpar[new_tool].material + "\n").c_str());
+        writer.comment_with_value(" current tool ", m_current_tool);
+        writer.comment_with_value(" new     tool ", new_tool);
 
         m_num_tool_changes ++;
     }
@@ -1331,10 +1331,15 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     if (m_current_tool < m_used_filament_length.size())
         m_used_filament_length[m_current_tool] += writer.get_and_reset_used_filament_length();
 
+#if 0
     // This is where we want to place the custom gcodes. We will use placeholders for this.
     // These will be substituted by the actual gcodes when the gcode is generated.
     //writer.append("[end_filament_gcode]\n");
     writer.append("[toolchange_gcode_from_wipe_tower_generator]\n");
+#else
+    writer.append("T" + std::to_string(new_tool) + "\n");
+#endif
+
 
     // Travel to where we assume we are. Custom toolchange or some special T code handling (parking extruder etc)
     // gcode could have left the extruder somewhere, we cannot just start extruding. We should also inform the

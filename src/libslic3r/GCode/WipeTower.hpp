@@ -157,7 +157,7 @@ public:
 
     float get_depth() const { return m_wipe_tower_depth; }
 	std::vector<std::pair<float, float>> get_z_and_depth_pairs() const;
-    float get_brim_width() const { return m_wipe_tower_brim_width_real; }
+    float get_brim_width() const { return m_wipe_tower_brim_width; }
 	float get_wipe_tower_height() const { return m_wipe_tower_height; }
 
 
@@ -276,7 +276,6 @@ private:
 	float  m_wipe_tower_height  = 0.f;
 	float  m_wipe_tower_cone_angle = 0.f;
     float  m_wipe_tower_brim_width      = 0.f; 	// Width of brim (mm) from config
-    float  m_wipe_tower_brim_width_real = 0.f; 	// Width of brim (mm) after generation
 	float  m_wipe_tower_rotation_angle = 0.f; // Wipe tower rotation angle in degrees (with respect to x axis)
     float  m_internal_rotation  = 0.f;
 	float  m_y_shift			= 0.f;  // y shift passed to writer

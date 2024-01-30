@@ -1161,17 +1161,6 @@ void WipeTower::save_on_last_wipe()
 }
 
 
-// Return index of first toolchange that switches to non-soluble extruder
-// ot -1 if there is no such toolchange.
-int WipeTower::first_toolchange_to_nonsoluble(
-        const std::vector<WipeTowerInfo::ToolChange>& tool_changes) const
-{
-    for (size_t idx=0; idx<tool_changes.size(); ++idx)
-        if (! m_filpar[tool_changes[idx].new_tool].is_soluble)
-            return idx;
-    return -1;
-}
-
 static WipeTower::ToolChangeResult merge_tcr(WipeTower::ToolChangeResult& first,
                                              WipeTower::ToolChangeResult& second)
 {

@@ -67,7 +67,7 @@ static std::string def_text_color()
     return encode_color(ColorRGB(def_colour.Red(), def_colour.Green(), def_colour.Blue()));
 }
 static std::string grey     = "#808080";
-static std::string orange   = "#ed6b21";
+static std::string modix_red   = "#bf0000";
 
 static void color_string(wxString& str, const std::string& color)
 {
@@ -177,7 +177,7 @@ ModelNode::ModelNode(ModelNode* parent, const wxString& text, const wxString& ol
 
     // "color" strings
     color_string(m_old_value, def_text_color());
-    color_string(m_mod_value, orange);
+    color_string(m_mod_value, modix_red);
     color_string(m_new_value, def_text_color());
 
     UpdateIcons();
@@ -197,13 +197,13 @@ void ModelNode::UpdateEnabling()
     if (!m_toggle) {
         change_text_color(m_text,      def_text_color(), grey);
         change_text_color(m_old_value, def_text_color(), grey);
-        change_text_color(m_mod_value, orange,grey);
+        change_text_color(m_mod_value, modix_red,grey);
         change_text_color(m_new_value, def_text_color(), grey);
     }
     else {
         change_text_color(m_text,      grey, def_text_color());
         change_text_color(m_old_value, grey, def_text_color());
-        change_text_color(m_mod_value, grey, orange);
+        change_text_color(m_mod_value, grey, modix_red);
         change_text_color(m_new_value, grey, def_text_color());
     }
     // update icons for the colors
@@ -1414,13 +1414,13 @@ FullCompareDialog::FullCompareDialog(const wxString& option_name, const wxString
     auto add_value = [grid_sizer, border, this](wxString label, const std::set<wxString>& diff_set, bool is_colored = false) {
         wxTextCtrl* text = new wxTextCtrl(this, wxID_ANY, label, wxDefaultPosition, wxSize(400, 400), wxTE_MULTILINE | wxTE_READONLY | wxBORDER_DEFAULT | wxTE_RICH);
         wxGetApp().UpdateDarkUI(text);
-        text->SetStyle(0, label.Len(), wxTextAttr(is_colored ? wxColour(orange) : wxNullColour, wxNullColour, this->GetFont()));
+        text->SetStyle(0, label.Len(), wxTextAttr(is_colored ? wxColour(modix_red) : wxNullColour, wxNullColour, this->GetFont()));
 
         for (const wxString& str : diff_set) {
             int pos = label.First(str);
             if (pos == wxNOT_FOUND)
                 continue;
-            text->SetStyle(pos, pos + (int)str.Len(), wxTextAttr(is_colored ? wxColour(orange) : wxNullColour, wxNullColour, this->GetFont().Bold()));
+            text->SetStyle(pos, pos + (int)str.Len(), wxTextAttr(is_colored ? wxColour(modix_red) : wxNullColour, wxNullColour, this->GetFont().Bold()));
         }
 
         grid_sizer->Add(text, 1, wxALL | wxEXPAND, border);

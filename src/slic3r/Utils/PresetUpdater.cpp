@@ -273,42 +273,9 @@ void PresetUpdater::priv::prune_tmps() const
 
 void PresetUpdater::priv::get_missing_resource(const std::string& vendor, const std::string& filename, const std::string& url) const
 {
-	if (filename.empty() || vendor.empty())
-		return;
-
-	if (!boost::starts_with(url, "http://files.prusa3d.com/wp-content/uploads/repository/") &&
-		!boost::starts_with(url, "https://files.prusa3d.com/wp-content/uploads/repository/"))
-	{
-		throw Slic3r::CriticalException(GUI::format("URL outside prusa3d.com network: %1%", url));
-	}
-
-	std::string escaped_filename = escape_string_url(filename);
-	const fs::path file_in_vendor(vendor_path / (vendor + "/" + filename));
-	const fs::path file_in_rsrc(rsrc_path / (vendor + "/" + filename));
-	const fs::path file_in_cache(cache_path / (vendor + "/" + filename));
-
-	if (fs::exists(file_in_vendor)) { // Already in vendor. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in vendor folder. No need to download.";
-		return;
-	}
-	if (fs::exists(file_in_rsrc)) { // In resources dir since installation. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in resources folder. No need to download.";
-		return;
-	}
-	if (fs::exists(file_in_cache)) { // In cache/venodr_name/ dir. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in cache folder. No need to download.";
-		return;
-	}
-
-	BOOST_LOG_TRIVIAL(info) << "Resources check could not find " << vendor << " / " << filename << " bed texture. Downloading.";
-
-	const auto resource_url = format("%1%%2%%3%", url, url.back() == '/' ? "" : "/", escaped_filename); // vendor should already be in url 
-
-	if (!fs::exists(file_in_cache.parent_path()))
-		fs::create_directory(file_in_cache.parent_path());
-
-	get_file(resource_url, file_in_cache);
-	return;
+    // This has been disabled for now in ModixSlicer because the resource
+    // should be available within the resources.
+    return;
 }
 
 void PresetUpdater::priv::get_or_copy_missing_resource(const std::string& vendor, const std::string& filename, const std::string& url) const
@@ -369,7 +336,7 @@ void PresetUpdater::priv::sync_config(const VendorMap vendors, const std::string
 		BOOST_LOG_TRIVIAL(error) << "Downloading profile archive failed - url has no value.";
 		return;
 	}
-	BOOST_LOG_TRIVIAL(info) << "Downloading vedor profiles archive zip from " << index_archive_url;
+	BOOST_LOG_TRIVIAL(info) << "Downloading vendor profiles archive zip from " << index_archive_url;
 	//check if idx_url is leading to our site 
 	if (!boost::starts_with(index_archive_url, "http://files.prusa3d.com/wp-content/uploads/repository/") &&
 		!boost::starts_with(index_archive_url, "https://files.prusa3d.com/wp-content/uploads/repository/"))

@@ -1,94 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   version="1.0"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 16 16"
-   enable-background="new 0 0 16 16"
-   xml:space="preserve"
-   sodipodi:docname="sla_printer.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs20" /><sodipodi:namedview
-   id="namedview18"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="46.4375"
-   inkscape:cx="8"
-   inkscape:cy="7.9892328"
-   inkscape:window-width="1920"
-   inkscape:window-height="1007"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<g
-   id="sla">
-	<rect
-   x="3"
-   y="11"
-   fill="#808080"
-   width="1"
-   height="4"
-   id="rect2" />
-	<rect
-   x="12"
-   y="11"
-   fill="#808080"
-   width="1"
-   height="4"
-   id="rect4" />
-	<rect
-   x="7.5"
-   y="6.5"
-   transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 19.5 3.5)"
-   fill="#808080"
-   width="1"
-   height="10"
-   id="rect6" />
-	<rect
-   x="7.5"
-   y="9.5"
-   transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 22.5 6.5)"
-   fill="#808080"
-   width="1"
-   height="10"
-   id="rect8" />
-	<rect
-   x="10.5"
-   y="11.5"
-   transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 24.5 1.5)"
-   fill="#808080"
-   width="2"
-   height="3"
-   id="rect10" />
-	<rect
-   x="3.5"
-   y="11.5"
-   transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 17.5 8.5)"
-   fill="#808080"
-   width="2"
-   height="3"
-   id="rect12" />
-	<rect
-   x="3"
-   y="1"
-   fill="#ED6B21"
-   width="10"
-   height="10"
-   id="rect14"
-   style="fill:#bf0000;fill-opacity:1" />
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g id="sla">
+	<rect x="3" y="11" fill="#808080" width="1" height="4"/>
+	<rect x="12" y="11" fill="#808080" width="1" height="4"/>
+	<rect x="7.5" y="6.5" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 19.5 3.5)" fill="#808080" width="1" height="10"/>
+	<rect x="7.5" y="9.5" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 22.5 6.5)" fill="#808080" width="1" height="10"/>
+	<rect x="10.5" y="11.5" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 24.5 1.5)" fill="#808080" width="2" height="3"/>
+	<rect x="3.5" y="11.5" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 17.5 8.5)" fill="#808080" width="2" height="3"/>
+	<rect x="3" y="1" fill="#bf0000" width="10" height="10"/>
 </g>
 </svg>

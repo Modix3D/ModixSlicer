@@ -1,71 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   version="1.0"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 16 16"
-   enable-background="new 0 0 16 16"
-   xml:space="preserve"
-   sodipodi:docname="scalar_param.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs22" /><sodipodi:namedview
-   id="namedview20"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="46.4375"
-   inkscape:cx="8"
-   inkscape:cy="7.9892328"
-   inkscape:window-width="1920"
-   inkscape:window-height="1007"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<g
-   id="number_x5F_of_x5F_copies">
-	<g
-   id="g4">
-		<path
-   fill="#808080"
-   d="M13,2c0.55,0,1,0.45,1,1V13c0,0.55-0.45,1-1,1H3c-0.55,0-1-0.45-1-1V3c0-0.55,0.45-1,1-1H13 M13,1H3    c-1.1,0-2,0.89-2,2V13c0,1.1,0.89,2,2,2H13c1.1,0,2-0.89,2-2V3C15,1.89,14.11,1,13,1L13,1z"
-   id="path2" />
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g id="number_x5F_of_x5F_copies">
+	<g>
+		<path fill="#808080" d="M13,2c0.55,0,1,0.45,1,1V13c0,0.55-0.45,1-1,1H3c-0.55,0-1-0.45-1-1V3c0-0.55,0.45-1,1-1H13 M13,1H3
+			c-1.1,0-2,0.89-2,2V13c0,1.1,0.89,2,2,2H13c1.1,0,2-0.89,2-2V3C15,1.89,14.11,1,13,1L13,1z"/>
 	</g>
-	<g
-   id="g8">
-		<path
-   fill="#ED6B21"
-   d="M6,4.5H4C3.72,4.5,3.5,4.28,3.5,4S3.72,3.5,4,3.5h2c0.28,0,0.5,0.22,0.5,0.5S6.28,4.5,6,4.5z"
-   id="path6"
-   style="fill:#bf0000;fill-opacity:1" />
+	<g>
+		<path fill="#bf0000" d="M6,4.5H4C3.72,4.5,3.5,4.28,3.5,4S3.72,3.5,4,3.5h2c0.28,0,0.5,0.22,0.5,0.5S6.28,4.5,6,4.5z"/>
 	</g>
-	<g
-   id="g12">
-		<path
-   fill="#ED6B21"
-   d="M6,12.5H4c-0.28,0-0.5-0.22-0.5-0.5s0.22-0.5,0.5-0.5h2c0.28,0,0.5,0.22,0.5,0.5S6.28,12.5,6,12.5z"
-   id="path10"
-   style="fill:#bf0000;fill-opacity:1" />
+	<g>
+		<path fill="#bf0000" d="M6,12.5H4c-0.28,0-0.5-0.22-0.5-0.5s0.22-0.5,0.5-0.5h2c0.28,0,0.5,0.22,0.5,0.5S6.28,12.5,6,12.5z"/>
 	</g>
-	<g
-   id="g16">
-		<path
-   fill="#ED6B21"
-   d="M5,12.5c-0.28,0-0.5-0.22-0.5-0.5V4c0-0.28,0.22-0.5,0.5-0.5S5.5,3.72,5.5,4v8C5.5,12.28,5.28,12.5,5,12.5    z"
-   id="path14"
-   style="fill:#bf0000;fill-opacity:1" />
+	<g>
+		<path fill="#bf0000" d="M5,12.5c-0.28,0-0.5-0.22-0.5-0.5V4c0-0.28,0.22-0.5,0.5-0.5S5.5,3.72,5.5,4v8C5.5,12.28,5.28,12.5,5,12.5
+			z"/>
 	</g>
 </g>
 </svg>

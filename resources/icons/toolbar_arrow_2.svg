@@ -1,75 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 25.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   version="1.1"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   viewBox="50 0 228 330"
-   style="enable-background:new 50 0 228 330;"
-   xml:space="preserve"
-   sodipodi:docname="toolbar_arrow_2.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs19" /><sodipodi:namedview
-   id="namedview17"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="2.2515152"
-   inkscape:cx="114.14536"
-   inkscape:cy="164.77793"
-   inkscape:window-width="1920"
-   inkscape:window-height="1007"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<style
-   type="text/css"
-   id="style2">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    viewBox="50 0 228 330" style="enable-background:new 50 0 228 330;" xml:space="preserve">
+<style type="text/css">
    .st0{display:none;}
-   .st1{fill:none;stroke:#ED6B21;stroke-width:17.0079;stroke-linecap:round;stroke-miterlimit:10;}
+   .st1{fill:none;stroke:#bf0000;stroke-width:17.0079;stroke-linecap:round;stroke-miterlimit:10;}
 </style>
-<path
-   id="XMLID_28_"
-   class="st0"
-   d="M180,315V51.2l49.4,49.4c5.9,5.9,15.4,5.9,21.2,0c5.9-5.9,5.9-15.4,0-21.2l-75-75    c-5.9-5.9-15.4-5.9-21.2,0l-75,75C76.5,82.3,75,86.2,75,90s1.5,7.7,4.4,10.6c5.9,5.9,15.4,5.9,21.2,0L150,51.2V315    c0,8.3,6.7,15,15,15S180,323.3,180,315z"
-   style="fill:#ed6b21;" />
-<g
-   id="XMLID_1_">
-   <g
-   id="g5">
+<path id="XMLID_28_" class="st0" d="M180,315V51.2l49.4,49.4c5.9,5.9,15.4,5.9,21.2,0c5.9-5.9,5.9-15.4,0-21.2l-75-75
+   c-5.9-5.9-15.4-5.9-21.2,0l-75,75C76.5,82.3,75,86.2,75,90s1.5,7.7,4.4,10.6c5.9,5.9,15.4,5.9,21.2,0L150,51.2V315
+   c0,8.3,6.7,15,15,15S180,323.3,180,315z"
+    style="fill:#bf0000;"/>
+<g id="XMLID_1_">
+   <g>
    </g>
-   <g
-   id="g11">
-      <polyline
-   class="st1"
-   points="113.3,84.5 164,18.3 164,18.3       "
-   id="polyline7"
-   style="stroke:#bf0000;stroke-opacity:1" />
-      <polyline
-   class="st1"
-   points="216.1,84.5 164,18.3 164,18.3       "
-   id="polyline9"
-   style="stroke:#bf0000;stroke-opacity:1" />
+   <g>
+      <polyline class="st1" points="113.3,84.5 164,18.3 164,18.3       "/>
+      <polyline class="st1" points="216.1,84.5 164,18.3 164,18.3       "/>
    </g>
 </g>
-<line
-   class="st1"
-   x1="164"
-   y1="263.3"
-   x2="164"
-   y2="18.3"
-   id="line14"
-   style="stroke:#bf0000;stroke-opacity:1" />
+<line class="st1" x1="164" y1="263.3" x2="164" y2="18.3"/>
 </svg>

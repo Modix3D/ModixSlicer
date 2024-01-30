@@ -1,104 +1,26 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   version="1.0"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 16 16"
-   enable-background="new 0 0 16 16"
-   xml:space="preserve"
-   sodipodi:docname="layers_white.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs32" /><sodipodi:namedview
-   id="namedview30"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="46.4375"
-   inkscape:cx="7.9892328"
-   inkscape:cy="7.9892328"
-   inkscape:window-width="1920"
-   inkscape:window-height="1007"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<g
-   id="layers">
-	<g
-   id="g26">
-		<g
-   id="g4">
-			<rect
-   x="1"
-   y="13"
-   fill="#FFFFFF"
-   width="14"
-   height="2"
-   id="rect2" />
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g id="layers">
+	<g>
+		<g>
+			<rect x="1" y="13" fill="#FFFFFF" width="14" height="2"/>
 		</g>
-		<g
-   id="g8">
-			<rect
-   x="1"
-   y="10.6"
-   fill="#FFFFFF"
-   width="14"
-   height="1.74"
-   id="rect6" />
+		<g>
+			<rect x="1" y="10.6" fill="#FFFFFF" width="14" height="1.74"/>
 		</g>
-		<g
-   id="g12">
-			<rect
-   x="1"
-   y="8.19"
-   fill="#FFFFFF"
-   width="14"
-   height="1.47"
-   id="rect10" />
+		<g>
+			<rect x="1" y="8.19" fill="#FFFFFF" width="14" height="1.47"/>
 		</g>
-		<g
-   id="g16">
-			<rect
-   x="1"
-   y="5.79"
-   fill="#ED6B21"
-   width="14"
-   height="1.2"
-   id="rect14"
-   style="fill:#bf0021;fill-opacity:1" />
+		<g>
+			<rect x="1" y="5.79" fill="#bf0000" width="14" height="1.2"/>
 		</g>
-		<g
-   id="g20">
-			<rect
-   x="1"
-   y="3.39"
-   fill="#ED6B21"
-   width="14"
-   height="0.93"
-   id="rect18"
-   style="fill:#bf0021;fill-opacity:1" />
+		<g>
+			<rect x="1" y="3.39" fill="#bf0000" width="14" height="0.93"/>
 		</g>
-		<g
-   id="g24">
-			<rect
-   x="1"
-   y="0.99"
-   fill="#FFFFFF"
-   width="14"
-   height="0.67"
-   id="rect22" />
+		<g>
+			<rect x="1" y="0.99" fill="#FFFFFF" width="14" height="0.67"/>
 		</g>
 	</g>
 </g>

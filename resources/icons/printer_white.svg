@@ -1,88 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   version="1.0"
-   id="Layer_1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 16 16"
-   enable-background="new 0 0 16 16"
-   xml:space="preserve"
-   sodipodi:docname="printer_white.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs20" /><sodipodi:namedview
-   id="namedview18"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="46.4375"
-   inkscape:cx="7.9892328"
-   inkscape:cy="7.9892328"
-   inkscape:window-width="1920"
-   inkscape:window-height="1007"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<g
-   id="printer">
-	<rect
-   x="1"
-   y="1"
-   fill="#FFFFFF"
-   width="1"
-   height="14"
-   id="rect2" />
-	<rect
-   x="14"
-   y="1"
-   fill="#FFFFFF"
-   width="1"
-   height="14"
-   id="rect4" />
-	<rect
-   x="1"
-   y="5"
-   fill="#FFFFFF"
-   width="14"
-   height="1"
-   id="rect6" />
-	<rect
-   x="1"
-   y="1"
-   fill="#FFFFFF"
-   width="14"
-   height="1"
-   id="rect8" />
-	<rect
-   x="1"
-   y="13"
-   fill="#FFFFFF"
-   width="14"
-   height="2"
-   id="rect10" />
-	<rect
-   x="3"
-   y="4"
-   fill="#ED6B21"
-   width="4"
-   height="4"
-   id="rect12"
-   style="fill:#bf0021;fill-opacity:1" />
-	<polygon
-   fill="#ED6B21"
-   points="5,9 4,8 6,8  "
-   id="polygon14"
-   style="fill:#bf0021;fill-opacity:1" />
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g id="printer">
+	<rect x="1" y="1" fill="#FFFFFF" width="1" height="14"/>
+	<rect x="14" y="1" fill="#FFFFFF" width="1" height="14"/>
+	<rect x="1" y="5" fill="#FFFFFF" width="14" height="1"/>
+	<rect x="1" y="1" fill="#FFFFFF" width="14" height="1"/>
+	<rect x="1" y="13" fill="#FFFFFF" width="14" height="2"/>
+	<rect x="3" y="4" fill="#bf0000" width="4" height="4"/>
+	<polygon fill="#bf0000" points="5,9 4,8 6,8 	"/>
 </g>
 </svg>

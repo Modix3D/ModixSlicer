@@ -167,7 +167,7 @@ public:
     bool                        transfer_and_save(Preset::Type type, const std::string& preset_from_name, const std::string& preset_to_name,
                                                   const std::string& new_name, const std::vector<std::string>& options);
 
-    static const char *PRUSA_BUNDLE;
+    static const char *MODIX_BUNDLE;
 
     static std::array<Preset::Type, 3>  types_list(PrinterTechnology pt) {
         if (pt == ptFFF)

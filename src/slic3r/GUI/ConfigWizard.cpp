@@ -130,21 +130,20 @@ BundleMap BundleMap::load()
     const auto archive_dir = (boost::filesystem::path(Slic3r::data_dir()) / "cache" / "vendor").make_preferred();
     const auto rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
     const auto cache_dir = boost::filesystem::path(Slic3r::data_dir()) / "cache"; // for Index
-    // Load Prusa bundle from the datadir/vendor directory or from datadir/cache/vendor (archive) or from resources/profiles.
-    auto prusa_bundle_path = (vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-    BundleLocation prusa_bundle_loc = BundleLocation::IN_VENDOR;
-    if (! boost::filesystem::exists(prusa_bundle_path)) {
-        prusa_bundle_path = (archive_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-        prusa_bundle_loc = BundleLocation::IN_ARCHIVE;
+    auto modix_bundle_path = (vendor_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+    BundleLocation modix_bundle_loc = BundleLocation::IN_VENDOR;
+    if (! boost::filesystem::exists(modix_bundle_path)) {
+        modix_bundle_path = (archive_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+        modix_bundle_loc = BundleLocation::IN_ARCHIVE;
     }
-    if (!boost::filesystem::exists(prusa_bundle_path)) {
-        prusa_bundle_path = (rsrc_vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-        prusa_bundle_loc = BundleLocation::IN_RESOURCES;
+    if (!boost::filesystem::exists(modix_bundle_path)) {
+        modix_bundle_path = (rsrc_vendor_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+        modix_bundle_loc = BundleLocation::IN_RESOURCES;
     }
     {
-        Bundle prusa_bundle;
-        if (prusa_bundle.load(std::move(prusa_bundle_path), prusa_bundle_loc, true))
-            res.emplace(PresetBundle::PRUSA_BUNDLE, std::move(prusa_bundle)); 
+        Bundle modix_bundle;
+        if (modix_bundle.load(std::move(modix_bundle_path), modix_bundle_loc, true))
+            res.emplace(PresetBundle::MODIX_BUNDLE, std::move(modix_bundle)); 
     }
 
     // Load the other bundles in the datadir/vendor directory
@@ -217,9 +216,9 @@ BundleMap BundleMap::load()
 
 Bundle& BundleMap::prusa_bundle()
 {
-    auto it = find(PresetBundle::PRUSA_BUNDLE);
+    auto it = find(PresetBundle::MODIX_BUNDLE);
     if (it == end()) {
-        throw Slic3r::RuntimeError("ConfigWizard: Internal error in BundleMap: PRUSA_BUNDLE not loaded");
+        throw Slic3r::RuntimeError("ConfigWizard: Internal error in BundleMap: MODIX_BUNDLE not loaded");
     }
 
     return it->second;
@@ -692,7 +691,7 @@ void PagePrinters::set_run_reason(ConfigWizard::RunReason run_reason)
     if (is_primary_printer_page
         && (run_reason == ConfigWizard::RR_DATA_EMPTY || run_reason == ConfigWizard::RR_DATA_LEGACY)
         && printer_pickers.size() > 0 
-        && printer_pickers[0]->vendor_id == PresetBundle::PRUSA_BUNDLE) {
+        && printer_pickers[0]->vendor_id == PresetBundle::MODIX_BUNDLE) {
         printer_pickers[0]->select_one(0, true);
     }
 }
@@ -1177,7 +1176,7 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
 // then the rest
 // in alphabetical order
     
-    std::vector<std::reference_wrapper<const std::string>> prusa_profiles;
+    std::vector<std::reference_wrapper<const std::string>> modix_profiles;
     std::vector<std::pair<std::wstring ,std::reference_wrapper<const std::string>>> other_profiles; // first is lower case id for sorting
     bool add_TEMPLATES_item = false;
     for (int i = 0 ; i < list->size(); ++i) {
@@ -1188,8 +1187,8 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
             add_TEMPLATES_item = true;
             continue;
         }
-        if (!material_type_ordering && data.find("Prusa") != std::string::npos)
-            prusa_profiles.push_back(data);
+        if (!material_type_ordering && data.find("Modix") != std::string::npos)
+            modix_profiles.push_back(data);
         else 
             other_profiles.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(data)),data);
     }
@@ -1214,7 +1213,7 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
             }
         }
     } else {
-        std::sort(prusa_profiles.begin(), prusa_profiles.end(), [](std::reference_wrapper<const std::string> a, std::reference_wrapper<const std::string> b) {
+        std::sort(modix_profiles.begin(), modix_profiles.end(), [](std::reference_wrapper<const std::string> a, std::reference_wrapper<const std::string> b) {
             return a.get() < b.get();
             });
         std::sort(other_profiles.begin(), other_profiles.end(), [](const std::pair<std::wstring, std::reference_wrapper<const std::string>>& a, const std::pair<std::wstring, std::reference_wrapper<const std::string>>& b) {
@@ -1227,7 +1226,7 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
         list->append(_L("(All)"), &EMPTY);
     if (materials->technology == T_FFF && add_TEMPLATES_item)
         list->append(_L("(Templates)"), &TEMPLATES);
-    for (const auto& item : prusa_profiles)
+    for (const auto& item : modix_profiles)
         list->append(item, &const_cast<std::string&>(item.get()));
     for (const auto& item : other_profiles)
         list->append(item.second, &const_cast<std::string&>(item.second.get()));
@@ -1674,12 +1673,8 @@ PageMode::PageMode(ConfigWizard *parent)
     radio_advanced = new wxRadioButton(this, wxID_ANY, _L("Advanced mode"));
     radio_expert = new wxRadioButton(this, wxID_ANY, _L("Expert mode"));
 
-    std::string mode { "expert" };
-    wxGetApp().app_config->get("", "view_mode", mode);
-
-    if (mode == "advanced") { radio_advanced->SetValue(true); }
-    else if (mode == "expert") { radio_expert->SetValue(true); }
-    else { radio_simple->SetValue(true); }
+    // Modix wants to always show expert options.
+    radio_expert->SetValue(true);
 
     append(radio_simple);
     append(radio_advanced);
@@ -1725,7 +1720,7 @@ PageVendors::PageVendors(ConfigWizard *parent)
 
     for (const std::pair<std::wstring, const VendorProfile*>& v : vendors) {
         const VendorProfile* vendor = v.second;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
+        if (vendor->id == PresetBundle::MODIX_BUNDLE) { continue; }
         if (vendor && vendor->templates_profile)
             continue;
 
@@ -2362,9 +2357,8 @@ void ConfigWizard::priv::load_pages()
     // Printers
     if (!only_sla_mode)
         index->add_page(page_fff);
-    index->add_page(page_msla);
     if (!only_sla_mode) {
-        index->add_page(page_vendors);
+    //    index->add_page(page_vendors);
 
         // Copy pages names from map to vector, so we can sort it without case sensitivity
         std::vector<std::pair<std::wstring, std::string>> sorted_vendors;
@@ -2436,7 +2430,7 @@ void ConfigWizard::priv::init_dialog_size()
         9*disp_rect.width / 10,
         9*disp_rect.height / 10);
 
-    const int width_hint = index->GetSize().GetWidth() + std::max(90 * em(), (only_sla_mode ? page_msla->get_width() : page_fff->get_width()) + 30 * em());    // XXX: magic constant, I found no better solution
+    const int width_hint = index->GetSize().GetWidth() + std::max(90 * em(), (page_fff->get_width()) + 30 * em());    // XXX: magic constant, I found no better solution
     if (width_hint < window_rect.width) {
         window_rect.x += (window_rect.width - width_hint) / 2;
         window_rect.width = width_hint;
@@ -2555,7 +2549,7 @@ void ConfigWizard::priv::create_3rdparty_pages()
 {
     for (const auto &pair : bundles) {
         const VendorProfile *vendor = pair.second.vendor_profile;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
+        if (vendor->id == PresetBundle::MODIX_BUNDLE) { continue; }
 
         bool is_fff_technology = false;
         bool is_sla_technology = false;
@@ -3289,11 +3283,7 @@ bool ConfigWizard::priv::check_fff_selected()
 
 bool ConfigWizard::priv::check_sla_selected()
 {
-    bool ret = page_msla->any_selected();
-    for (const auto& printer: pages_3rdparty)
-        if (printer.second.second)               // SLA page
-            ret |= printer.second.second->any_selected();
-    return ret;
+    return false;
 }
 
 
@@ -3357,31 +3347,28 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
     wxGetApp().SetWindowVariantForButton(p->btn_finish);
     wxGetApp().SetWindowVariantForButton(p->btn_cancel);
 
-    const auto prusa_it = p->bundles.find("PrusaResearch");
-    wxCHECK_RET(prusa_it != p->bundles.cend(), "Vendor PrusaResearch not found");
-    const VendorProfile *vendor_prusa = prusa_it->second.vendor_profile;
+    //const auto prusa_it = p->bundles.find("PrusaResearch");
+    //wxCHECK_RET(prusa_it != p->bundles.cend(), "Vendor PrusaResearch not found");
+    //const VendorProfile *vendor_prusa = prusa_it->second.vendor_profile;
+
+    const auto modix_it = p->bundles.find("Modix");
+    wxCHECK_RET(modix_it != p->bundles.cend(), "Vendor Modix not found");
+    const VendorProfile *vendor_modix = modix_it->second.vendor_profile;
 
     p->add_page(p->page_welcome = new PageWelcome(this));
 
-    
-    p->page_fff = new PagePrinters(this, _L("Prusa FFF Technology Printers"), "Prusa FFF", *vendor_prusa, 0, T_FFF);
+   
+    p->page_fff = new PagePrinters(this, _L("Modix FFF Technology Printers"), "Modix FFF", *vendor_modix, 0, T_FFF);
     p->only_sla_mode = !p->page_fff->has_printers;
     if (!p->only_sla_mode) {
         p->add_page(p->page_fff);
         p->page_fff->is_primary_printer_page = true;
     }
-  
-
-    p->page_msla = new PagePrinters(this, _L("Prusa MSLA Technology Printers"), "Prusa MSLA", *vendor_prusa, 0, T_SLA);
-    p->add_page(p->page_msla);
-    if (p->only_sla_mode) {
-        p->page_msla->is_primary_printer_page = true;
-    }
 
     if (!p->only_sla_mode) {
 	    // Pages for 3rd party vendors
 	    p->create_3rdparty_pages();   // Needs to be done _before_ creating PageVendors
-	    p->add_page(p->page_vendors = new PageVendors(this));
+	    //p->add_page(p->page_vendors = new PageVendors(this));
 	    p->add_page(p->page_custom = new PageCustom(this));
         p->custom_printer_selected = p->page_custom->custom_wanted();
     }
@@ -3453,7 +3440,6 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
         p->any_sla_selected = true;
         p->load_pages();
         p->page_fff->select_all(true, false);
-        p->page_msla->select_all(true, false);
         p->index->go_to(p->page_mode);
     });
 

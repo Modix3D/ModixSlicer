@@ -5372,7 +5372,9 @@ void Plater::load_project(const wxString& filename)
 
     p->reset();
 
-    if (! load_files({ into_path(filename) }).empty()) {
+    std::vector<boost::filesystem::path> files;
+    files.emplace_back(into_path(filename));
+    if (! load_files(files).empty()) {
         // At least one file was loaded.
         p->set_project_filename(filename);
         // Save the names of active presets and project specific config into ProjectDirtyStateManager.

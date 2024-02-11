@@ -127,7 +127,7 @@ int CLI::run(int argc, char **argv)
 #ifdef _WIN32
             false;
 #else
-            // On Unix systems, the prusa-slicer binary may be symlinked to give the application a different meaning.
+            // On Unix systems, the modix-slicer binary may be symlinked to give the application a different meaning.
             boost::algorithm::iends_with(boost::filesystem::path(argv[0]).filename().string(), "gcodeviewer");
 #endif // _WIN32
 #if ENABLE_GL_CORE_PROFILE
@@ -753,7 +753,7 @@ bool CLI::setup(int argc, char **argv)
     }
 #endif
 
-    // See Invoking prusa-slicer from $PATH environment variable crashes #5542
+    // See Invoking modix-slicer from $PATH environment variable crashes #5542
     // boost::filesystem::path path_to_binary = boost::filesystem::system_complete(argv[0]);
     boost::filesystem::path path_to_binary = boost::dll::program_location();
 
@@ -837,7 +837,7 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
 #endif /* SLIC3R_GUI */
         << std::endl
         << "https://github.com/prusa3d/PrusaSlicer" << std::endl << std::endl
-        << "Usage: prusa-slicer [ ACTIONS ] [ TRANSFORM ] [ OPTIONS ] [ file.stl ... ]" << std::endl
+        << "Usage: modix-slicer [ ACTIONS ] [ TRANSFORM ] [ OPTIONS ] [ file.stl ... ]" << std::endl
         << std::endl
         << "Actions:" << std::endl;
     cli_actions_config_def.print_cli_help(boost::nowide::cout, false);

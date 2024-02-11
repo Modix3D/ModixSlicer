@@ -5,7 +5,7 @@
 #/|/ Copyright (c) 2019 Spencer Owen @spuder
 #/|/ Copyright (c) 2019 Stephan Reichhelm @stephanr
 #/|/
-#/|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+#/|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 #/|/
 cmake_minimum_required(VERSION 3.13)
 project(libslic3r_gui)

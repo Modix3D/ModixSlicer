@@ -40,8 +40,8 @@ add_executable(${_TEST_NAME}_tests
     test_anyptr.cpp
     test_jump_point_search.cpp
     test_support_spots_generator.cpp
-    ../data/prusaparts.cpp
-    ../data/prusaparts.hpp
+    ../data/modixparts.cpp
+    ../data/modixparts.hpp
      test_static_map.cpp
 	)
 
@@ -53,7 +53,7 @@ target_link_libraries(${_TEST_NAME}_tests test_common libslic3r)
 set_property(TARGET ${_TEST_NAME}_tests PROPERTY FOLDER "tests")
 
 if (WIN32)
-    prusaslicer_copy_dlls(${_TEST_NAME}_tests)
+    modixslicer_copy_dlls(${_TEST_NAME}_tests)
 endif()
 
 # catch_discover_tests(${_TEST_NAME}_tests TEST_PREFIX "${_TEST_NAME}: ")

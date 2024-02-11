@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Prusa GCode viewer
-Exec=prusa-slicer --gcodeviewer %F
+Exec=modix-slicer --gcodeviewer %F
 Icon=PrusaSlicer-gcodeviewer
 Terminal=false
 Type=Application

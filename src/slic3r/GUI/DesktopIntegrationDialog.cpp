@@ -342,7 +342,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
         "Categories=Graphics;3DGraphics;Engineering;\n"
         "Keywords=3D;Printing;Slicer;slice;3D;printer;convert;gcode;stl;obj;amf;SLA\n"
         "StartupNotify=false\n"
-        "StartupWMClass=prusa-slicer\n", name_suffix, version_suffix, excutable_path);
+        "StartupWMClass=modix-slicer\n", name_suffix, version_suffix, excutable_path);
 
     bool candidate_found = false;
     for (size_t i = 0; i < target_candidates.size(); ++i) {

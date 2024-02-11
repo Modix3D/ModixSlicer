@@ -2401,7 +2401,7 @@ void ConfigWizard::priv::load_pages()
     // there should to be selected at least one printer
     btn_finish->Enable(any_fff_selected || any_sla_selected || custom_printer_selected || custom_printer_in_bundle);
 
-    index->add_page(page_update);
+    //index->add_page(page_update);
     index->add_page(page_downloader);
     index->add_page(page_reload_from_disk);
 #ifdef _WIN32
@@ -3203,8 +3203,11 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
 
     app_config->set_vendors(appconfig_new);
 
-    app_config->set("notify_release", page_update->version_check ? "all" : "none");
-    app_config->set("preset_update", page_update->preset_update ? "1" : "0");
+    // Modix--
+    // we don't want updates as this is not ready yet...
+
+    app_config->set("notify_release", false && page_update->version_check ? "all" : "none");
+    app_config->set("preset_update", false && page_update->preset_update ? "1" : "0");
     app_config->set("export_sources_full_pathnames", page_reload_from_disk->full_pathnames ? "1" : "0");
 
 #ifdef _WIN32

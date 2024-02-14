@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2018 - 2022 Lukáš Matěna @lukasmatena, Tomáš Mészáros @tamasmeszaros, Filip Sykala @Jony01, Vojtěch Bubník @bubnikv, Vojtěch Král @vojtechkral
+#/|/ Copyright (c) PR 2018 - 2022 Lukáš Matěna @lukasmatena, Tomáš Mészáros @tamasmeszaros, Filip Sykala @Jony01, Vojtěch Bubník @bubnikv, Vojtěch Král @vojtechkral
 #/|/
 #/|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 #/|/

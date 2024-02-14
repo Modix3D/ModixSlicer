@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2019 David Kocík @kocikdav
+///|/ Copyright (c) PR 2019 David Kocík @kocikdav
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/

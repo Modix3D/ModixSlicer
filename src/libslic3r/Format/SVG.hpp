@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2023 - 2023
+///|/ Copyright (c) PR 2023 - 2023
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_Format_SVG_hpp_

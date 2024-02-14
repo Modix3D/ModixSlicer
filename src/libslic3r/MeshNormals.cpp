@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2022 Tomáš Mészáros @tamasmeszaros, Lukáš Hejl @hejllukas
+///|/ Copyright (c) PR 2022 Tomáš Mészáros @tamasmeszaros, Lukáš Hejl @hejllukas
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/

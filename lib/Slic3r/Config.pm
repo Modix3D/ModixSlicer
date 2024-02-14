@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2016 - 2022 Vojtěch Bubník @bubnikv
+#/|/ Copyright (c) PR 2016 - 2022 Vojtěch Bubník @bubnikv
 #/|/ Copyright (c) 2017 Joseph Lenox @lordofhyphens
 #/|/ Copyright (c) Slic3r 2011 - 2016 Alessandro Ranellucci @alranel
 #/|/ Copyright (c) 2015 Alexander Rössler @machinekoder

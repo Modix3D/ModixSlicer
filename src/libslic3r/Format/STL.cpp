@@ -1,7 +1,7 @@
-///|/ Copyright (c) Prusa Research 2017 - 2021 Vojtěch Bubník @bubnikv
+///|/ Copyright (c) PR 2017 - 2021 Vojtěch Bubník @bubnikv
 ///|/
 ///|/ ported from lib/Slic3r/Format/STL.pm:
-///|/ Copyright (c) Prusa Research 2017 Vojtěch Bubník @bubnikv
+///|/ Copyright (c) PR 2017 Vojtěch Bubník @bubnikv
 ///|/ Copyright (c) Slic3r 2011 - 2015 Alessandro Ranellucci @alranel
 ///|/ Copyright (c) 2012 Mark Hindess
 ///|/

@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2018 Vojtěch Bubník @bubnikv
+#/|/ Copyright (c) PR 2018 Vojtěch Bubník @bubnikv
 #/|/ Copyright (c) Slic3r 2011 - 2014 Alessandro Ranellucci @alranel
 #/|/ Copyright (c) 2012 Mark Hindess
 #/|/

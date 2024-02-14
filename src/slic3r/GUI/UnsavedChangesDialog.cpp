@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2020 - 2023 Oleksandra Iushchenko @YuSanka, Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv, Enrico Turri @enricoturri1966, David Kocík @kocikdav
+///|/ Copyright (c) PR 2020 - 2023 Oleksandra Iushchenko @YuSanka, Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv, Enrico Turri @enricoturri1966, David Kocík @kocikdav
 ///|/ Copyright (c) 2021 Pascal de Bruijn @pmjdebruijn
 ///|/ Copyright (c) 2021 Sebastian Hammerl
 ///|/

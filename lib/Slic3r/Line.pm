@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2022 Vojtěch Bubník @bubnikv
+#/|/ Copyright (c) PR 2022 Vojtěch Bubník @bubnikv
 #/|/ Copyright (c) Slic3r 2011 - 2014 Alessandro Ranellucci @alranel
 #/|/
 #/|/ PrusaSlicer is released under the terms of the AGPLv3 or higher

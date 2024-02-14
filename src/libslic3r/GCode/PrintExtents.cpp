@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2017 - 2022 Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena
+///|/ Copyright (c) PR 2017 - 2022 Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena
 ///|/ Copyright (c) 2019 Thomas Moore
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher

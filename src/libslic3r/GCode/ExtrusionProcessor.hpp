@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2022 - 2023 Pavel Mikuš @Godrak, Vojtěch Bubník @bubnikv
+///|/ Copyright (c) PR 2022 - 2023 Pavel Mikuš @Godrak, Vojtěch Bubník @bubnikv
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/

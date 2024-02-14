@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2016 - 2021 Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena, Enrico Turri @enricoturri1966
+#/|/ Copyright (c) PR 2016 - 2021 Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena, Enrico Turri @enricoturri1966
 #/|/ Copyright (c) 2016 Joseph Lenox @lordofhyphens
 #/|/ Copyright (c) Slic3r 2012 - 2016 Alessandro Ranellucci @alranel
 #/|/

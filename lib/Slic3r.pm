@@ -1,4 +1,4 @@
-#/|/ Copyright (c) Prusa Research 2016 - 2022 Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros, Vojtěch Král @vojtechkral, Oleksandra Iushchenko @YuSanka
+#/|/ Copyright (c) PR 2016 - 2022 Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros, Vojtěch Král @vojtechkral, Oleksandra Iushchenko @YuSanka
 #/|/ Copyright (c) 2018 Martin Loidl @LoidlM
 #/|/ Copyright (c) Slic3r 2011 - 2016 Alessandro Ranellucci @alranel
 #/|/ Copyright (c) 2012 Henrik Brix Andersen @henrikbrixandersen

@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2018 - 2020 Enrico Turri @enricoturri1966, Oleksandra Iushchenko @YuSanka
+///|/ Copyright (c) PR 2018 - 2020 Enrico Turri @enricoturri1966, Oleksandra Iushchenko @YuSanka
 ///|/ Copyright (c) 2019 Maeyanie @Maeyanie
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher

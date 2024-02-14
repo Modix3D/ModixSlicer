@@ -1,4 +1,4 @@
-///|/ Copyright (c) Prusa Research 2017 - 2023 Oleksandra Iushchenko @YuSanka, Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros, Enrico Turri @enricoturri1966, Filip Sykala @Jony01
+///|/ Copyright (c) PR 2017 - 2023 Oleksandra Iushchenko @YuSanka, Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros, Enrico Turri @enricoturri1966, Filip Sykala @Jony01
 ///|/ Copyright (c) 2019 Sijmen Schoon
 ///|/ Copyright (c) 2016 Joseph Lenox @lordofhyphens
 ///|/ Copyright (c) Slic3r 2013 - 2016 Alessandro Ranellucci @alranel

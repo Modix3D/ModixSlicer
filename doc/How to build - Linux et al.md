@@ -5,7 +5,7 @@ Please understand that PrusaSlicer team cannot support compilation on all possib
 
 If you have some reason to link dynamically to your system libraries, you are free to do so, but we can not and will not troubleshoot any issues you possibly run into.
 
-Instead of compiling PrusaSlicer from source code, one may also consider to install PrusaSlicer [pre-compiled by contributors](https://github.com/prusa3d/PrusaSlicer/wiki/PrusaSlicer-on-Linux---binary-distributions).
+Instead of compiling Slic3r from source code, one may also consider to install Slic3r pre-compiled by contributors, like from the distribution application manager.
 
 ## Step by step guide
 

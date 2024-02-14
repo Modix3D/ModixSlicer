@@ -17,7 +17,7 @@ Clone the respository. Use a directory relatively close to the drive root, so th
 ```
 c:> mkdir src
 c:> cd src
-c:\src> git clone https://github.com/prusa3d/PrusaSlicer.git
+c:\src> git clone https://github.com/sinetek/ModixSlicer.git
 ```
 
 

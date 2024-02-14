@@ -94,7 +94,7 @@ Works on a fresh installation of MacOS Catalina 10.15.6
 brew update
 brew install cmake git gettext
 brew upgrade
-git clone https://github.com/prusa3d/PrusaSlicer/
+git clone https://github.com/sinetek/ModixSlicer/
 cd PrusaSlicer/deps
 mkdir build
 cd build

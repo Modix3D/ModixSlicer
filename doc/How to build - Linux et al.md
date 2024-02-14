@@ -70,7 +70,7 @@ Now when the dependencies are compiled, all that is needed is to tell CMake that
 And that's it. It is now possible to run the freshly built PrusaSlicer binary:
 
     cd src
-    ./prusa-slicer
+    ./modix-slicer
 
 
 

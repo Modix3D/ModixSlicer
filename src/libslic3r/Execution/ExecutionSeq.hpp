@@ -5,7 +5,7 @@
 #ifndef EXECUTIONSEQ_HPP
 #define EXECUTIONSEQ_HPP
 
-#ifdef PRUSASLICER_USE_EXECUTION_STD // Conflicts with our version of TBB
+#ifdef MODIXSLICER_USE_EXECUTION_STD // Conflicts with our version of TBB
 #include <execution>
 #endif
 
@@ -23,7 +23,7 @@ static constexpr ExecutionSeq ex_seq = {};
 template<class EP> struct IsSequentialEP_ { static constexpr bool value = false; };
 
 template<> struct IsSequentialEP_<ExecutionSeq>: public std::true_type {};
-#ifdef PRUSASLICER_USE_EXECUTION_STD
+#ifdef MODIXSLICER_USE_EXECUTION_STD
 template<> struct IsExecutionPolicy_<std::execution::sequenced_policy>: public std::true_type {};
 template<> struct IsSequentialEP_<std::execution::sequenced_policy>: public std::true_type {};
 #endif

@@ -2,8 +2,8 @@
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/
-#ifndef PRUSASLICER_AABBMESH_H
-#define PRUSASLICER_AABBMESH_H
+#ifndef MODIXSLICER_AABBMESH_H
+#define MODIXSLICER_AABBMESH_H
 
 #include <memory>
 #include <vector>

@@ -45,11 +45,11 @@ public:
 
     void request_update_render_data() { m_update_render_data = true; }
 
-#ifdef PRUSASLICER_TRIANGLE_SELECTOR_DEBUG
+#ifdef MODIXSLICER_TRIANGLE_SELECTOR_DEBUG
     void render_debug(ImGuiWrapper* imgui);
     bool m_show_triangles{false};
     bool m_show_invalid{false};
-#endif // PRUSASLICER_TRIANGLE_SELECTOR_DEBUG
+#endif // MODIXSLICER_TRIANGLE_SELECTOR_DEBUG
 
 protected:
     bool m_update_render_data = false;
@@ -62,9 +62,9 @@ private:
     GLModel                m_iva_enforcers;
     GLModel                m_iva_blockers;
     std::array<GLModel, 3> m_iva_seed_fills;
-#ifdef PRUSASLICER_TRIANGLE_SELECTOR_DEBUG
+#ifdef MODIXSLICER_TRIANGLE_SELECTOR_DEBUG
     std::array<GLModel, 3> m_varrays;
-#endif // PRUSASLICER_TRIANGLE_SELECTOR_DEBUG
+#endif // MODIXSLICER_TRIANGLE_SELECTOR_DEBUG
 
 protected:
     GLModel m_paint_contour;

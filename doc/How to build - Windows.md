@@ -75,7 +75,7 @@ c:\src\PrusaSlicer>build_win.bat -d=..\PrusaSlicer-deps -r=console
 The build script will run for a while and automatically perform the following steps:
 1. Configure and build [deps](#compile-the-dependencies) as RelWithDebInfo with `c:\src\PrusaSlicer-deps` as the destination directory
 2. Configure and build all [application targets](#compile-prusaslicer) as RelWithDebInfo
-3. Launch the resulting `prusa-slicer-console.exe` binary
+3. Launch the resulting `modix-slicer-console.exe` binary
 
 You can change the above command line options to do things like:
 * Change the destination for the dependencies by pointing `-d` to a different directory such as: `build_win.bat -d=s:\PrusaSlicerDeps`

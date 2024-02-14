@@ -2,8 +2,8 @@
 ///|/
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/
-#ifndef PRUSASLICER_OPTIMIZER_HPP
-#define PRUSASLICER_OPTIMIZER_HPP
+#ifndef MODIXSLICER_OPTIMIZER_HPP
+#define MODIXSLICER_OPTIMIZER_HPP
 
 #include <utility>
 #include <tuple>

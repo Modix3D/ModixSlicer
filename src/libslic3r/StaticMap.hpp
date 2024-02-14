@@ -1,5 +1,5 @@
-#ifndef PRUSASLICER_STATICMAP_HPP
-#define PRUSASLICER_STATICMAP_HPP
+#ifndef MODIXSLICER_STATICMAP_HPP
+#define MODIXSLICER_STATICMAP_HPP
 
 #include <optional>
 #include <array>

@@ -9,7 +9,7 @@
 ///|/ Copyright (c) 2016 Miro Hrončok @hroncok
 ///|/ Copyright (c) 2014 Kamil Kwolek
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef _libslic3r_h_
 #define _libslic3r_h_

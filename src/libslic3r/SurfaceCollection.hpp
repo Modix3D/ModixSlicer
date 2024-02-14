@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2016 - 2023 Vojtěch Bubník @bubnikv
 ///|/ Copyright (c) Slic3r 2013 - 2015 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_SurfaceCollection_hpp_
 #define slic3r_SurfaceCollection_hpp_

@@ -2,7 +2,7 @@
 ///|/ Copyright (c) Slic3r 2014 - 2016 Alessandro Ranellucci @alranel
 ///|/ Copyright (c) 2015 Maksim Derbasov @ntfshard
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "BridgeDetector.hpp"
 #include "ClipperUtils.hpp"

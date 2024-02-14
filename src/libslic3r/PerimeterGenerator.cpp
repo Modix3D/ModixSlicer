@@ -3,7 +3,7 @@
 ///|/ Copyright (c) 2021 Ilya @xorza
 ///|/ Copyright (c) Slic3r 2015 - 2016 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "PerimeterGenerator.hpp"
 #include "AABBTreeIndirect.hpp"

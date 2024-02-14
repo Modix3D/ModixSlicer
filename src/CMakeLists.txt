@@ -115,9 +115,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/ModixSlicer-gcodeviewer.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/ModixSlicer.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer.manifest @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/osx/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 if (WIN32)
-    add_library(ModixSlicer SHARED PrusaSlicer.cpp PrusaSlicer.hpp)
+    add_library(ModixSlicer SHARED ModixSlicer.cpp ModixSlicer.hpp)
 else ()
-    add_executable(ModixSlicer PrusaSlicer.cpp PrusaSlicer.hpp)
+    add_executable(ModixSlicer ModixSlicer.cpp ModixSlicer.hpp)
 endif ()
 
 if (MINGW)

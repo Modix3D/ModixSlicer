@@ -3,7 +3,7 @@
 ///|/ ported from lib/Slic3r/GUI/GLShader.pm:
 ///|/ Copyright (c) PR 2016 - 2017 Vojtěch Bubník @bubnikv
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "libslic3r/libslic3r.h"
 #include "GLShader.hpp"

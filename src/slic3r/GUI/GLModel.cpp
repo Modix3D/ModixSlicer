@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2020 - 2023 Enrico Turri @enricoturri1966, Vojtěch Bubník @bubnikv, Filip Sykala @Jony01
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "libslic3r/libslic3r.h"
 #include "GLModel.hpp"

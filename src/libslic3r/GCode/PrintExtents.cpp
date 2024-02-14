@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2017 - 2022 Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena
 ///|/ Copyright (c) 2019 Thomas Moore
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 // Calculate extents of the extrusions assigned to Print / PrintObject.
 // The extents are used for assessing collisions of the print with the priming towers,

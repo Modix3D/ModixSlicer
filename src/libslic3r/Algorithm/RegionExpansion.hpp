@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2022 - 2023 Vojtěch Bubník @bubnikv
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef SRC_LIBSLIC3R_ALGORITHM_REGION_EXPANSION_HPP_
 #define SRC_LIBSLIC3R_ALGORITHM_REGION_EXPANSION_HPP_

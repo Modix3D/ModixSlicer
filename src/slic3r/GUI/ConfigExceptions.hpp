@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2017 - 2020 Vojtěch Bubník @bubnikv, Oleksandra Iushchenko @YuSanka
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include <exception> 
 namespace Slic3r {

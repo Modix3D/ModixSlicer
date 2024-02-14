@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2018 - 2020 Enrico Turri @enricoturri1966, Oleksandra Iushchenko @YuSanka
 ///|/ Copyright (c) 2019 Maeyanie @Maeyanie
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_GUI_KBShortcutsDialog_hpp_
 #define slic3r_GUI_KBShortcutsDialog_hpp_

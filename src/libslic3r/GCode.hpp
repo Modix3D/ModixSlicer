@@ -10,7 +10,7 @@
 ///|/ Copyright (c) 2012 Mark Hindess
 ///|/ Copyright (c) 2012 Henrik Brix Andersen @henrikbrixandersen
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_GCode_hpp_
 #define slic3r_GCode_hpp_

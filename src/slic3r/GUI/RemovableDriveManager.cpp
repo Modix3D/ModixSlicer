@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2019 - 2023 David Kocík @kocikdav, Lukáš Matěna @lukasmatena, Roman Beránek @zavorka, Vojtěch Bubník @bubnikv
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "RemovableDriveManager.hpp"
 #include "libslic3r/Platform.hpp"

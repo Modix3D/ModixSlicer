@@ -4,7 +4,7 @@
 ///|/ Copyright (c) PR 2016 - 2018 Vojtěch Bubník @bubnikv
 ///|/ Copyright (c) Slic3r 2015 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "2DBed.hpp"
 #include "GUI_App.hpp"

@@ -6,7 +6,7 @@
 #/|/ Copyright (c) 2012 Michael Moon
 #/|/ Copyright (c) 2011 Clarence Risher
 #/|/
-#/|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+#/|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 #/|/
 # This package loads all the non-GUI Slic3r perl packages.
 

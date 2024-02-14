@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2020 - 2021 Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv, Lukáš Hejl @hejllukas, Tomáš Mészáros @tamasmeszaros
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 // Adaptive cubic infill was inspired by the work of @mboerwinkle
 // as implemented for Cura.

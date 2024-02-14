@@ -11,7 +11,7 @@
 ///|/ Copyright (c) Slic3r 2011 - 2014 Alessandro Ranellucci @alranel
 ///|/ Copyright (c) 2012 - 2013 Mark Hindess
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "Exception.hpp"
 #include "TriangleMesh.hpp"

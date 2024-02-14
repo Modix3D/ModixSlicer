@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2020 - 2023 Vojtěch Bubník @bubnikv, Pavel Mikuš @Godrak, Tomáš Mészáros @tamasmeszaros, Lukáš Matěna @lukasmatena, Lukáš Hejl @hejllukas
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 // AABB tree built upon external data set, referencing the external data by integer indices.
 // The AABB tree balancing and traversal (ray casting, closest triangle of an indexed triangle mesh)

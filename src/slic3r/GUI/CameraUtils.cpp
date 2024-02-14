@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2021 - 2022 Oleksandra Iushchenko @YuSanka, Filip Sykala @Jony01
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "CameraUtils.hpp"
 #include <igl/project.h> // projecting points

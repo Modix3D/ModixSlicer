@@ -3,7 +3,7 @@
 ///|/ ported from src/libslic3r/PNGRead.cpp:
 ///|/ Copyright (c) PR 2020 Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "PNGReadWrite.hpp"
 

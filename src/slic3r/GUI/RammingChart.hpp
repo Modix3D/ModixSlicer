@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2018 - 2019 Oleksandra Iushchenko @YuSanka, Vojtěch Bubník @bubnikv, Lukáš Matěna @lukasmatena
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef RAMMING_CHART_H_
 #define RAMMING_CHART_H_

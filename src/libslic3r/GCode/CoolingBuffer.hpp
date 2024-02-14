@@ -6,7 +6,7 @@
 ///|/ Copyright (c) Slic3r 2013 - 2016 Alessandro Ranellucci @alranel
 ///|/ Copyright (c) 2016 Chow Loong Jin @hyperair
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_CoolingBuffer_hpp_
 #define slic3r_CoolingBuffer_hpp_

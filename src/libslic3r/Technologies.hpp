@@ -2,7 +2,7 @@
 ///|/ Copyright (c) BambuStudio 2023 manch1n @manch1n
 ///|/ Copyright (c) 2019 BeldrothTheGold @BeldrothTheGold
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef _prusaslicer_technologies_h_
 #define _prusaslicer_technologies_h_

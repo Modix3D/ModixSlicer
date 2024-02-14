@@ -2,7 +2,7 @@
 ///|/ Copyright (c) SuperSlicer 2021 Remi Durand @supermerill
 ///|/ Copyright (c) 2019 John Drake @foxox
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include <cassert>
 

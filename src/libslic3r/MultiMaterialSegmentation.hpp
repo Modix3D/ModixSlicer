@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2021 Lukáš Hejl @hejllukas, Vojtěch Bubník @bubnikv
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_MultiMaterialSegmentation_hpp_
 #define slic3r_MultiMaterialSegmentation_hpp_

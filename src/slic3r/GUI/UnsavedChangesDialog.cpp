@@ -2,7 +2,7 @@
 ///|/ Copyright (c) 2021 Pascal de Bruijn @pmjdebruijn
 ///|/ Copyright (c) 2021 Sebastian Hammerl
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "UnsavedChangesDialog.hpp"
 

@@ -6,7 +6,7 @@
 ///|/ Copyright (c) 2019 BeldrothTheGold @BeldrothTheGold
 ///|/ Copyright (c) 2019 Thomas Moore
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "libslic3r/libslic3r.h"
 #include "GLCanvas3D.hpp"

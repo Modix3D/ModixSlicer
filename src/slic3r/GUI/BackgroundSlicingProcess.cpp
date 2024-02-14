@@ -2,7 +2,7 @@
 ///|/ Copyright (c) 2022 ole00 @ole00
 ///|/ Copyright (c) 2021 Ilya @xorza
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "BackgroundSlicingProcess.hpp"
 #include "GUI_App.hpp"

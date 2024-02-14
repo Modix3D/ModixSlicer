@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2020 - 2021 David Kocík @kocikdav
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #import <Cocoa/Cocoa.h>
 

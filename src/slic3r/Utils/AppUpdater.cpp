@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2022 - 2023 Oleksandra Iushchenko @YuSanka, David Kocík @kocikdav, Vojtěch Bubník @bubnikv, Enrico Turri @enricoturri1966, Lukáš Matěna @lukasmatena
 ///|/ Copyright (c) 2022 KARBOWSKI Piotr
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "AppUpdater.hpp"
 

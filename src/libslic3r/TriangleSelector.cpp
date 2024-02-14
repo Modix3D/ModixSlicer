@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2020 - 2022 Vojtěch Bubník @bubnikv, Lukáš Hejl @hejllukas, Lukáš Matěna @lukasmatena
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "TriangleSelector.hpp"
 #include "Model.hpp"

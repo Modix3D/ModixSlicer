@@ -17,7 +17,7 @@
 ///|/ Copyright (c) 2015 Alexander Rössler @machinekoder
 ///|/ Copyright (c) 2014 Petr Ledvina @ledvinap
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "PrintConfig.hpp"
 #include "Config.hpp"

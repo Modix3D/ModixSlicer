@@ -5,7 +5,7 @@
 ///|/ Copyright (c) Slic3r 2011 - 2015 Alessandro Ranellucci @alranel
 ///|/ Copyright (c) 2012 Mark Hindess
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "../ClipperUtils.hpp"
 #include "../ShortestPath.hpp"

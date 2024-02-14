@@ -2,7 +2,7 @@
 ///|/ Copyright (c) 2021 Justin Schuh @jschuh
 ///|/ Copyright (c) Slic3r 2013 - 2015 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "Utils.hpp"
 #include "I18N.hpp"

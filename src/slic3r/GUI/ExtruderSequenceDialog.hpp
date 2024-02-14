@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2019 - 2021 Oleksandra Iushchenko @YuSanka
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef slic3r_GUI_ExtruderSequenceDialog_hpp_
 #define slic3r_GUI_ExtruderSequenceDialog_hpp_

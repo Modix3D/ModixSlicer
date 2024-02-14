@@ -4,7 +4,7 @@
 ///|/ Copyright (c) 2018 Francesco Santini @fsantini
 ///|/ Copyright (c) Slic3r 2014 - 2016 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "PlaceholderParser.hpp"
 #include "Exception.hpp"

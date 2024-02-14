@@ -5,7 +5,7 @@
 ///|/ ported from lib/Slic3r/Geometry/BoundingBox.pm:
 ///|/ Copyright (c) Slic3r 2013 - 2014 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "BoundingBox.hpp"
 #include <algorithm>

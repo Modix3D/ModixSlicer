@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2017 - 2023 Oleksandra Iushchenko @YuSanka, Pavel Mikuš @Godrak, Lukáš Matěna @lukasmatena, Vojtěch Bubník @bubnikv
 ///|/ Copyright (c) 2021 Ilya @xorza
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include <cassert>
 

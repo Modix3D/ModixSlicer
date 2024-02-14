@@ -5,7 +5,7 @@
 ///|/ ported from lib/Slic3r/Extruder.pm:
 ///|/ Copyright (c) Slic3r 2011 - 2014 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "Extruder.hpp"
 #include "GCode/GCodeWriter.hpp"

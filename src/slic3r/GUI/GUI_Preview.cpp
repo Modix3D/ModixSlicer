@@ -2,7 +2,7 @@
 ///|/ Copyright (c) 2022 André Althaus
 ///|/ Copyright (c) 2019 John Drake @foxox
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 //#include "stdlib.h"
 #include "libslic3r/libslic3r.h"

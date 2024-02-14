@@ -6,7 +6,7 @@
 ///|/ Copyright (c) 2017 Ahmed Samir Abdelreheem @Samir55
 ///|/ Copyright (c) Slic3r 2014 - 2016 Alessandro Ranellucci @alranel
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "BedShapeDialog.hpp"
 #include "GUI_App.hpp"

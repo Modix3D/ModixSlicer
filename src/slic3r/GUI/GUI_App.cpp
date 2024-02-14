@@ -4,7 +4,7 @@
 ///|/ Copyright (c) 2020 Tuomas Kuosmanen @tigert
 ///|/ Copyright (c) 2020 Klaus Naumann
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "libslic3r/Technologies.hpp"
 #include "GUI_App.hpp"

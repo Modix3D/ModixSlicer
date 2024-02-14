@@ -10,7 +10,7 @@
 ///|/ Copyright (c) 2012 Mike Sheldrake @mesheldrake
 ///|/ Copyright (c) 2012 Mark Hindess
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "libslic3r.h"
 #include "Exception.hpp"

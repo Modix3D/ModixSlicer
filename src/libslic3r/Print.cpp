@@ -18,7 +18,7 @@
 ///|/ Copyright (c) 2012 Michael Moon
 ///|/ Copyright (c) 2011 Richard Goodwin
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "Exception.hpp"
 #include "Print.hpp"

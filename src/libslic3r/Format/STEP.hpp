@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2022 Tomáš Mészáros @tamasmeszaros
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 // Original implementation of STEP format import created by Bambulab.
 // https://github.com/bambulab/BambuStudio

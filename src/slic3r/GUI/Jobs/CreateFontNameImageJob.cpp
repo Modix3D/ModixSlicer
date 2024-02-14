@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2022 Filip Sykala @Jony01
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "CreateFontNameImageJob.hpp"
 

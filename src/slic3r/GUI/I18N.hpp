@@ -1,6 +1,6 @@
 ///|/ Copyright (c) PR 2018 - 2023 Oleksandra Iushchenko @YuSanka, Vojtěch Bubník @bubnikv, Vojtěch Král @vojtechkral
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #ifndef _
 #define _(s)    	Slic3r::GUI::I18N::translate((s))

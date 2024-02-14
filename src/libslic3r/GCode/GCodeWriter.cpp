@@ -9,7 +9,7 @@
 ///|/ Copyright (c) 2015 Maciej Dębski
 ///|/ Copyright (c) 2015 Alexander Rössler @machinekoder
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "GCodeWriter.hpp"
 #include "../CustomGCode.hpp"

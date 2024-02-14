@@ -6,7 +6,7 @@
 ///|/ Copyright (c) 2015 Pavel Karoukin @hippich
 ///|/ Copyright (c) 2012 Henrik Brix Andersen @henrikbrixandersen
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "AboutDialog.hpp"
 #include "I18N.hpp"

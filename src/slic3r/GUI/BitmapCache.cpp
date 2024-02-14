@@ -1,7 +1,7 @@
 ///|/ Copyright (c) PR 2018 - 2022 Lukáš Matěna @lukasmatena, Oleksandra Iushchenko @YuSanka, Tomáš Mészáros @tamasmeszaros, Enrico Turri @enricoturri1966, Vojtěch Bubník @bubnikv, Vojtěch Král @vojtechkral
 ///|/ Copyright (c) 2021 Scott Mudge @ScottMudge
 ///|/
-///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/ ModixSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include "BitmapCache.hpp"
 

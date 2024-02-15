@@ -49,7 +49,7 @@
 @ECHO.
 @ECHO  Examples:
 @ECHO.
-@ECHO  Initial build:           build_win -d "c:\src\PrusaSlicer-deps"
+@ECHO  Initial build:           build_win -d "c:\src\ModixSlicer-deps"
 @ECHO  Build post deps change:  build_win -s all
 @ECHO  App dirty build:         build_win
 @ECHO  App dirty build ^& run:   build_win -r console
@@ -61,7 +61,7 @@ GOTO :END
 REM Script constants
 SET START_TIME=%TIME%
 SET PS_START_DIR=%CD%
-SET PS_SOLUTION_NAME=PrusaSlicer
+SET PS_SOLUTION_NAME=ModixSlicer
 SET PS_CHOICE_TIMEOUT=30
 SET PS_CUSTOM_RUN_FILE=custom_run.bat
 SET PS_DEPS_PATH_FILE_NAME=.DEPS_PATH.txt

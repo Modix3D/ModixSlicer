@@ -347,10 +347,28 @@ macro(just_fail msg)
   return()
 endmacro()
 
+find_package(IlmBase QUIET)
+if(NOT IlmBase_FOUND)
+  pkg_check_modules(IlmBase QUIET IlmBase)
+endif()
+if (IlmBase_FOUND AND NOT TARGET IlmBase::Half)
+  message(STATUS "Falling back to IlmBase found by pkg-config...")
+
+  find_library(IlmHalf_LIBRARY NAMES Half)
+  if(IlmHalf_LIBRARY-NOTFOUND OR NOT IlmBase_INCLUDE_DIRS)
+    just_fail("IlmBase::Half can not be found!")
+  endif()
+  
+  add_library(IlmBase::Half UNKNOWN IMPORTED)
+  set_target_properties(IlmBase::Half PROPERTIES
+    IMPORTED_LOCATION "${IlmHalf_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${IlmBase_INCLUDE_DIRS}")
+elseif(NOT IlmBase_FOUND)
+  just_fail("IlmBase::Half can not be found!")
+endif()
 find_package(TBB ${_quiet} ${_required} COMPONENTS tbb)
 find_package(ZLIB ${_quiet} ${_required})
 find_package(Boost ${_quiet} ${_required} COMPONENTS iostreams system )
-find_package(Imath CONFIG)
 
 # Use GetPrerequisites to see which libraries this OpenVDB lib has linked to
 # which we can query for optional deps. This basically runs ldd/otoll/objdump
@@ -362,6 +380,19 @@ include(GetPrerequisites)
 set(_EXCLUDE_SYSTEM_PREREQUISITES 1)
 set(_RECURSE_PREREQUISITES 0)
 set(_OPENVDB_PREREQUISITE_LIST)
+
+if(NOT OPENVDB_USE_STATIC_LIBS)
+get_prerequisites(${OpenVDB_openvdb_LIBRARY}
+  _OPENVDB_PREREQUISITE_LIST
+  ${_EXCLUDE_SYSTEM_PREREQUISITES}
+  ${_RECURSE_PREREQUISITES}
+  ""
+  "${SYSTEM_LIBRARY_PATHS}"
+)
+endif()
+
+unset(_EXCLUDE_SYSTEM_PREREQUISITES)
+unset(_RECURSE_PREREQUISITES)
 
 # As the way we resolve optional libraries relies on library file names, use
 # the configuration options from the main CMakeLists.txt to allow users
@@ -388,7 +419,7 @@ foreach(PREREQUISITE ${_OPENVDB_PREREQUISITE_LIST})
     set(OpenVDB_USES_LOG4CPLUS ON)
   endif()
 
-  string(FIND ${PREREQUISITE} "OpenEXR" _HAS_DEP)
+  string(FIND ${PREREQUISITE} "IlmImf" _HAS_DEP)
   if(NOT ${_HAS_DEP} EQUAL -1)
     set(OpenVDB_USES_ILM ON)
   endif()
@@ -419,7 +450,11 @@ if(OpenVDB_USES_LOG4CPLUS)
   find_package(Log4cplus ${_quiet} ${_required})
 endif()
 
-if(OpenVDB_USES_ILM OR OpenVDB_USES_EXR)
+if(OpenVDB_USES_ILM)
+  find_package(IlmBase ${_quiet} ${_required})
+endif()
+
+if(OpenVDB_USES_EXR)
   find_package(OpenEXR ${_quiet} ${_required})
 endif()
 
@@ -436,7 +471,7 @@ endif()
 set(_OPENVDB_VISIBLE_DEPENDENCIES
   Boost::iostreams
   Boost::system
-  Imath::Imath
+  IlmBase::Half
 )
 
 set(_OPENVDB_DEFINITIONS)
@@ -446,7 +481,10 @@ endif()
 
 if(OpenVDB_USES_EXR)
   list(APPEND _OPENVDB_VISIBLE_DEPENDENCIES
-    OpenEXR::OpenEXR
+    IlmBase::IlmThread
+    IlmBase::Iex
+    IlmBase::Imath
+    OpenEXR::IlmImf
   )
   list(APPEND _OPENVDB_DEFINITIONS "-DOPENVDB_TOOLS_RAYTRACER_USE_EXR")
 endif()

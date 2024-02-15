@@ -25,7 +25,7 @@ if (NOT EXPAT_FOUND)
     endif ()
 endif()
 
-if (EXPAT_FOUND AND NOT (TARGET EXPAT::EXPAT OR TARGET expat::expat))
+if (EXPAT_FOUND AND NOT TARGET EXPAT::EXPAT)
     add_library(libexpat INTERFACE)
     add_library(EXPAT::EXPAT ALIAS libexpat)
     target_link_libraries(libexpat INTERFACE expat::expat)

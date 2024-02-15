@@ -836,7 +836,7 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
         << " (without GUI support)"
 #endif /* SLIC3R_GUI */
         << std::endl
-        << "https://github.com/prusa3d/PrusaSlicer" << std::endl << std::endl
+        << "https://modix3d.com" << std::endl << std::endl
         << "Usage: modix-slicer [ ACTIONS ] [ TRANSFORM ] [ OPTIONS ] [ file.stl ... ]" << std::endl
         << std::endl
         << "Actions:" << std::endl;

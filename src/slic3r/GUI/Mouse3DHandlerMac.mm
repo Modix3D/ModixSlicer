@@ -202,9 +202,9 @@ void Mouse3DController::init()
       // Registration is done either by 4letter constant (CFBundleSignature - obsolete
       //and we dont have that) or Executable name in pascal string(first byte is string lenght).
       //If no packets are recieved the name might be different - check cmake. If debugging try commenting
-      // set_target_properties(PrusaSlicer PROPERTIES OUTPUT_NAME "modix-slicer")
+      // set_target_properties(ModixSlicer PROPERTIES OUTPUT_NAME "modix-slicer")
       clientID = RegisterConnexionClient(
-          0, "\013PrusaSlicer", kConnexionClientModeTakeOver, kConnexionMaskAxis);
+          0, "\013ModixSlicer", kConnexionClientModeTakeOver, kConnexionMaskAxis);
         BOOST_LOG_TRIVIAL(info) << "3dx mac handler registered";
     }
   }

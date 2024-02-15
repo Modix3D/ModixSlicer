@@ -273,7 +273,7 @@ boost::filesystem::path AppUpdateDownloadDialog::get_download_path() const
 
 MsgUpdateConfig::MsgUpdateConfig(const std::vector<Update> &updates, bool force_before_wizard/* = false*/) :
 	MsgDialog(nullptr, force_before_wizard ? _L("Opening Configuration Wizard") : _L("Configuration update"), 
-					   force_before_wizard ? _L("PrusaSlicer is not using the newest configuration available.\n"
+					   force_before_wizard ? _L("ModixSlicer is not using the newest configuration available.\n"
 												"Configuration Wizard may not offer the latest printers, filaments and SLA materials to be installed.") : 
 											 _L("Configuration update is available"), wxICON_ERROR)
 {
@@ -474,7 +474,7 @@ MsgDataLegacy::MsgDataLegacy() :
 	auto *text2 = new wxStaticText(this, wxID_ANY, _(L("For more information please visit our wiki page:")));
 	static const wxString url("https://github.com/prusa3d/PrusaSlicer/wiki/Slic3r-PE-1.40-configuration-update");
 	// The wiki page name is intentionally not localized:
-	// TRN %s = PrusaSlicer
+	// TRN %s = ModixSlicer
 	auto *link = new wxHyperlinkCtrl(this, wxID_ANY, format_wxstr(_L("%s 1.40 configuration update"), SLIC3R_APP_NAME), CONFIG_UPDATE_WIKI_URL);
 	content_sizer->Add(text2);
 	content_sizer->Add(link);
@@ -511,7 +511,7 @@ MsgNoUpdates::~MsgNoUpdates() {}
 MsgNoAppUpdates::MsgNoAppUpdates() :
 	MsgDialog(nullptr, _(L("App update")), _(L("No updates available")), wxICON_ERROR | wxOK)
 {
-	//TRN %1% is PrusaSlicer
+	//TRN %1% is ModixSlicer
 	auto* text = new wxStaticText(this, wxID_ANY, format_wxstr(_L("Your %1% is up to date."),SLIC3R_APP_NAME));
 	text->Wrap(CONTENT_WIDTH * wxGetApp().em_unit());
 	content_sizer->Add(text);

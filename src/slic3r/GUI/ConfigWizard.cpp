@@ -1576,7 +1576,7 @@ bool DownloaderUtils::Worker::perform_register(const std::string& path_override/
     if (!key_full.Exists()) {
         key_full.Create(false);
     }
-    //key_full = "\"C:\\Program Files\\Prusa3D\\PrusaSlicer\\modix-slicer-console.exe\" \"%1\"";
+    //key_full = "\"C:\\Program Files\\Prusa3D\\ModixSlicer\\modix-slicer-console.exe\" \"%1\"";
     key_full = key_string;
 #elif __APPLE__
     // Apple registers for custom url in info.plist thus it has to be already registered since build.
@@ -1651,9 +1651,9 @@ PageReloadFromDisk::PageReloadFromDisk(ConfigWizard* parent)
 PageFilesAssociation::PageFilesAssociation(ConfigWizard* parent)
     : ConfigWizardPage(parent, _L("Files association"), _L("Files association"))
 {
-    cb_3mf = new wxCheckBox(this, wxID_ANY, _L("Associate .3mf files to PrusaSlicer"));
-    cb_stl = new wxCheckBox(this, wxID_ANY, _L("Associate .stl files to PrusaSlicer"));
-//    cb_gcode = new wxCheckBox(this, wxID_ANY, _L("Associate .gcode files to PrusaSlicer G-code Viewer"));
+    cb_3mf = new wxCheckBox(this, wxID_ANY, _L("Associate .3mf files to ModixSlicer"));
+    cb_stl = new wxCheckBox(this, wxID_ANY, _L("Associate .stl files to ModixSlicer"));
+//    cb_gcode = new wxCheckBox(this, wxID_ANY, _L("Associate .gcode files to ModixSlicer G-code Viewer"));
 
     append(cb_3mf);
     append(cb_stl);
@@ -2053,7 +2053,7 @@ void PageTemperatures::apply_custom_config(DynamicPrintConfig &config)
 
 ConfigWizardIndex::ConfigWizardIndex(wxWindow *parent)
     : wxPanel(parent)
-    , bg(ScalableBitmap(parent, "PrusaSlicer_192px_transparent.png", 192))
+    , bg(ScalableBitmap(parent, "ModixSlicer_192px_transparent.png", 192))
     , bullet_black(ScalableBitmap(parent, "bullet_black.png"))
     , bullet_blue(ScalableBitmap(parent, "bullet_blue.png"))
     , bullet_white(ScalableBitmap(parent, "bullet_white.png"))

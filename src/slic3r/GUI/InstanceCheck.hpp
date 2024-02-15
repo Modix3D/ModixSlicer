@@ -70,7 +70,7 @@ public:
 	//and sends them to plater via LoadFromOtherInstanceEvent
 	//security of messages: from message all existing paths are proccesed to load model 
 	//						win32 - anybody who has hwnd can send message.
-	//						mac - anybody who posts notification with name:@"OtherPrusaSlicerTerminating"
+	//						mac - anybody who posts notification with name:@"OtherModixSlicerTerminating"
 	//						linux - instrospectable on dbus
 	void           handle_message(const std::string& message);
 #ifdef __APPLE__

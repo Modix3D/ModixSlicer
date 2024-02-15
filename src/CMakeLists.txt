@@ -173,7 +173,7 @@ if (WIN32)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -municode")
     endif()
 
-    add_executable(ModixSlicer_app_gui WIN32 ModixSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer.rc)
+    add_executable(ModixSlicer_app_gui WIN32 PrusaSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer.rc)
     # Generate debug symbols even in release mode.
     if(MSVC)
         target_link_options(ModixSlicer_app_gui PUBLIC "$<$<CONFIG:RELEASE>:/DEBUG>")
@@ -183,7 +183,7 @@ if (WIN32)
     set_target_properties(ModixSlicer_app_gui PROPERTIES OUTPUT_NAME "modix-slicer")
     target_link_libraries(ModixSlicer_app_gui PRIVATE boost_headeronly)
 
-    add_executable(ModixSlicer_app_console ModixSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer.rc)
+    add_executable(ModixSlicer_app_console PrusaSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer.rc)
     # Generate debug symbols even in release mode.
     if (MSVC)
         target_link_options(ModixSlicer_app_console PUBLIC "$<$<CONFIG:RELEASE>:/DEBUG>")
@@ -193,7 +193,7 @@ if (WIN32)
     set_target_properties(ModixSlicer_app_console PROPERTIES OUTPUT_NAME "modix-slicer-console")
     target_link_libraries(ModixSlicer_app_console PRIVATE boost_headeronly)
 
-    add_executable(ModixSlicer_app_gcodeviewer WIN32 ModixSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer-gcodeviewer.rc)
+    add_executable(ModixSlicer_app_gcodeviewer WIN32 PrusaSlicer_app_msvc.cpp ${CMAKE_CURRENT_BINARY_DIR}/ModixSlicer-gcodeviewer.rc)
     # Generate debug symbols even in release mode.
     if (MSVC)
         target_link_options(ModixSlicer_app_gcodeviewer PUBLIC "$<$<CONFIG:RELEASE>:/DEBUG>")

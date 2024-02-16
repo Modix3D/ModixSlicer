@@ -10,3 +10,10 @@ NotoSansCJK-Regular.ttc
 -----------------------
 Noto Sans CJK and Noto Serif CJK comprehensively cover Simplified Chinese, Traditional Chinese, Japanese, and Korean in a unified font family. This includes the full coverage of CJK Ideographs with variation support for 4 regions, Kangxi radicals, Japanese Kana, Korean Hangul, and other CJK symbols and letters in the Basic Multilingual Plane of Unicode. It also provides limited coverage of CJK Ideographs in Plane 2 of Unicode as necessary to support standards from China and Japan.
 https://www.google.com/get/noto/help/cjk/
+
+Audiowide-Regular.ttf
+---------------------
+Audiowide is a sans serif, technology styled, typeface composed of soft corner tubular forms. With vague nods to letter styles like that of Handel Gothic and the Converse logo, Audiowide veers off in a direction of its own for a slightly more techno-futuristic and yet cleanly readable typestyle.
+Designed by Brian J. Bonislawsky for Astigmatic (AOETI). Audiowide is a Unicode typeface family that supports languages that use the Latin script and its variants, and could be expanded to support other scripts. To contribute to the project contact Brian J. Bonislawsky.
+These fonts are licensed under the Open Font License.
+https://fonts.google.com/specimen/Audiowide

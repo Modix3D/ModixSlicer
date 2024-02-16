@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Prusa GCode viewer
+Name=Modix GCode viewer
 Exec=modix-slicer --gcodeviewer %F
-Icon=PrusaSlicer-gcodeviewer
+Icon=ModixSlicer-gcodeviewer
 Terminal=false
 Type=Application
 MimeType=text/x.gcode;

@@ -13,8 +13,8 @@
                 "SLIC3R_ENC_CHECK": false,
                 "SLIC3R_PCH": true,
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build-default/dist",
-                "PrusaSlicer_DEPS_PRESET": "default",
-                "PrusaSlicer_DEPS_OUTPUT_QUIET": false
+                "ModixSlicer_DEPS_PRESET": "default",
+                "ModixSlicer_DEPS_OUTPUT_QUIET": false
             }
         },
         {
@@ -25,7 +25,7 @@
             "binaryDir": "${sourceDir}/build-no-occt",
             "cacheVariables": {
                 "SLIC3R_ENABLE_FORMAT_STEP": false,
-                "PrusaSlicer_DEPS_PRESET": "no-occt"
+                "ModixSlicer_DEPS_PRESET": "no-occt"
             }
         },
         {
@@ -39,7 +39,7 @@
                 "SLIC3R_GTK": "3",
                 "SLIC3R_ENC_CHECK": false,
                 "SLIC3R_PCH": true,
-                "PrusaSlicer_BUILD_DEPS": false
+                "ModixSlicer_BUILD_DEPS": false
             }
         }
     ]

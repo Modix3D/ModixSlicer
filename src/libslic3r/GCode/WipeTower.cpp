@@ -1359,6 +1359,8 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
 void
 WipeTower::wipe_contour_1(WipeTowerWriter& writer, float offset)
 {
+    int extrude_speed;
+
     // XXX how much filament consumed....
 
     // h-----------------g
@@ -1394,15 +1396,19 @@ WipeTower::wipe_contour_1(WipeTowerWriter& writer, float offset)
     params.density = 1.f;
     filler->bounding_box = get_extents(expolygon);
 
-    if (is_first_layer())
+    if (is_first_layer()) {
         params.density = 1.f;
+        extrude_speed = m_first_layer_speed * 60.f;
+    } else {
+        extrude_speed = m_perimeter_speed * 60.f;
+    }
 
     polylines = filler->fill_surface(&surface, params);
 
     for (const Polyline& line: polylines) {
         writer.travel(unscale(line.points.front()).cast<float>());
         for (auto& point: line.points) {
-            writer.extrude(unscale(point).cast<float>(), m_perimeter_speed * 60.f);
+            writer.extrude(unscale(point).cast<float>(), extrude_speed);
         }
     }
 }
@@ -1410,6 +1416,14 @@ WipeTower::wipe_contour_1(WipeTowerWriter& writer, float offset)
 void
 WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
 {
+    int extrude_speed;
+
+    if (is_first_layer()) {
+        extrude_speed = m_first_layer_speed * 60.f;
+    } else {
+        extrude_speed = m_perimeter_speed * 60.f;
+    }
+
     Point a = Point::new_scale(0,0);
     Point b = Point::new_scale(m_wipe_tower_width,0);
     Point c = Point::new_scale(m_wipe_tower_width,m_wipe_tower_depth);
@@ -1422,7 +1436,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
-            writer.extrude(unscale(poly.points[i]).cast<float>(), m_perimeter_speed * 60.f);
+            writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed);
             if (i == cp)
                 break;
         }
@@ -1439,7 +1453,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
             for (int i=cp+1; true; ++i ) {
                 if (i==int(poly.points.size()))
                     i = 0;
-                writer.extrude(unscale(poly.points[i]).cast<float>(), m_perimeter_speed * 60.f);
+                writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed);
                 if (i == cp)
                     break;
             }
@@ -1450,6 +1464,8 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
 void
 WipeTower::wipe_lines_1(WipeTowerWriter& writer)
 {
+    int extrude_speed;
+
     // XXX how much filament consumed....
 
     //   d-------------c
@@ -1479,15 +1495,19 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer)
     params.density = m_density / 100.f;
     filler->bounding_box = get_extents(expolygon);
 
-    if (is_first_layer())
+    if (is_first_layer()) {
         params.density = 1.f;
+        extrude_speed = m_first_layer_speed * 60.f;
+    } else {
+        extrude_speed = m_infill_speed * 60.f;
+    }
 
     polylines = filler->fill_surface(&surface, params);
 
     for (const Polyline& line: polylines) {
         writer.travel(unscale(line.points.front()).cast<float>());
         for (auto& point: line.points) {
-            writer.extrude(unscale(point).cast<float>(), m_infill_speed * 60.f);
+            writer.extrude(unscale(point).cast<float>(), extrude_speed);
         }
     }
 }

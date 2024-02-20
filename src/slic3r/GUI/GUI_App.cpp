@@ -294,6 +294,7 @@ private:
                 _L("Licensed under GNU AGPLv3.") + "\n\n\n\n\n\n\n";
 
             title_font = version_font = credits_font = init_font;
+            title_font.SetFaceName("Audiowide");
         }
     } 
     m_constant_text;
@@ -1656,6 +1657,14 @@ void GUI_App::init_fonts()
     // DEFAULT in wxGtk. Use the TELETYPE family as a work-around
     m_code_font = wxFont(wxFontInfo().Family(wxFONTFAMILY_TELETYPE));
     m_code_font.SetPointSize(m_normal_font.GetPointSize());
+
+#if wxUSE_PRIVATE_FONTS
+    const wxString resources_dir = from_u8(Slic3r::resources_dir());
+    const wxString font_path = resources_dir + "/fonts/Audiowide-Regular.ttf";
+    wxFont::AddPrivateFont(font_path);
+#else
+#error "No support for wxUSE_PRIVATE_FONTS"
+#endif
 }
 
 void GUI_App::update_fonts(const MainFrame *main_frame)

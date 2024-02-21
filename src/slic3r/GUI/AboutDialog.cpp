@@ -242,8 +242,8 @@ AboutDialog::AboutDialog()
     // title
     {
         wxStaticText* title = new wxStaticText(this, wxID_ANY, wxGetApp().is_editor() ? SLIC3R_APP_NAME : GCODEVIEWER_APP_NAME, wxDefaultPosition, wxDefaultSize);
-        wxFont title_font = GUI::wxGetApp().bold_font();
-        title_font.SetFamily(wxFONTFAMILY_ROMAN);
+        wxFont title_font = GUI::wxGetApp().normal_font();
+        title_font.SetFaceName("Audiowide");
         title_font.SetPointSize(int(2.5 * title_font.GetPointSize()));//title_font.SetPointSize(24);
         title->SetFont(title_font);
         vsizer->Add(title, 0, wxALIGN_LEFT | wxTOP, 10);

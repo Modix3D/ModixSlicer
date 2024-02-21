@@ -15,8 +15,8 @@
 #define _libslic3r_h_
 
 #include "libslic3r_version.h"
-#define GCODEVIEWER_APP_NAME "PrusaSlicer G-code Viewer"
-#define GCODEVIEWER_APP_KEY  "PrusaSlicerGcodeViewer"
+#define GCODEVIEWER_APP_NAME "ModixSlicer G-code Viewer"
+#define GCODEVIEWER_APP_KEY  "ModixSlicerGcodeViewer"
 
 // this needs to be included early for MSVC (listing it in Build.PL is not enough)
 #include <memory>

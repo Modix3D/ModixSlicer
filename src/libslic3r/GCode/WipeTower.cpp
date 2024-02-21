@@ -1234,6 +1234,15 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         m_perimeter_width = m_filpar[m_current_tool].nozzle_diameter;
         m_infill_width = m_filpar[m_current_tool].nozzle_diameter;
 
+
+        int extrude_speed_perimeter, extrude_speed_infill;
+        if (is_first_layer()) {
+            extrude_speed_perimeter = extrude_speed_infill = m_first_layer_speed * 60.f;
+        } else {
+            extrude_speed_perimeter = m_perimeter_speed * 60.f;
+            extrude_speed_infill = m_infill_speed * 60.f;
+        }
+
         // add number of layers to the brim
         float reinforce_max_z = m_brim_layers * m_wipe_tower_height;
         {
@@ -1248,7 +1257,8 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
             // brim (first layer only)
             if (is_first_layer()) {
-                wipe_contour_2(writer, loops * alpha);
+                writer.change_analyzer_line_width(m_perimeter_width);
+                wipe_contour_2(writer, loops * alpha, extrude_speed_perimeter);
             } else {
                 // 2. adjust number of loops depending on z position
                 int loops2 = (m_z_pos / reinforce_max_z) * loops;
@@ -1257,7 +1267,7 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
                 int loops3 = std::max( int(1+m_extra_perimeters) , loops - loops2);
 
                 writer.change_analyzer_line_width(m_perimeter_width);
-                wipe_contour_2(writer, loops3 * alpha);
+                wipe_contour_2(writer, loops3 * alpha, extrude_speed_perimeter);
             }
 
         }
@@ -1273,16 +1283,17 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
             m_perimeter_width = m_filpar[m_current_tool].nozzle_diameter;
             m_infill_width = m_filpar[m_current_tool].nozzle_diameter;
 
+            // complete layer
             writer.change_analyzer_line_width(m_infill_width);
-            wipe_lines_1(writer);
+            wipe_lines_1(writer, extrude_speed_infill);
             break;
         case 0:
             // there is no tool switch, complete layer
             writer.change_analyzer_line_width(m_infill_width);
-            wipe_lines_1(writer);
+            wipe_lines_1(writer, extrude_speed_infill);
             break;
         default:
-            throw Slic3r::InvalidArgument("Error: WipeTower invalid parameter");
+            throw Slic3r::InvalidArgument("WipeTower: invalid parameter");
             break;
         }
 
@@ -1326,6 +1337,8 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     //writer.append("[end_filament_gcode]\n");
     writer.append("[toolchange_gcode_from_wipe_tower_generator]\n");
 #else
+    // Perform the switch in-place, that way we can be sure there's no issue with the
+    // gcode generation getting confused with the tool changes.
     writer.append("T" + std::to_string(new_tool) + "\n");
 #endif
 
@@ -1357,12 +1370,8 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
 }
 
 void
-WipeTower::wipe_contour_1(WipeTowerWriter& writer, float offset)
+WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
 {
-    int extrude_speed;
-
-    // XXX how much filament consumed....
-
     // h-----------------g
     // | d-------------c |
     // | |             | |
@@ -1370,59 +1379,6 @@ WipeTower::wipe_contour_1(WipeTowerWriter& writer, float offset)
     // | |             | |
     // | a-------------b |
     // e-----------------f
-
-    Point a = Point::new_scale(0,0);
-    Point b = Point::new_scale(m_wipe_tower_width,0);
-    Point c = Point::new_scale(m_wipe_tower_width,m_wipe_tower_depth);
-    Point d = Point::new_scale(0,m_wipe_tower_depth);
-
-    Point e = Point::new_scale(-offset,-offset);
-    Point f = Point::new_scale( offset+m_wipe_tower_width,-offset);
-    Point g = Point::new_scale( offset+m_wipe_tower_width, offset+m_wipe_tower_depth);
-    Point h = Point::new_scale(-offset, offset+m_wipe_tower_depth);
-
-    std::unique_ptr<Fill> filler(Fill::new_from_type("concentric"));
-    Slic3r::ExPolygon expolygon({e,f,g,h}, {a,b,c,d});
-    Polylines polylines;
-    Surface surface(stPerimeter, expolygon);
-
-    // width, height, nozzle_dmr
-    auto flow = Slic3r::Flow(m_perimeter_width, m_layer_height, m_perimeter_width);
-
-    const float spacing = m_perimeter_width - m_layer_height*float(1.-M_PI_4);
-    filler->angle = Geometry::deg2rad(0.f);
-    filler->spacing = flow.spacing();
-    FillParams params;
-    params.density = 1.f;
-    filler->bounding_box = get_extents(expolygon);
-
-    if (is_first_layer()) {
-        params.density = 1.f;
-        extrude_speed = m_first_layer_speed * 60.f;
-    } else {
-        extrude_speed = m_perimeter_speed * 60.f;
-    }
-
-    polylines = filler->fill_surface(&surface, params);
-
-    for (const Polyline& line: polylines) {
-        writer.travel(unscale(line.points.front()).cast<float>());
-        for (auto& point: line.points) {
-            writer.extrude(unscale(point).cast<float>(), extrude_speed);
-        }
-    }
-}
-
-void
-WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
-{
-    int extrude_speed;
-
-    if (is_first_layer()) {
-        extrude_speed = m_first_layer_speed * 60.f;
-    } else {
-        extrude_speed = m_perimeter_speed * 60.f;
-    }
 
     Point a = Point::new_scale(0,0);
     Point b = Point::new_scale(m_wipe_tower_width,0);
@@ -1462,16 +1418,12 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops)
 }
 
 void
-WipeTower::wipe_lines_1(WipeTowerWriter& writer)
+WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
 {
-    int extrude_speed;
-
-    // XXX how much filament consumed....
-
     //   d-------------c
-    //   |             |
-    //   |             |
-    //   |             |
+    //   |/////////////|
+    //   |/////////////|
+    //   |/////////////|
     //   a-------------b
     //
 
@@ -1497,9 +1449,6 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer)
 
     if (is_first_layer()) {
         params.density = 1.f;
-        extrude_speed = m_first_layer_speed * 60.f;
-    } else {
-        extrude_speed = m_infill_speed * 60.f;
     }
 
     polylines = filler->fill_surface(&surface, params);

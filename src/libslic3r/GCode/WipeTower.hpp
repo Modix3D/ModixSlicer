@@ -150,9 +150,8 @@ public:
 	// Iterates through prepared m_plan, generates ToolChangeResults and appends them to "result"
 	void generate(std::vector<std::vector<ToolChangeResult>> &result);
 	void change_tool(WipeTowerWriter& writer, int new_tool);
-	void wipe_lines_1(WipeTowerWriter& writer);
-	void wipe_contour_1(WipeTowerWriter& writer, float offset);
-	void wipe_contour_2(WipeTowerWriter& writer, int loops);
+	void wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed);
+	void wipe_lines_1(WipeTowerWriter& writer, int extrude_speed);
 
 
     float get_depth() const { return m_wipe_tower_depth; }

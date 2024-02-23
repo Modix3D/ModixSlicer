@@ -353,14 +353,6 @@ void ToolOrdering::reorder_extruders(unsigned int last_extruder_id)
                     lt.extruders.front() = last_extruder_id;
                     break;
                 }
-
-            // On first layer with wipe tower, prefer a soluble extruder
-            // at the beginning, so it is not wiped on the first layer.
-			// Modix remove ?
-            if (lt == m_layer_tools[0] && m_print_config_ptr && m_print_config_ptr->wipe_tower) {
-                for (size_t i = 0; i<lt.extruders.size(); ++i)
-					std::swap(lt.extruders[i], lt.extruders.front());
-            }
         }
         last_extruder_id = lt.extruders.back();
     }

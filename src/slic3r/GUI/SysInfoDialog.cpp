@@ -120,8 +120,8 @@ SysInfoDialog::SysInfoDialog()
     // title
     {
         wxStaticText* title = new wxStaticText(this, wxID_ANY, wxGetApp().is_editor() ? SLIC3R_APP_NAME : GCODEVIEWER_APP_NAME, wxDefaultPosition, wxDefaultSize);
-        wxFont title_font = wxGetApp().bold_font();
-        title_font.SetFamily(wxFONTFAMILY_ROMAN);
+        wxFont title_font = wxGetApp().normal_font();
+        title_font.SetFaceName("Audiowide");
         title_font.SetPointSize(int(2.5 * title_font.GetPointSize()));//title_font.SetPointSize(22);
         title->SetFont(title_font);
         vsizer->Add(title, 0, wxEXPAND | wxALIGN_LEFT | wxTOP, wxGetApp().em_unit()/*50*/);

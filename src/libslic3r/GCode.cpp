@@ -2012,7 +2012,16 @@ namespace Skirt {
         //For sequential print, the following test may fail when extruding the 2nd and other objects.
         // assert(skirt_done.empty());
         if (skirt_done.empty() && print.has_skirt() && ! print.skirt().entities.empty() && layer_tools.has_skirt) {
+
+#if 1
+            // Prime just the first printing extruder. This is original Slic3r's implementation.
+            skirt_loops_per_extruder_out[layer_tools.extruders.front()] = std::pair<size_t, size_t>(0, print.config().skirts.value);
+#else
+            // Prime all extruders planned for this layer, see
+            // https://github.com/prusa3d/PrusaSlicer/issues/469#issuecomment-322450619
             skirt_loops_per_extruder_all_printing(print, layer_tools, skirt_loops_per_extruder_out);
+#endif
+
             skirt_done.emplace_back(layer_tools.print_z);
         }
         return skirt_loops_per_extruder_out;
@@ -2037,7 +2046,7 @@ namespace Skirt {
             // FIXME: The skirt_done should not be empty at this point. The check is a workaround
             // of https://github.com/prusa3d/PrusaSlicer/issues/5652, but it deserves a real fix.
             if (valid) {
-#if 0
+#if 1
                 // Prime just the first printing extruder. This is original Slic3r's implementation.
                 skirt_loops_per_extruder_out[layer_tools.extruders.front()] = std::pair<size_t, size_t>(0, print.config().skirts.value);
 #else

@@ -211,19 +211,6 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
                opt_key == "complete_objects"
             || opt_key == "filament_type"
             || opt_key == "first_layer_temperature"
-            || opt_key == "filament_loading_speed"
-            || opt_key == "filament_loading_speed_start"
-            || opt_key == "filament_unloading_speed"
-            || opt_key == "filament_unloading_speed_start"
-            || opt_key == "filament_toolchange_delay"
-            || opt_key == "filament_cooling_moves"
-            || opt_key == "filament_minimal_purge_on_wipe_tower"
-            || opt_key == "filament_cooling_initial_speed"
-            || opt_key == "filament_cooling_final_speed"
-            || opt_key == "filament_ramming_parameters"
-            || opt_key == "filament_multitool_ramming"
-            || opt_key == "filament_multitool_ramming_volume"
-            || opt_key == "filament_multitool_ramming_flow"
             || opt_key == "filament_max_volumetric_speed"
             || opt_key == "gcode_flavor"
             || opt_key == "high_current_on_filament_swap"
@@ -238,14 +225,7 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
 			|| opt_key == "wipe_tower_density"
 			|| opt_key == "wipe_tower_brim_layers"
             || opt_key == "wipe_tower_brim_width"
-            || opt_key == "wipe_tower_bridging"
-            || opt_key == "wipe_tower_no_sparse_layers"
             || opt_key == "wipe_tower_extruder"
-            || opt_key == "wiping_volumes_matrix"
-            || opt_key == "parking_pos_retraction"
-            || opt_key == "cooling_tube_retraction"
-            || opt_key == "cooling_tube_length"
-            || opt_key == "extra_loading_move"
             || opt_key == "travel_speed"
             || opt_key == "travel_speed_z"
             || opt_key == "first_layer_speed"
@@ -1233,13 +1213,6 @@ Points Print::first_layer_wipe_tower_corners() const
                                    Vec2d(pt0.x(),pt0.y()+depth)
                                  };
 
-        // Now the stabilization cone.
-        Vec2d center = (pts[0] + pts[2])/2.;
-        const auto [cone_R, cone_x_scale] = WipeTower::get_wipe_tower_cone_base(m_config.wipe_tower_width, m_wipe_tower_data.height, m_wipe_tower_data.depth, 0.);
-        double r = cone_R + m_wipe_tower_data.brim_width;
-        for (double alpha = 0.; alpha<2*M_PI; alpha += M_PI/20.)
-            pts.emplace_back(center + r*Vec2d(std::cos(alpha)/cone_x_scale, std::sin(alpha)));
-
         for (Vec2d& pt : pts) {
             pt = Eigen::Rotation2Dd(Geometry::deg2rad(m_config.wipe_tower_rotation_angle.value)) * pt;
             pt += Vec2d(m_config.wipe_tower_x.value, m_config.wipe_tower_y.value);
@@ -1427,21 +1400,7 @@ const WipeTowerData& Print::wipe_tower_data(size_t extruders_cnt) const
     // If the wipe tower wasn't created yet, make sure the depth and brim_width members are set to default.
     if (! is_step_done(psWipeTower) && extruders_cnt !=0) {
         const_cast<Print*>(this)->m_wipe_tower_data.brim_width = m_config.wipe_tower_brim_width;
-
-        // Calculating depth should take into account currently set wiping volumes.
-        // For a long time, the initial preview would just use 900/width per toolchange (15mm on a 60mm wide tower)
-        // and it worked well enough. Let's try to do slightly better by accounting for the purging volumes.
-        std::vector<std::vector<float>> wipe_volumes = WipeTower::extract_wipe_volumes(m_config);
-        std::vector<float> max_wipe_volumes;
-        for (const std::vector<float>& v : wipe_volumes)
-            max_wipe_volumes.emplace_back(*std::max_element(v.begin(), v.end()));
-        float maximum = std::accumulate(max_wipe_volumes.begin(), max_wipe_volumes.end(), 0.f);
-        maximum = maximum * extruders_cnt / max_wipe_volumes.size();
-
-        float width = float(m_config.wipe_tower_width);
-        float layer_height = 0.2f; // just assume fixed value, it will still be better than before.
-
-        const_cast<Print*>(this)->m_wipe_tower_data.depth = (maximum/layer_height)/width;
+        const_cast<Print*>(this)->m_wipe_tower_data.depth = m_config.wipe_tower_depth;
         const_cast<Print*>(this)->m_wipe_tower_data.height = -1.f; // unknown yet
     }
 
@@ -1453,8 +1412,6 @@ void Print::_make_wipe_tower()
     m_wipe_tower_data.clear();
     if (! this->has_wipe_tower())
         return;
-
-    std::vector<std::vector<float>> wipe_volumes = WipeTower::extract_wipe_volumes(m_config);
 
     // Let the ToolOrdering class know there will be initial priming extrusions at the start of the print.
     m_wipe_tower_data.tool_ordering = ToolOrdering(*this, (unsigned int)-1, true);
@@ -1501,7 +1458,7 @@ void Print::_make_wipe_tower()
     this->throw_if_canceled();
 
     // Initialize the wipe tower.
-    WipeTower wipe_tower(m_config, m_default_region_config, wipe_volumes, m_wipe_tower_data.tool_ordering.first_extruder());
+    WipeTower wipe_tower(m_config, m_default_region_config, m_wipe_tower_data.tool_ordering.first_extruder());
 
     // Set the extruder & material properties at the wipe tower object.
     for (size_t i = 0; i < m_config.nozzle_diameter.size(); ++ i)
@@ -1518,20 +1475,8 @@ void Print::_make_wipe_tower()
             for (const auto extruder_id : layer_tools.extruders) {
                 if ((first_layer && extruder_id == m_wipe_tower_data.tool_ordering.all_extruders().back()) || extruder_id != current_extruder_id) {
 
-
-                    float volume_to_wipe = wipe_volumes[current_extruder_id][extruder_id];             // total volume to wipe after this toolchange
-                    // Not all of that can be used for infill purging:
-                    volume_to_wipe -= (float)m_config.filament_minimal_purge_on_wipe_tower.get_at(extruder_id);
-
-                    // try to assign some infills/objects for the wiping:
-                    volume_to_wipe = layer_tools.wiping_extrusions_nonconst().mark_wiping_extrusions(*this, layer_tools, current_extruder_id, extruder_id, volume_to_wipe);
-
-                    // add back the minimal amount toforce on the wipe tower:
-                    volume_to_wipe += (float)m_config.filament_minimal_purge_on_wipe_tower.get_at(extruder_id);
-
                     // request a toolchange at the wipe tower with at least volume_to_wipe purging amount
-                    wipe_tower.plan_toolchange((float)layer_tools.print_z, (float)layer_tools.wipe_tower_layer_height,
-                                               current_extruder_id, extruder_id, 0);
+                    wipe_tower.plan_toolchange((float)layer_tools.print_z, (float)layer_tools.wipe_tower_layer_height, current_extruder_id, extruder_id);
                     current_extruder_id = extruder_id;
                 }
             }
@@ -1548,29 +1493,10 @@ void Print::_make_wipe_tower()
     m_wipe_tower_data.z_and_depth_pairs = wipe_tower.get_z_and_depth_pairs();
     m_wipe_tower_data.brim_width = wipe_tower.get_brim_width();
     m_wipe_tower_data.height = wipe_tower.get_wipe_tower_height();
-
-    // Unload the current filament over the purge tower.
-    coordf_t layer_height = m_objects.front()->config().layer_height.value;
-    if (m_wipe_tower_data.tool_ordering.back().wipe_tower_partitions > 0) {
-        // The wipe tower goes up to the last layer of the print.
-        if (wipe_tower.layer_finished()) {
-            // The wipe tower is printed to the top of the print and it has no space left for the final extruder purge.
-            // Lift Z to the next layer.
-            wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z + layer_height), float(layer_height), 0, false, true);
-        } else {
-            // There is yet enough space at this layer of the wipe tower for the final purge.
-        }
-    } else {
-        // The wipe tower does not reach the last print layer, perform the pruge at the last print layer.
-        assert(m_wipe_tower_data.tool_ordering.back().wipe_tower_partitions == 0);
-        wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z), float(layer_height), 0, false, true);
-    }
-
     m_wipe_tower_data.used_filament = wipe_tower.get_used_filament();
     m_wipe_tower_data.number_of_toolchanges = wipe_tower.get_number_of_toolchanges();
     m_wipe_tower_data.width = wipe_tower.width();
     m_wipe_tower_data.first_layer_height = config().first_layer_height;
-    m_wipe_tower_data.cone_angle = 0.;
 }
 
 // Generate a recommended G-code output file name based on the format template, default extension, and template parameters

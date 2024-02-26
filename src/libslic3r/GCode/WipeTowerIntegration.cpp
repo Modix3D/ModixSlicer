@@ -49,8 +49,7 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
 
     const bool needs_toolchange = gcodegen.writer().need_toolchange(new_extruder_id);
     const bool will_go_down = ! is_approx(z, current_z);
-    const bool is_ramming = (gcodegen.config().single_extruder_multi_material)
-                         || (! gcodegen.config().single_extruder_multi_material && gcodegen.config().filament_multitool_ramming.get_at(tcr.initial_tool));
+    const bool is_ramming = false;
     const bool should_travel_to_tower = ! tcr.priming
                                      && (tcr.force_travel        // wipe tower says so
                                          || ! needs_toolchange   // this is just finishing the tower with no toolchange
@@ -214,6 +213,7 @@ std::string WipeTowerIntegration::prime(GCodeGenerator &gcodegen)
 
 std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extruder_id, bool finish_layer)
 {
+    // XXX
     std::string gcode;
     assert(m_layer_idx >= 0);
     if (gcodegen.writer().need_toolchange(extruder_id) || finish_layer) {
@@ -225,12 +225,6 @@ std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extr
             // resulting in a wipe tower with sparse layers.
             double wipe_tower_z = -1;
             bool ignore_sparse = false;
-            if (gcodegen.config().wipe_tower_no_sparse_layers.value) {
-                wipe_tower_z = m_last_wipe_tower_print_z;
-                ignore_sparse = (m_tool_changes[m_layer_idx].size() == 1 && m_tool_changes[m_layer_idx].front().initial_tool == m_tool_changes[m_layer_idx].front().new_tool && m_layer_idx != 0);
-                if (m_tool_change_idx == 0 && !ignore_sparse)
-                    wipe_tower_z = m_last_wipe_tower_print_z + m_tool_changes[m_layer_idx].front().layer_height;
-            }
 
             if (!ignore_sparse) {
                 gcode += append_tcr(gcodegen, m_tool_changes[m_layer_idx][m_tool_change_idx++], extruder_id, wipe_tower_z);

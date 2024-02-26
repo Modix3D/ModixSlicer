@@ -364,8 +364,6 @@ void GCodeProcessor::TimeProcessor::reset()
     export_remaining_time_enabled = false;
     machine_envelope_processing_enabled = false;
     machine_limits = MachineEnvelopeConfig();
-    filament_load_times = std::vector<float>();
-    filament_unload_times = std::vector<float>();
     for (size_t i = 0; i < static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count); ++i) {
         machines[i].reset();
     }
@@ -621,28 +619,8 @@ void GCodeProcessor::apply_config(const PrintConfig& config)
         }
     }
 
-    // Filament load / unload times are not specific to a firmware flavor. Let anybody use it if they find it useful.
-    // As of now the fields are shown at the UI dialog in the same combo box as the ramming values, so they
-    // are considered to be active for the single extruder multi-material printers only.
-    m_time_processor.filament_load_times.resize(config.filament_load_time.values.size());
-    for (size_t i = 0; i < config.filament_load_time.values.size(); ++i) {
-        m_time_processor.filament_load_times[i] = static_cast<float>(config.filament_load_time.values[i]);
-    }
-    m_time_processor.filament_unload_times.resize(config.filament_unload_time.values.size());
-    for (size_t i = 0; i < config.filament_unload_time.values.size(); ++i) {
-        m_time_processor.filament_unload_times[i] = static_cast<float>(config.filament_unload_time.values[i]);
-    }
 
-    m_single_extruder_multi_material = config.single_extruder_multi_material;
-
-    // With MM setups like Prusa MMU2, the filaments may be expected to be parked at the beginning.
-    // Remember the parking position so the initial load is not included in filament estimate.
-    if (m_single_extruder_multi_material && extruders_count > 1 && config.wipe_tower) {
-        m_parking_position = float(config.parking_pos_retraction.value);
-        m_extra_loading_move = float(config.extra_loading_move);
-    }
-
-for (size_t i = 0; i < static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count); ++i) {
         float max_acceleration = get_option_value(m_time_processor.machine_limits.machine_max_acceleration_extruding, i);
         m_time_processor.machines[i].max_acceleration = max_acceleration;
         m_time_processor.machines[i].acceleration = (max_acceleration > 0.0f) ? max_acceleration : DEFAULT_ACCELERATION;
@@ -796,37 +774,6 @@ void GCodeProcessor::apply_config(const DynamicPrintConfig& config)
 
     m_extruder_temps.resize(m_result.extruders_count);
 
-    const ConfigOptionFloats* filament_load_time = config.option<ConfigOptionFloats>("filament_load_time");
-    if (filament_load_time != nullptr) {
-        m_time_processor.filament_load_times.resize(filament_load_time->values.size());
-        for (size_t i = 0; i < filament_load_time->values.size(); ++i) {
-            m_time_processor.filament_load_times[i] = static_cast<float>(filament_load_time->values[i]);
-        }
-    }
-
-    const ConfigOptionFloats* filament_unload_time = config.option<ConfigOptionFloats>("filament_unload_time");
-    if (filament_unload_time != nullptr) {
-        m_time_processor.filament_unload_times.resize(filament_unload_time->values.size());
-        for (size_t i = 0; i < filament_unload_time->values.size(); ++i) {
-            m_time_processor.filament_unload_times[i] = static_cast<float>(filament_unload_time->values[i]);
-        }
-    }
-
-    // With MM setups like Prusa MMU2, the filaments may be expected to be parked at the beginning.
-    // Remember the parking position so the initial load is not included in filament estimate.
-    const ConfigOptionBool* single_extruder_multi_material = config.option<ConfigOptionBool>("single_extruder_multi_material");
-    const ConfigOptionBool* wipe_tower = config.option<ConfigOptionBool>("wipe_tower");
-    const ConfigOptionFloat* parking_pos_retraction = config.option<ConfigOptionFloat>("parking_pos_retraction");
-    const ConfigOptionFloat* extra_loading_move = config.option<ConfigOptionFloat>("extra_loading_move");
-
-    m_single_extruder_multi_material = single_extruder_multi_material != nullptr && single_extruder_multi_material->value;
-
-    if (m_single_extruder_multi_material && wipe_tower != nullptr && parking_pos_retraction != nullptr && extra_loading_move != nullptr) {
-        if (m_single_extruder_multi_material && m_result.extruders_count > 1 && wipe_tower->value) {
-            m_parking_position = float(parking_pos_retraction->value);
-            m_extra_loading_move = float(extra_loading_move->value);
-        }
-    }
 
     bool use_machine_limits = false;
     const ConfigOptionEnum<MachineLimitsUsage>* machine_limits_usage = config.option<ConfigOptionEnum<MachineLimitsUsage>>("machine_limits_usage");
@@ -1002,8 +949,6 @@ void GCodeProcessor::reset()
         m_extruder_temps[i] = 0.0f;
     }
 
-    m_parking_position = 0.f;
-    m_extra_loading_move = 0.f;
     m_extruded_last_z = 0.0f;
     m_first_layer_height = 0.0f;
     m_g1_line_id = 0;
@@ -1769,18 +1714,6 @@ void GCodeProcessor::process_gcode_line(const GCodeReader::GCodeLine& line, bool
                     case '6':
                         switch (cmd[3]) {
                         case '6': { process_M566(line); break; } // Set allowable instantaneous speed change
-                        default: break;
-                        }
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                case '7':
-                    switch (cmd[2]) {
-                    case '0':
-                        switch (cmd[3]) {
-                        case '2': { process_M702(line); break; } // Unload the current filament into the MK3 MMU2 unit at the end of print.
                         default: break;
                         }
                         break;
@@ -2625,10 +2558,6 @@ void GCodeProcessor::process_G1(const std::array<std::optional<double>, 4>& axes
         return;
 
     const float volume_extruded_filament = area_filament_cross_section * delta_pos[E];
-
-    if (volume_extruded_filament != 0.)
-        m_used_filaments.increase_caches(volume_extruded_filament, m_extruder_id, area_filament_cross_section * m_parking_position,
-                                         area_filament_cross_section * m_extra_loading_move);
 
     const EMoveType type = move_type(delta_pos);
     if (type == EMoveType::Extrude) {
@@ -3601,17 +3530,6 @@ void GCodeProcessor::process_M566(const GCodeReader::GCodeLine& line)
     }
 }
 
-void GCodeProcessor::process_M702(const GCodeReader::GCodeLine& line)
-{
-    if (line.has('C')) {
-        // MK3 MMU2 specific M code:
-        // M702 C is expected to be sent by the custom end G-code when finalizing a print.
-        // The MK3 unit shall unload and park the active filament into the MMU2 unit.
-        m_time_processor.extruder_unloaded = true;
-        simulate_st_synchronize(get_filament_unload_time(m_extruder_id));
-    }
-}
-
 void GCodeProcessor::process_T(const GCodeReader::GCodeLine& line)
 {
     process_T(line.cmd());
@@ -3641,15 +3559,6 @@ void GCodeProcessor::process_T(const std::string_view command)
                     process_filaments(CustomGCode::ToolChange);
                     m_extruder_id = id;
                     m_cp_color.current = m_extruder_colors[id];
-                    // Specific to the MK3 MMU2:
-                    // The initial value of extruder_unloaded is set to true indicating
-                    // that the filament is parked in the MMU2 unit and there is nothing to be unloaded yet.
-                    float extra_time = get_filament_unload_time(static_cast<size_t>(old_extruder_id));
-                    m_time_processor.extruder_unloaded = false;
-                    extra_time += get_filament_load_time(static_cast<size_t>(m_extruder_id));
-                    if (m_producer == EProducer::KissSlicer && m_flavor == gcfMarlinLegacy)
-                        extra_time += m_kissslicer_toolchange_time_correction;
-                    simulate_st_synchronize(extra_time);
 
                     // specific to single extruder multi material, set the new extruder temperature
                     // to match the old one
@@ -4539,26 +4448,6 @@ void GCodeProcessor::set_travel_acceleration(PrintEstimatedStatistics::ETimeMode
             // Clamp the acceleration with the maximum.
             std::min(value, m_time_processor.machines[id].max_travel_acceleration);
     }
-}
-
-float GCodeProcessor::get_filament_load_time(size_t extruder_id)
-{
-    if (m_is_XL_printer)
-        return 4.5f; // FIXME
-    return (m_time_processor.filament_load_times.empty() || m_time_processor.extruder_unloaded) ?
-        0.0f :
-        ((extruder_id < m_time_processor.filament_load_times.size()) ?
-            m_time_processor.filament_load_times[extruder_id] : m_time_processor.filament_load_times.front());
-}
-
-float GCodeProcessor::get_filament_unload_time(size_t extruder_id)
-{
-    if (m_is_XL_printer)
-        return 0.f; // FIXME
-    return (m_time_processor.filament_unload_times.empty() || m_time_processor.extruder_unloaded) ?
-        0.0f :
-        ((extruder_id < m_time_processor.filament_unload_times.size()) ?
-            m_time_processor.filament_unload_times[extruder_id] : m_time_processor.filament_unload_times.front());
 }
 
 void GCodeProcessor::process_custom_gcode_time(CustomGCode::Type code)

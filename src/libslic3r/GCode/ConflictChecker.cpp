@@ -107,10 +107,7 @@ static std::vector<ExtrusionPaths> getFakeExtrusionPathsFromWipeTower(const Wipe
     float width = wtd.width;
     float depth = wtd.depth;
     float height = wtd.height;
-    float cone_angle = wtd.cone_angle;
     const auto& z_and_depth_pairs = wtd.z_and_depth_pairs;
-
-    const auto [cone_base_R, cone_scale_x] = WipeTower::get_wipe_tower_cone_base(width, height, depth, cone_angle);
 
     std::vector<ExtrusionPaths> paths;
     for (float hh = 0.f; hh < h; hh += lh) {
@@ -136,26 +133,6 @@ static std::vector<ExtrusionPaths> getFakeExtrusionPathsFromWipeTower(const Wipe
         for (coord_t y=minCorner.y()+scale_(3.); y<maxCorner.y(); y+=scale_(3.)) {
             path.polyline = { {minCorner.x(), y}, {maxCorner.x(), y} };
             paths.back().emplace_back(path);
-        }
-
-        // And of course the stabilization cone and its base...
-        if (cone_base_R > 0.) {
-            path.polyline.clear();
-            double r = cone_base_R * (1 - hh/height);
-            for (double alpha=0; alpha<2.01*M_PI; alpha+=2*M_PI/20.)
-                path.polyline.points.emplace_back(Point::new_scale(width/2. + r * std::cos(alpha)/cone_scale_x, depth/2. + r * std::sin(alpha)));
-            paths.back().emplace_back(path);
-            if (hh == 0.f) { // Cone brim.
-                for (float bw=wtd.brim_width; bw>0.f; bw-=3.f) {
-                    path.polyline.clear();
-                    for (double alpha=0; alpha<2.01*M_PI; alpha+=2*M_PI/20.) // see load_wipe_tower_preview, where the same is a bit clearer
-                        path.polyline.points.emplace_back(Point::new_scale(
-                            width/2. + cone_base_R * std::cos(alpha)/cone_scale_x * (1. + cone_scale_x*bw/cone_base_R),
-                            depth/2. + cone_base_R * std::sin(alpha) * (1. + bw/cone_base_R))
-                        );
-                    paths.back().emplace_back(path);
-                }
-            }
         }
 
         // Only the first layer has brim.

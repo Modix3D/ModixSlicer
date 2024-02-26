@@ -463,7 +463,6 @@ struct WipeTowerData
     // Data needed to generate fake extrusions for conflict checking.
     float                                                 width;
     float                                                 first_layer_height;
-    float                                                 cone_angle;
     Vec2d                                                 position;
     float                                                 rotation_angle;
 
@@ -479,7 +478,6 @@ struct WipeTowerData
         height = 0.f;
         width = 0.f;
         first_layer_height = 0.f;
-        cone_angle = 0.f;
         position = Vec2d::Zero();
         rotation_angle = 0.f;
     }

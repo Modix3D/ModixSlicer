@@ -38,7 +38,6 @@ public:
 		m_current_z(0.f),
 		m_current_feedrate(0.f),
 		m_layer_height(layer_height),
-		m_extrusion_flow(0.f),
 		m_preview_suppressed(false),
 		m_elapsed_time(0.f),
 #if ENABLE_GCODE_VIEWER_DATA_CHECKING
@@ -84,44 +83,17 @@ public:
 		return *this;
 	}
 
-    WipeTowerWriter& 			 set_position(const Vec2f &pos) { m_current_pos = pos; return *this; }
+    WipeTowerWriter& set_position(const Vec2f &pos) { m_current_pos = pos; return *this; }
 
-    WipeTowerWriter&				 set_initial_tool(size_t tool) { m_current_tool = tool; return *this; }
+    WipeTowerWriter& set_initial_tool(size_t tool) { m_current_tool = tool; return *this; }
 
-	WipeTowerWriter&				 set_z(float z)
+	WipeTowerWriter& set_z(float z)
 		{ m_current_z = z; return *this; }
 
-	WipeTowerWriter& 			 set_extrusion_flow(float flow)
+	WipeTowerWriter& set_extrusion_flow(float flow)
 		{ m_extrusion_flow = flow; return *this; }
 
-	WipeTowerWriter&				 set_y_shift(float shift) {
-        m_current_pos.y() -= shift-m_y_shift;
-        m_y_shift = shift;
-        return (*this);
-    }
-
-    WipeTowerWriter&            disable_linear_advance() {
-        if (m_gcode_flavor == gcfRepRapSprinter || m_gcode_flavor == gcfRepRapFirmware)
-            m_gcode += (std::string("M572 D") + std::to_string(m_current_tool) + " S0\n");
-        else if (m_gcode_flavor == gcfKlipper)
-            m_gcode += "SET_PRESSURE_ADVANCE ADVANCE=0\n";
-        else
-            m_gcode += "M900 K0\n";
-        return *this;
-    }
-
-	// Suppress / resume G-code preview in Slic3r. Slic3r will have difficulty to differentiate the various
-	// filament loading and cooling moves from normal extrusion moves. Therefore the writer
-	// is asked to suppres output of some lines, which look like extrusions.
-#if ENABLE_GCODE_VIEWER_DATA_CHECKING
-    WipeTowerWriter& suppress_preview() { change_analyzer_line_width(0.f); m_preview_suppressed = true; return *this; }
-    WipeTowerWriter& resume_preview() { change_analyzer_line_width(m_default_analyzer_line_width); m_preview_suppressed = false; return *this; }
-#else
-    WipeTowerWriter& 			 suppress_preview() { m_preview_suppressed = true; return *this; }
-	WipeTowerWriter& 			 resume_preview()   { m_preview_suppressed = false; return *this; }
-#endif // ENABLE_GCODE_VIEWER_DATA_CHECKING
-
-	WipeTowerWriter& 			 feedrate(float f)
+	WipeTowerWriter& feedrate(float f)
 	{
         if (f != m_current_feedrate) {
 			m_gcode += "G1" + set_format_F(f) + "\n";
@@ -524,26 +496,20 @@ WipeTower::ToolChangeResult WipeTower::construct_tcr(WipeTowerWriter& writer,
 
 
 
-WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default_region_config, const std::vector<std::vector<float>>& wiping_matrix, size_t initial_tool) :
-    m_semm(config.single_extruder_multi_material.value),
+WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default_region_config, size_t initial_tool) :
     m_wipe_tower_pos(config.wipe_tower_x, config.wipe_tower_y),
     m_wipe_tower_width(float(config.wipe_tower_width)),
+    m_wipe_tower_depth(float(config.wipe_tower_depth)),
     m_wipe_tower_rotation_angle(float(config.wipe_tower_rotation_angle)),
     m_wipe_tower_brim_width(float(config.wipe_tower_brim_width)),
-    m_wipe_tower_cone_angle(float(0.)),
-    m_extra_spacing(float(1.)),
     m_y_shift(0.f),
     m_z_pos(0.f),
-    m_bridging(float(config.wipe_tower_bridging)),
-    m_no_sparse_layers(config.wipe_tower_no_sparse_layers),
     m_gcode_flavor(config.gcode_flavor),
     m_travel_speed(config.travel_speed),
     m_infill_speed(default_region_config.wipe_tower_infill_speed),
     m_perimeter_speed(default_region_config.wipe_tower_perimeter_speed),
     m_current_tool(initial_tool),
-    wipe_volumes(wiping_matrix),
 	m_extra_perimeters(config.wipe_tower_perimeters-1),
-	m_minimum_depth(float(config.wipe_tower_depth)),
 	m_density(float(config.wipe_tower_density)),
 	m_brim_layers(float(config.wipe_tower_brim_layers/100.f)),
 	m_wipe_tower_extruder(config.wipe_tower_extruder)
@@ -562,16 +528,6 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
     if (m_perimeter_speed == 0.f)
         m_perimeter_speed = 80.f;
 
-
-    // If this is a single extruder MM printer, we will use all the SE-specific config values.
-    // Otherwise, the defaults will be used to turn off the SE stuff.
-    if (m_semm) {
-        m_cooling_tube_retraction = float(config.cooling_tube_retraction);
-        m_cooling_tube_length     = float(config.cooling_tube_length);
-        m_parking_pos_retraction  = float(config.parking_pos_retraction);
-        m_extra_loading_move      = float(config.extra_loading_move);
-        m_set_extruder_trimpot    = config.high_current_on_filament_swap;
-    }
 
     // Calculate where the priming lines should be - very naive test not detecting parallelograms etc.
     const std::vector<Vec2d>& bed_points = config.bed_shape.values;
@@ -604,26 +560,11 @@ void WipeTower::set_extruder(size_t idx, const PrintConfig& config, const PrintR
     m_filpar.push_back(FilamentParameters());
 
     m_filpar[idx].material = config.filament_type.get_at(idx);
-    m_filpar[idx].is_soluble = config.wipe_tower_extruder == 0 ? true : (idx != size_t(config.wipe_tower_extruder - 1));
     m_filpar[idx].temperature = config.temperature.get_at(idx);
     m_filpar[idx].first_layer_temperature = config.first_layer_temperature.get_at(idx);
-
-    // If this is a single extruder MM printer, we will use all the SE-specific config values.
-    // Otherwise, the defaults will be used to turn off the SE stuff.
-    if (m_semm) {
-        m_filpar[idx].loading_speed           = float(config.filament_loading_speed.get_at(idx));
-        m_filpar[idx].loading_speed_start     = float(config.filament_loading_speed_start.get_at(idx));
-        m_filpar[idx].unloading_speed         = float(config.filament_unloading_speed.get_at(idx));
-        m_filpar[idx].unloading_speed_start   = float(config.filament_unloading_speed_start.get_at(idx));
-        m_filpar[idx].delay                   = float(config.filament_toolchange_delay.get_at(idx));
-        m_filpar[idx].cooling_moves           = config.filament_cooling_moves.get_at(idx);
-        m_filpar[idx].cooling_initial_speed   = float(config.filament_cooling_initial_speed.get_at(idx));
-        m_filpar[idx].cooling_final_speed     = float(config.filament_cooling_final_speed.get_at(idx));
-    }
-
     m_filpar[idx].filament_area = float((M_PI/4.f) * pow(config.filament_diameter.get_at(idx), 2)); // all extruders are assumed to have the same filament diameter at this point
     float nozzle_diameter = float(config.nozzle_diameter.get_at(idx));
-    m_filpar[idx].nozzle_diameter = nozzle_diameter; // to be used in future with (non-single) multiextruder MM
+    m_filpar[idx].nozzle_diameter = nozzle_diameter;
 
     float max_vol_speed = float(config.filament_max_volumetric_speed.get_at(idx));
     if (max_vol_speed!= 0.f)
@@ -638,449 +579,7 @@ void WipeTower::set_extruder(size_t idx, const PrintConfig& config, const PrintR
 		m_infill_width = nozzle_diameter;
 	}
 
-    if (m_semm) {
-        std::istringstream stream{config.filament_ramming_parameters.get_at(idx)};
-        float speed = 0.f;
-        stream >> m_filpar[idx].ramming_line_width_multiplicator >> m_filpar[idx].ramming_step_multiplicator;
-        m_filpar[idx].ramming_line_width_multiplicator /= 100;
-        m_filpar[idx].ramming_step_multiplicator /= 100;
-        while (stream >> speed)
-            m_filpar[idx].ramming_speed.push_back(speed);
-        // ramming_speed now contains speeds to be used for every 0.25s piece of the ramming line.
-        // This allows to have the ramming flow variable. The 0.25s value is how it is saved in config
-        // and the same time step has to be used when the ramming is performed.
-    } else {
-        // We will use the same variables internally, but the correspondence to the configuration options will be different.
-        float vol  = config.filament_multitool_ramming_volume.get_at(idx);
-        float flow = config.filament_multitool_ramming_flow.get_at(idx);
-        m_filpar[idx].multitool_ramming = config.filament_multitool_ramming.get_at(idx);
-        m_filpar[idx].ramming_line_width_multiplicator = 2.;
-        m_filpar[idx].ramming_step_multiplicator = 1.;
-
-        // Now the ramming speed vector. In this case it contains just one value (flow).
-        // The time is calculated and saved separately. This is here so that the MM ramming
-        // is not limited by the 0.25s granularity - it is not possible to create a SEMM-style
-        // ramming_speed vector that would respect both the volume and flow (because of
-        // rounding issues with small volumes and high flow).
-        m_filpar[idx].ramming_speed.push_back(flow);
-        m_filpar[idx].multitool_ramming_time = vol/flow;
-    }
-
     m_used_filament_length.resize(std::max(m_used_filament_length.size(), idx + 1)); // makes sure that the vector is big enough so we don't have to check later
-}
-
-
-WipeTower::ToolChangeResult WipeTower::tool_change(size_t tool)
-{
-    size_t old_tool = m_current_tool;
-
-    float wipe_area = 0.f;
-	float wipe_volume = 0.f;
-
-	// Finds this toolchange info
-	if (tool != (unsigned int)(-1))
-	{
-		for (const auto &b : m_layer_info->tool_changes)
-			if ( b.new_tool == tool ) {
-                wipe_volume = b.wipe_volume;
-				wipe_area = b.required_depth * m_layer_info->extra_spacing;
-				break;
-			}
-	}
-	else {
-		// Otherwise we are going to Unload only. And m_layer_info would be invalid.
-	}
-
-    box_coordinates cleaning_box(
-		Vec2f(m_perimeter_width / 2.f, m_perimeter_width / 2.f),
-		m_wipe_tower_width - m_perimeter_width,
-        (tool != (unsigned int)(-1) ? wipe_area+m_depth_traversed-0.5f*m_perimeter_width
-                                    : m_wipe_tower_depth-m_perimeter_width));
-
-	WipeTowerWriter writer(m_layer_height, m_perimeter_width, m_gcode_flavor, m_filpar);
-	writer.set_extrusion_flow(m_extrusion_flow)
-		.set_z(m_z_pos)
-		.set_initial_tool(m_current_tool)
-        .set_y_shift(m_y_shift + (tool!=(unsigned int)(-1) && (m_current_shape == SHAPE_REVERSED) ? m_layer_info->depth - m_layer_info->toolchanges_depth(): 0.f))
-		.append(";--------------------\n"
-				"; CP TOOLCHANGE START\n");
-
-    if (tool != (unsigned)(-1)) {
-        writer.comment_with_value(" toolchange #", m_num_tool_changes + 1); // the number is zero-based
-        writer.append(std::string("; material : " + (m_current_tool < m_filpar.size() ? m_filpar[m_current_tool].material : "(NONE)") + " -> " + m_filpar[tool].material + "\n").c_str())
-              .append(";--------------------\n");
-    }
-
-    writer.speed_override_backup();
-	writer.speed_override(100);
-
-	Vec2f initial_position = cleaning_box.ld + Vec2f(0.f, m_depth_traversed);
-    writer.set_initial_position(initial_position, m_wipe_tower_width, m_wipe_tower_depth, m_internal_rotation);
-
-    // Increase the extruder driver current to allow fast ramming.
-	if (m_set_extruder_trimpot)
-		writer.set_extruder_trimpot(750);
-
-    // Ram the hot material out of the melt zone, retract the filament into the cooling tubes and let it cool.
-    if (tool != (unsigned int)-1){ 			// This is not the last change.
-        toolchange_Unload(writer, cleaning_box, m_filpar[m_current_tool].material,
-                          is_first_layer() ? m_filpar[tool].first_layer_temperature : m_filpar[tool].temperature);
-        toolchange_Change(writer, tool, m_filpar[tool].material); // Change the tool, set a speed override for soluble and flex materials.
-        toolchange_Load(writer, cleaning_box);
-        writer.travel(writer.x(), writer.y()-m_perimeter_width); // cooling and loading were done a bit down the road
-        toolchange_Wipe(writer, cleaning_box, wipe_volume);     // Wipe the newly loaded filament until the end of the assigned wipe area.
-        ++ m_num_tool_changes;
-    } else
-        toolchange_Unload(writer, cleaning_box, m_filpar[m_current_tool].material, m_filpar[m_current_tool].temperature);
-
-    m_depth_traversed += wipe_area;
-
-	if (m_set_extruder_trimpot)
-		writer.set_extruder_trimpot(550);    // Reset the extruder current to a normal value.
-	writer.speed_override_restore();
-    writer.feedrate(m_travel_speed * 60.f)
-          .flush_planner_queue()
-          .reset_extruder()
-          .append("; CP TOOLCHANGE END\n"
-                  ";------------------\n"
-                  "\n\n");
-
-    // Ask our writer about how much material was consumed:
-    if (m_current_tool < m_used_filament_length.size())
-        m_used_filament_length[m_current_tool] += writer.get_and_reset_used_filament_length();
-
-   return construct_tcr(writer, false, old_tool);
-}
-
-
-// Ram the hot material out of the melt zone, retract the filament into the cooling tubes and let it cool.
-void WipeTower::toolchange_Unload(
-	WipeTowerWriter &writer,
-	const box_coordinates 	&cleaning_box,
-	const std::string&		 current_material,
-	const int 				 new_temperature)
-{
-	float xl = cleaning_box.ld.x() + 1.f * m_perimeter_width;
-	float xr = cleaning_box.rd.x() - 1.f * m_perimeter_width;
-
-    const float line_width = m_perimeter_width * m_filpar[m_current_tool].ramming_line_width_multiplicator;       // desired ramming line thickness
-	const float y_step = line_width * m_filpar[m_current_tool].ramming_step_multiplicator * m_extra_spacing; // spacing between lines in mm
-
-    const Vec2f ramming_start_pos = Vec2f(xl, cleaning_box.ld.y() + m_depth_traversed + y_step/2.f);
-
-    writer.append("; CP TOOLCHANGE UNLOAD\n")
-        .change_analyzer_line_width(line_width);
-
-	unsigned i = 0;										// iterates through ramming_speed
-	m_left_to_right = true;								// current direction of ramming
-	float remaining = xr - xl ;							// keeps track of distance to the next turnaround
-	float e_done = 0;									// measures E move done from each segment
-
-    const bool do_ramming = m_semm || m_filpar[m_current_tool].multitool_ramming;
-
-    if (do_ramming) {
-        writer.travel(ramming_start_pos); // move to starting position
-        writer.disable_linear_advance();
-    }
-    else
-        writer.set_position(ramming_start_pos);
-
-    // if the ending point of the ram would end up in mid air, align it with the end of the wipe tower:
-    if (do_ramming && (m_layer_info > m_plan.begin() && m_layer_info < m_plan.end() && (m_layer_info-1!=m_plan.begin() || !m_adhesion ))) {
-
-        // this is y of the center of previous sparse infill border
-        float sparse_beginning_y = 0.f;
-        if (m_current_shape == SHAPE_REVERSED)
-            sparse_beginning_y += ((m_layer_info-1)->depth - (m_layer_info-1)->toolchanges_depth())
-                                      - ((m_layer_info)->depth-(m_layer_info)->toolchanges_depth()) ;
-        else
-            sparse_beginning_y += (m_layer_info-1)->toolchanges_depth() + m_perimeter_width;
-
-        float sum_of_depths = 0.f;
-        for (const auto& tch : m_layer_info->tool_changes) {  // let's find this toolchange
-            if (tch.old_tool == m_current_tool) {
-                sum_of_depths += tch.ramming_depth;
-                float ramming_end_y = sum_of_depths;
-                ramming_end_y -= (y_step/m_extra_spacing-m_perimeter_width) / 2.f;   // center of final ramming line
-
-                if ( (m_current_shape == SHAPE_REVERSED   && ramming_end_y < sparse_beginning_y - 0.5f*m_perimeter_width  ) ||
-                     (m_current_shape == SHAPE_NORMAL && ramming_end_y > sparse_beginning_y + 0.5f*m_perimeter_width  )  )
-                {
-                    writer.extrude(xl + tch.first_wipe_line-1.f*m_perimeter_width,writer.y());
-                    remaining -= tch.first_wipe_line-1.f*m_perimeter_width;
-                }
-                break;
-            }
-            sum_of_depths += tch.required_depth;
-        }
-    }
-
-
-    // now the ramming itself:
-    while (do_ramming && i < m_filpar[m_current_tool].ramming_speed.size())
-    {
-        // The time step is different for SEMM ramming and the MM ramming. See comments in set_extruder() for details.
-        const float time_step = m_semm ? 0.25f : m_filpar[m_current_tool].multitool_ramming_time;
-
-        const float x = volume_to_length(m_filpar[m_current_tool].ramming_speed[i] * time_step, line_width, m_layer_height);
-        const float e = m_filpar[m_current_tool].ramming_speed[i] * time_step / filament_area(); // transform volume per sec to E move;
-        const float dist = std::min(x - e_done, remaining);		  // distance to travel for either the next time_step, or to the next turnaround
-        const float actual_time = dist/x * time_step;
-        writer.ram(writer.x(), writer.x() + (m_left_to_right ? 1.f : -1.f) * dist, 0.f, 0.f, e * (dist / x), dist / (actual_time / 60.f));
-        remaining -= dist;
-
-		if (remaining < WT_EPSILON)	{ // we reached a turning point
-			writer.travel(writer.x(), writer.y() + y_step, 7200);
-			m_left_to_right = !m_left_to_right;
-			remaining = xr - xl;
-		}
-		e_done += dist; // subtract what was actually done
-		if (e_done > x - WT_EPSILON) { // current segment finished
-			++i;
-			e_done = 0;
-		}
-	}
-	Vec2f end_of_ramming(writer.x(),writer.y());
-    writer.change_analyzer_line_width(m_perimeter_width);   // so the next lines are not affected by ramming_line_width_multiplier
-
-    // Retraction:
-    float old_x = writer.x();
-    float turning_point = (!m_left_to_right ? xl : xr );
-    if (m_semm && (m_cooling_tube_retraction != 0 || m_cooling_tube_length != 0)) {
-        float total_retraction_distance = m_cooling_tube_retraction + m_cooling_tube_length/2.f - 15.f; // the 15mm is reserved for the first part after ramming
-        writer.suppress_preview()
-              .retract(15.f, m_filpar[m_current_tool].unloading_speed_start * 60.f) // feedrate 5000mm/min = 83mm/s
-              .retract(0.70f * total_retraction_distance, 1.0f * m_filpar[m_current_tool].unloading_speed * 60.f)
-              .retract(0.20f * total_retraction_distance, 0.5f * m_filpar[m_current_tool].unloading_speed * 60.f)
-              .retract(0.10f * total_retraction_distance, 0.3f * m_filpar[m_current_tool].unloading_speed * 60.f)
-              .resume_preview();
-    }
-    // Wipe tower should only change temperature with single extruder MM. Otherwise, all temperatures should
-    // be already set and there is no need to change anything. Also, the temperature could be changed
-    // for wrong extruder.
-    if (m_semm) {
-        if (new_temperature != 0 && (new_temperature != m_old_temperature || is_first_layer()) ) { 	// Set the extruder temperature, but don't wait.
-            // If the required temperature is the same as last time, don't emit the M104 again (if user adjusted the value, it would be reset)
-            // However, always change temperatures on the first layer (this is to avoid issues with priming lines turned off).
-            writer.set_extruder_temp(new_temperature, false);
-            m_old_temperature = new_temperature;
-        }
-    }
-
-    // Cooling:
-    const int& number_of_moves = m_filpar[m_current_tool].cooling_moves;
-    if (m_semm && number_of_moves > 0) {
-        const float& initial_speed = m_filpar[m_current_tool].cooling_initial_speed;
-        const float& final_speed   = m_filpar[m_current_tool].cooling_final_speed;
-
-        float speed_inc = (final_speed - initial_speed) / (2.f * number_of_moves - 1.f);
-
-        writer.suppress_preview()
-              .travel(writer.x(), writer.y() + y_step);
-        old_x = writer.x();
-        turning_point = xr-old_x > old_x-xl ? xr : xl;
-        for (int i=0; i<number_of_moves; ++i) {
-            float speed = initial_speed + speed_inc * 2*i;
-            writer.load_move_x_advanced(turning_point, m_cooling_tube_length, speed);
-            speed += speed_inc;
-            writer.load_move_x_advanced(old_x, -m_cooling_tube_length, speed);
-        }
-    }
-
-    if (m_semm) {
-        // let's wait is necessary:
-        writer.wait(m_filpar[m_current_tool].delay);
-        // we should be at the beginning of the cooling tube again - let's move to parking position:
-        writer.retract(-m_cooling_tube_length/2.f+m_parking_pos_retraction-m_cooling_tube_retraction, 2000);
-    }
-
-    // this is to align ramming and future wiping extrusions, so the future y-steps can be uniform from the start:
-    // the perimeter_width will later be subtracted, it is there to not load while moving over just extruded material
-    Vec2f pos = Vec2f(end_of_ramming.x(), end_of_ramming.y() + (y_step/m_extra_spacing-m_perimeter_width) / 2.f + m_perimeter_width);
-    if (do_ramming)
-        writer.travel(pos, 2400.f);
-    else
-        writer.set_position(pos);
-
-    writer.resume_preview()
-          .flush_planner_queue();
-}
-
-// Change the tool, set a speed override for soluble and flex materials.
-void WipeTower::toolchange_Change(
-	WipeTowerWriter &writer,
-    const size_t 	new_tool,
-    const std::string&  new_material)
-{
-    // Ask the writer about how much of the old filament we consumed:
-    if (m_current_tool < m_used_filament_length.size())
-    	m_used_filament_length[m_current_tool] += writer.get_and_reset_used_filament_length();
-
-    // This is where we want to place the custom gcodes. We will use placeholders for this.
-    // These will be substituted by the actual gcodes when the gcode is generated.
-    //writer.append("[end_filament_gcode]\n");
-    writer.append("[toolchange_gcode_from_wipe_tower_generator]\n");
-
-    // Travel to where we assume we are. Custom toolchange or some special T code handling (parking extruder etc)
-    // gcode could have left the extruder somewhere, we cannot just start extruding. We should also inform the
-    // postprocessor that we absolutely want to have this in the gcode, even if it thought it is the same as before.
-    Vec2f current_pos = writer.pos_rotated();
-    writer.feedrate(m_travel_speed * 60.f) // see https://github.com/prusa3d/PrusaSlicer/issues/5483
-          .append(std::string("G1 X") + Slic3r::float_to_string_decimal_point(current_pos.x())
-                             +  " Y"  + Slic3r::float_to_string_decimal_point(current_pos.y())
-                             + never_skip_tag() + "\n"
-    );
-
-    writer.append("[deretraction_from_wipe_tower_generator]");
-
-    // The toolchange Tn command will be inserted later, only in case that the user does
-    // not provide a custom toolchange gcode.
-	writer.set_tool(new_tool); // This outputs nothing, the writer just needs to know the tool has changed.
-    //writer.append("[start_filament_gcode]\n");
-
-	writer.flush_planner_queue();
-	m_current_tool = new_tool;
-}
-
-void WipeTower::toolchange_Load(
-	WipeTowerWriter &writer,
-	const box_coordinates  &cleaning_box)
-{
-    if (m_semm && (m_parking_pos_retraction != 0 || m_extra_loading_move != 0)) {
-        float xl = cleaning_box.ld.x() + m_perimeter_width * 0.75f;
-        float xr = cleaning_box.rd.x() - m_perimeter_width * 0.75f;
-        float oldx = writer.x();	// the nozzle is in place to do the first wiping moves, we will remember the position
-
-        // Load the filament while moving left / right, so the excess material will not create a blob at a single position.
-        float turning_point = ( oldx-xl < xr-oldx ? xr : xl );
-        float edist = m_parking_pos_retraction+m_extra_loading_move;
-
-        writer.append("; CP TOOLCHANGE LOAD\n")
-              .suppress_preview()
-              .load(0.2f * edist, 60.f * m_filpar[m_current_tool].loading_speed_start)
-              .load_move_x_advanced(turning_point, 0.7f * edist,        m_filpar[m_current_tool].loading_speed)  // Fast phase
-              .load_move_x_advanced(oldx,          0.1f * edist, 0.1f * m_filpar[m_current_tool].loading_speed)  // Super slow*/
-
-              .travel(oldx, writer.y()) // in case last move was shortened to limit x feedrate
-              .resume_preview();
-
-        // Reset the extruder current to the normal value.
-        if (m_set_extruder_trimpot)
-            writer.set_extruder_trimpot(550);
-    }
-}
-
-// Wipe the newly loaded filament until the end of the assigned wipe area.
-void WipeTower::toolchange_Wipe(
-	WipeTowerWriter &writer,
-	const box_coordinates  &cleaning_box,
-	float wipe_volume)
-{
-    // Modix --
-    //
-    //   This section switches to infill extrusion parameters.
-    // Once wiping is done, switch back to perimeters extrusion parameters.
-    //
-
-	writer.change_analyzer_line_width(m_infill_width);
-	// Increase flow on first layer, slow down print.
-    writer.set_extrusion_flow(m_infill_extrusion_flow * (is_first_layer() ? 1.18f : 1.f))
-		  .append("; CP TOOLCHANGE WIPE\n");
-	const float& xl = cleaning_box.ld.x();
-	const float& xr = cleaning_box.rd.x();
-
-    // wipe until the end of the assigned area.
-
-	float dy = (is_first_layer() ? 1.f : 100.f/m_density) * m_infill_width; // Don't use the extra spacing for the first layer.
-    // All the calculations in all other places take the spacing into account for all the layers.
-
-    const float target_speed = is_first_layer() ? m_first_layer_speed * 60.f : m_infill_speed * 60.f;
-    float wipe_speed = 0.33f * target_speed;
-
-    // if there is less than 2.5*m_infill_width to the edge, advance straightaway (there is likely a blob anyway)
-    if ((m_left_to_right ? xr-writer.x() : writer.x()-xl) < 2.5f*m_infill_width) {
-        writer.travel((m_left_to_right ? xr-m_infill_width : xl+m_perimeter_width),writer.y()+dy);
-        m_left_to_right = !m_left_to_right;
-    }
-
-    // now the wiping itself:
-	for (int i = 0; true; ++i)	{
-		if (i!=0) {
-            if      (wipe_speed < 0.34f * target_speed) wipe_speed = 0.375f * target_speed;
-            else if (wipe_speed < 0.377 * target_speed) wipe_speed = 0.458f * target_speed;
-            else if (wipe_speed < 0.46f * target_speed) wipe_speed = 0.875f * target_speed;
-            else wipe_speed = std::min(target_speed, wipe_speed + 50.f);
-		}
-
-		if (m_left_to_right)
-            writer.extrude(xr - (i % 4 == 0 ? 0 : 1.5f*m_infill_width), writer.y(), wipe_speed);
-		else
-            writer.extrude(xl + (i % 4 == 1 ? 0 : 1.5f*m_infill_width), writer.y(), wipe_speed);
-
-        if (writer.y()+float(EPSILON) > cleaning_box.lu.y()-0.5f*m_infill_width)
-            break;		// in case next line would not fit
-
-		// stepping to the next line:
-        writer.extrude(writer.x() + (i % 4 == 0 ? -1.f : (i % 4 == 1 ? 1.f : 0.f)) * 1.5f*m_infill_width, writer.y() + dy);
-		m_left_to_right = !m_left_to_right;
-	}
-
-    // We may be going back to the model - wipe the nozzle. If this is followed
-    // by finish_layer, this wipe path will be overwritten.
-    writer.add_wipe_point(writer.x(), writer.y())
-          .add_wipe_point(writer.x(), writer.y() - dy)
-          .add_wipe_point(! m_left_to_right ? m_wipe_tower_width : 0.f, writer.y() - dy);
-
-    if (m_layer_info != m_plan.end() && m_current_tool != m_layer_info->tool_changes.back().new_tool)
-        m_left_to_right = !m_left_to_right;
-
-    writer.change_analyzer_line_width(m_perimeter_width);
-    writer.set_extrusion_flow(m_extrusion_flow); // Reset the extrusion flow.
-}
-
-
-
-
-// Static method to get the radius and x-scaling of the stabilizing cone base.
-std::pair<double, double> WipeTower::get_wipe_tower_cone_base(double width, double height, double depth, double angle_deg)
-{
-    double R = std::tan(Geometry::deg2rad(angle_deg/2.)) * height;
-    double fake_width = 0.66 * width;
-    double diag = std::hypot(fake_width / 2., depth / 2.);
-    double support_scale = 1.;
-    if (R > diag) {
-        double w = fake_width;
-        double sin = 0.5 * depth / diag;
-        double tan = depth / w;
-        double t = (R - diag) * sin;
-        support_scale = (w / 2. + t / tan + t * tan) / (w / 2.);
-    }
-    return std::make_pair(R, support_scale);
-}
-
-// Static method to extract wipe_volumes[from][to] from the configuration.
-std::vector<std::vector<float>> WipeTower::extract_wipe_volumes(const PrintConfig& config)
-{
-    // Get wiping matrix to get number of extruders and convert vector<double> to vector<float>:
-    std::vector<float> wiping_matrix(cast<float>(config.wiping_volumes_matrix.values));
-
-    // The values shall only be used when SEMM is enabled. The purging for other printers
-    // is determined by filament_minimal_purge_on_wipe_tower.
-    if (! config.single_extruder_multi_material.value)
-        std::fill(wiping_matrix.begin(), wiping_matrix.end(), 0.f);
-
-    // Extract purging volumes for each extruder pair:
-    std::vector<std::vector<float>> wipe_volumes;
-    const unsigned int number_of_extruders = (unsigned int)(sqrt(wiping_matrix.size())+EPSILON);
-    for (unsigned int i = 0; i<number_of_extruders; ++i)
-        wipe_volumes.push_back(std::vector<float>(wiping_matrix.begin()+i*number_of_extruders, wiping_matrix.begin()+(i+1)*number_of_extruders));
-
-    // Also include filament_minimal_purge_on_wipe_tower. This is needed for the preview.
-    for (unsigned int i = 0; i<number_of_extruders; ++i)
-        for (unsigned int j = 0; j<number_of_extruders; ++j)
-            wipe_volumes[i][j] = std::max<float>(wipe_volumes[i][j], config.filament_minimal_purge_on_wipe_tower.get_at(j));
-
-    return wipe_volumes;
 }
 
 // Appends a toolchange into m_plan and calculates neccessary depth of the corresponding box
@@ -1092,93 +591,21 @@ void WipeTower::plan_toolchange(float z_par, float layer_height_par, unsigned in
 	if (m_plan.empty() || m_plan.back().z + WT_EPSILON < z_par) // if we moved to a new layer, we'll add it to m_plan first
 		m_plan.push_back(WipeTowerInfo(z_par, layer_height_par));
 
-    if (m_first_layer_idx == size_t(-1) && (! m_no_sparse_layers || old_tool != new_tool || m_plan.size() == 1))
+    if (m_first_layer_idx == size_t(-1) && (old_tool != new_tool || m_plan.size() == 1))
         m_first_layer_idx = m_plan.size() - 1;
 
     if (old_tool == new_tool)	// new layer without toolchanges - we are done
         return;
 
-	// this is an actual toolchange - let's calculate depth to reserve on the wipe tower
-    float depth = 0.f;
-	float width = m_wipe_tower_width - 3*m_perimeter_width;
-	float length_to_extrude = volume_to_length(0.25f * std::accumulate(m_filpar[old_tool].ramming_speed.begin(), m_filpar[old_tool].ramming_speed.end(), 0.f),
-										m_perimeter_width * m_filpar[old_tool].ramming_line_width_multiplicator,
-										layer_height_par);
-	depth = (int(length_to_extrude / width) + 1) * (m_perimeter_width * m_filpar[old_tool].ramming_line_width_multiplicator * m_filpar[old_tool].ramming_step_multiplicator);
-    float ramming_depth = depth;
-    length_to_extrude = width*((length_to_extrude / width)-int(length_to_extrude / width)) - width;
-    float first_wipe_line = -length_to_extrude;
-    length_to_extrude += volume_to_length(wipe_volume, m_perimeter_width, layer_height_par);
-    length_to_extrude = std::max(length_to_extrude,0.f);
-
-#if 0
-	depth += (int(length_to_extrude / width) + 1) * m_perimeter_width;
-	depth *= m_extra_spacing;
-#else
-	depth  = m_minimum_depth - m_perimeter_width;
-#endif
-
-	m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, new_tool, depth, ramming_depth, first_wipe_line, wipe_volume));
+	m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, new_tool));
 }
 
 
 
 void WipeTower::plan_tower()
 {
-	// Calculate m_wipe_tower_depth (maximum depth for all the layers) and propagate depths downwards
-	m_wipe_tower_depth = 0.f;
-	for (auto& layer : m_plan)
-		layer.depth = 0.f;
     m_wipe_tower_height = m_plan.empty() ? 0.f : m_plan.back().z;
-    m_current_height = 0.f;
-
-	for (auto& layer: m_plan) {
-		layer.depth = m_minimum_depth;
-	}
-	m_wipe_tower_depth = m_minimum_depth + m_perimeter_width;
-
-#if 0
-    for (int layer_index = int(m_plan.size()) - 1; layer_index >= 0; --layer_index)
-	{
-		float this_layer_depth = std::max(m_plan[layer_index].depth, m_plan[layer_index].toolchanges_depth());
-		m_plan[layer_index].depth = this_layer_depth;
-
-		if (this_layer_depth > m_wipe_tower_depth - m_perimeter_width)
-			m_wipe_tower_depth = this_layer_depth + m_perimeter_width;
-
-		for (int i = layer_index - 1; i >= 0 ; i--)
-		{
-			if (m_plan[i].depth - this_layer_depth < 2*m_perimeter_width )
-				m_plan[i].depth = this_layer_depth;
-		}
-	}
-#endif
 }
-
-void WipeTower::save_on_last_wipe()
-{
-    printf("XX--\n");
-}
-
-
-static WipeTower::ToolChangeResult merge_tcr(WipeTower::ToolChangeResult& first,
-                                             WipeTower::ToolChangeResult& second)
-{
-    assert(first.new_tool == second.initial_tool);
-    WipeTower::ToolChangeResult out = first;
-    if (first.end_pos != second.start_pos)
-        out.gcode += "G1 X" + Slic3r::float_to_string_decimal_point(second.start_pos.x(), 3)
-                     + " Y" + Slic3r::float_to_string_decimal_point(second.start_pos.y(), 3)
-                     + " F7200\n";
-    out.gcode += second.gcode;
-    out.extrusions.insert(out.extrusions.end(), second.extrusions.begin(), second.extrusions.end());
-    out.end_pos = second.end_pos;
-    out.wipe_path = second.wipe_path;
-    out.initial_tool = first.initial_tool;
-    out.new_tool = second.new_tool;
-    return out;
-}
-
 
 // Processes vector m_plan and calls respective functions to generate G-code for the wipe tower
 // Resulting ToolChangeResults are appended into vector "result"
@@ -1189,7 +616,6 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
     m_wipe_tower_height = m_plan.back().z;
     m_layer_info = m_plan.begin();
-    m_current_height = 0.f;
 
     // we don't know which extruder to start with - we'll set it according to the first toolchange
     for (const auto& layer : m_plan) {
@@ -1199,27 +625,23 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         }
     }
 
-    for (auto& used : m_used_filament_length) // reset used filament stats
+    for (auto& used : m_used_filament_length) {
+        // reset used filament stats
         used = 0.f;
-
-    m_old_temperature = -1; // reset last temperature written in the gcode
-    m_wipe_tower_depth = m_minimum_depth;
+    }
 
     for (const WipeTower::WipeTowerInfo& layer : m_plan)
     {
+        set_layer(layer.z, layer.layer_height);
 
         std::vector<WipeTower::ToolChangeResult> layer_result;
-        set_layer(layer.z, layer.height, 0, false/*layer.z == m_plan.front().z*/, layer.z == m_plan.back().z);
         ToolChangeResult layer_tcr;
 
-        assert(! this->layer_finished());
-        m_current_layer_finished = true;
         int old_tool = m_current_tool;
 
         WipeTowerWriter writer(m_layer_height, m_perimeter_width, m_gcode_flavor, m_filpar);
-        writer.set_extrusion_flow(m_extrusion_flow)
-        .set_z(m_z_pos)
-        .set_initial_tool(m_current_tool);
+        writer.set_z(m_z_pos);
+        writer.set_initial_tool(m_current_tool);
 
 
 
@@ -1242,6 +664,9 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
             extrude_speed_perimeter = m_perimeter_speed * 60.f;
             extrude_speed_infill = m_infill_speed * 60.f;
         }
+
+        // set extrusion flow to PERIMETER flow.
+        writer.set_extrusion_flow( m_layer_height * ( m_perimeter_width - m_layer_height * (1.f-float(M_PI)/4.f)) / filament_area() );
 
         // add number of layers to the brim
         float reinforce_max_z = m_brim_layers * m_wipe_tower_height;
@@ -1271,6 +696,9 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
             }
 
         }
+
+        // set extrusion flow to INFILL flow.
+        writer.set_extrusion_flow( m_layer_height * ( m_infill_width - m_layer_height * (1.f-float(M_PI)/4.f)) / filament_area() );
 
         // This is rather crude, is there a situation where the wipe tower
         // would present with more than 1 tool change, on the IDEX machine?
@@ -1388,7 +816,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
     {   // the first loop (always)
         Polygon poly {a,b,c,d};
         int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
-        writer.travel(unscale(poly.points[cp]).cast<float>());
+        writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed);
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
@@ -1405,7 +833,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
         for (int i = 0; i < loops; i++) {
             poly = offset(poly, scale_(spacing)).front();
             int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
-            writer.travel(unscale(poly.points[cp]).cast<float>());
+            writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed);
             for (int i=cp+1; true; ++i ) {
                 if (i==int(poly.points.size()))
                     i = 0;
@@ -1454,7 +882,7 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
     polylines = filler->fill_surface(&surface, params);
 
     for (const Polyline& line: polylines) {
-        writer.travel(unscale(line.points.front()).cast<float>());
+        writer.travel(unscale(line.points.front()).cast<float>(), m_travel_speed);
         for (auto& point: line.points) {
             writer.extrude(unscale(point).cast<float>(), extrude_speed);
         }
@@ -1465,13 +893,9 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
 std::vector<std::pair<float, float>> WipeTower::get_z_and_depth_pairs() const
 {
     std::vector<std::pair<float, float>> out = {{0.f, m_wipe_tower_depth}};
-    for (const WipeTowerInfo& wti : m_plan) {
-        assert(wti.depth < wti.depth + WT_EPSILON);
-        if (wti.depth < out.back().second - WT_EPSILON)
-            out.emplace_back(wti.z, wti.depth);
+    for (const WipeTowerInfo& layer : m_plan) {
+        out.emplace_back(layer.z, m_wipe_tower_depth);
     }
-    if (out.back().first < m_wipe_tower_height - WT_EPSILON)
-        out.emplace_back(m_wipe_tower_height, 0.f);
     return out;
 }
 

@@ -154,7 +154,7 @@ public:
 		if (e != 0.f)
 			m_gcode += set_format_E(e);
 
-		if (f != 0.f && f != m_current_feedrate) {
+        if (f != 0.f && f != m_current_feedrate) {
             if (limit_volumetric_flow) {
                 float e_speed = e / (((len == 0.f) ? std::abs(e) : len) / f * 60.f);
                 f /= std::max(1.f, e_speed / m_filpar[m_current_tool].max_e_speed);
@@ -816,7 +816,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
     {   // the first loop (always)
         Polygon poly {a,b,c,d};
         int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
-        writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed);
+        writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed * 60.f);
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
@@ -833,7 +833,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
         for (int i = 0; i < loops; i++) {
             poly = offset(poly, scale_(spacing)).front();
             int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
-            writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed);
+            writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed * 60.f);
             for (int i=cp+1; true; ++i ) {
                 if (i==int(poly.points.size()))
                     i = 0;
@@ -882,7 +882,7 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
     polylines = filler->fill_surface(&surface, params);
 
     for (const Polyline& line: polylines) {
-        writer.travel(unscale(line.points.front()).cast<float>(), m_travel_speed);
+        writer.travel(unscale(line.points.front()).cast<float>(), m_travel_speed * 60.f);
         for (auto& point: line.points) {
             writer.extrude(unscale(point).cast<float>(), extrude_speed);
         }

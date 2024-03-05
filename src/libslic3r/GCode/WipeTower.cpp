@@ -93,6 +93,9 @@ public:
 	WipeTowerWriter& set_extrusion_flow(float flow)
 		{ m_extrusion_flow = flow; return *this; }
 
+    float get_extrusion_flow()
+        { return m_extrusion_flow; }
+
 	WipeTowerWriter& feedrate(float f)
 	{
         if (f != m_current_feedrate) {
@@ -414,7 +417,7 @@ private:
 	float 	  	  m_current_feedrate;
     size_t        m_current_tool;
 	float 		  m_layer_height;
-	float 	  	  m_extrusion_flow;
+    float 	  	  m_extrusion_flow;
 	bool		  m_preview_suppressed;
 	std::string   m_gcode;
 	std::vector<WipeTower::Extrusion> m_extrusions;
@@ -567,17 +570,9 @@ void WipeTower::set_extruder(size_t idx, const PrintConfig& config, const PrintR
     m_filpar[idx].nozzle_diameter = nozzle_diameter;
 
     float max_vol_speed = float(config.filament_max_volumetric_speed.get_at(idx));
-    if (max_vol_speed!= 0.f)
+    if (max_vol_speed!= 0.f) {
         m_filpar[idx].max_e_speed = (max_vol_speed / filament_area());
-
-	m_perimeter_width = float(default_region_config.wipe_tower_perimeter_extrusion_width);
-	m_infill_width = float(default_region_config.wipe_tower_infill_extrusion_width);
-	if (m_perimeter_width < WT_EPSILON) {
-		m_perimeter_width = nozzle_diameter;
-	}
-	if (m_infill_width < WT_EPSILON) {
-		m_infill_width = nozzle_diameter;
-	}
+    }
 
     m_used_filament_length.resize(std::max(m_used_filament_length.size(), idx + 1)); // makes sure that the vector is big enough so we don't have to check later
 }
@@ -639,23 +634,15 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
         int old_tool = m_current_tool;
 
-        WipeTowerWriter writer(m_layer_height, m_perimeter_width, m_gcode_flavor, m_filpar);
+        WipeTowerWriter writer(m_layer_height, current_nozzle_diameter(), m_gcode_flavor, m_filpar);
         writer.set_z(m_z_pos);
         writer.set_initial_tool(m_current_tool);
 
-
-
-        // Change to tool needed for perimeter; if not, current tool.
-        // change_tool() updates m_current_tool.
-        //
         if (m_wipe_tower_extruder) {
             change_tool(writer, m_wipe_tower_extruder-1);
         } else {
             change_tool(writer, m_current_tool);
         }
-        m_perimeter_width = m_filpar[m_current_tool].nozzle_diameter;
-        m_infill_width = m_filpar[m_current_tool].nozzle_diameter;
-
 
         int extrude_speed_perimeter, extrude_speed_infill;
         if (is_first_layer()) {
@@ -664,9 +651,6 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
             extrude_speed_perimeter = m_perimeter_speed * 60.f;
             extrude_speed_infill = m_infill_speed * 60.f;
         }
-
-        // set extrusion flow to PERIMETER flow.
-        writer.set_extrusion_flow( m_layer_height * ( m_perimeter_width - m_layer_height * (1.f-float(M_PI)/4.f)) / filament_area() );
 
         // add number of layers to the brim
         float reinforce_max_z = m_brim_layers * m_wipe_tower_height;
@@ -682,7 +666,6 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
             // brim (first layer only)
             if (is_first_layer()) {
-                writer.change_analyzer_line_width(m_perimeter_width);
                 wipe_contour_2(writer, loops * alpha, extrude_speed_perimeter);
             } else {
                 // 2. adjust number of loops depending on z position
@@ -691,14 +674,10 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
                 // 3. above the support reinforcement, but keep extra perimeters
                 int loops3 = std::max( int(1+m_extra_perimeters) , loops - loops2);
 
-                writer.change_analyzer_line_width(m_perimeter_width);
                 wipe_contour_2(writer, loops3 * alpha, extrude_speed_perimeter);
             }
 
         }
-
-        // set extrusion flow to INFILL flow.
-        writer.set_extrusion_flow( m_layer_height * ( m_infill_width - m_layer_height * (1.f-float(M_PI)/4.f)) / filament_area() );
 
         // This is rather crude, is there a situation where the wipe tower
         // would present with more than 1 tool change, on the IDEX machine?
@@ -708,22 +687,16 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         case 1:
             // there is one tool change
             change_tool(writer, layer.tool_changes.front().new_tool);
-            m_perimeter_width = m_filpar[m_current_tool].nozzle_diameter;
-            m_infill_width = m_filpar[m_current_tool].nozzle_diameter;
-
-            // complete layer
-            writer.change_analyzer_line_width(m_infill_width);
-            wipe_lines_1(writer, extrude_speed_infill);
             break;
         case 0:
-            // there is no tool switch, complete layer
-            writer.change_analyzer_line_width(m_infill_width);
-            wipe_lines_1(writer, extrude_speed_infill);
             break;
         default:
             throw Slic3r::InvalidArgument("WipeTower: invalid parameter");
             break;
         }
+
+        // complete layer
+        wipe_lines_1(writer, extrude_speed_infill);
 
         layer_tcr = construct_tcr(writer, false, old_tool);
         layer_result.emplace_back(std::move(layer_tcr));
@@ -793,6 +766,10 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     writer.feedrate(m_travel_speed * 60.f);
     writer.flush_planner_queue();
     writer.reset_extruder();
+
+    writer.set_extrusion_flow( m_layer_height * ( current_nozzle_diameter() - m_layer_height * (1.f-float(M_PI)/4.f)) / filament_area() );
+    writer.change_analyzer_line_width( current_nozzle_diameter() );
+
     writer.append(";--  TOOL CHANGE END   \n");
     writer.append(";----------------------\n");
 }
@@ -800,6 +777,10 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
 void
 WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
 {
+    writer.append("; -- wipe tower's perimeter\n");
+    writer.append("; -- extrusion flow: " + std::to_string(writer.get_extrusion_flow()) + "\n");
+    writer.append("; -- extrusion speed: " + std::to_string(extrude_speed) + "\n");
+
     // h-----------------g
     // | d-------------c |
     // | |             | |
@@ -827,7 +808,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
     }
     loops --;
     {
-        float spacing = m_perimeter_width - m_layer_height * (1. - M_PI_4);
+        float spacing = current_nozzle_diameter() - m_layer_height * (1. - M_PI_4);
 
         Polygon poly {a,b,c,d};
         for (int i = 0; i < loops; i++) {
@@ -848,6 +829,10 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
 void
 WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
 {
+    writer.append("; -- wipe tower's infill\n");
+    writer.append("; -- extrusion flow:  " + std::to_string(writer.get_extrusion_flow()) + "\n");
+    writer.append("; -- extrusion speed: " + std::to_string(extrude_speed) + "\n");
+
     //   d-------------c
     //   |/////////////|
     //   |/////////////|
@@ -866,9 +851,9 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
     Surface surface(stBottom, expolygon);
 
     // width, height, nozzle_dmr
-    auto flow = Slic3r::Flow(m_perimeter_width, m_layer_height, m_perimeter_width);
+    auto flow = Slic3r::Flow(current_nozzle_diameter(), m_layer_height, current_nozzle_diameter());
 
-    const float spacing = m_perimeter_width - m_layer_height*float(1.-M_PI_4);
+    const float spacing = current_nozzle_diameter() - m_layer_height*float(1.-M_PI_4);
     filler->angle = Geometry::deg2rad(45.f);
     filler->spacing = flow.spacing();
     FillParams params;

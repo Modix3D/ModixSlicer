@@ -243,8 +243,12 @@ private:
 	float  m_density            = 0.f;
 	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
 	int    m_wipe_tower_extruder;
-	float  m_perimeter_width, m_infill_width;
-	size_t m_current_tool  = 0;
+    size_t m_current_tool  = 0;
+
+    float current_nozzle_diameter()
+    {
+        return m_filpar[m_current_tool].nozzle_diameter;
+    }
 
 	// G-code generator parameters.
     GCodeFlavor     m_gcode_flavor;

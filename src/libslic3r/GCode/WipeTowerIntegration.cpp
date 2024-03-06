@@ -29,17 +29,10 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
         return out;
     };
 
-    Vec2f start_pos = tcr.start_pos;
-    Vec2f end_pos = tcr.end_pos;
-    if (! tcr.priming) {
-        start_pos = transform_wt_pt(start_pos);
-        end_pos = transform_wt_pt(end_pos);
-    }
+    Vec2f start_pos = transform_wt_pt(tcr.start_pos);
+    Vec2f end_pos = transform_wt_pt(tcr.end_pos);
 
-    Vec2f wipe_tower_offset = tcr.priming ? Vec2f::Zero() : m_wipe_tower_pos;
-    float wipe_tower_rotation = tcr.priming ? 0.f : alpha;
-
-    std::string tcr_rotated_gcode = post_process_wipe_tower_moves(tcr, wipe_tower_offset, wipe_tower_rotation);
+    std::string tcr_rotated_gcode = post_process_wipe_tower_moves(tcr, m_wipe_tower_pos, alpha);
 
     double current_z = gcodegen.writer().get_position().z();
     gcode += gcodegen.writer().travel_to_z(current_z);
@@ -50,10 +43,8 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
     const bool needs_toolchange = gcodegen.writer().need_toolchange(new_extruder_id);
     const bool will_go_down = ! is_approx(z, current_z);
     const bool is_ramming = false;
-    const bool should_travel_to_tower = ! tcr.priming
-                                     && (tcr.force_travel        // wipe tower says so
+    const bool should_travel_to_tower = (tcr.force_travel        // wipe tower says so
                                          || ! needs_toolchange   // this is just finishing the tower with no toolchange
-                                         || is_ramming
                                          || will_go_down);       // don't dig into the print
     if (should_travel_to_tower) {
         gcode += gcodegen.retract_and_wipe();
@@ -76,9 +67,7 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
 
     std::string toolchange_gcode_str;
     std::string deretraction_str;
-    if (tcr.priming || (new_extruder_id >= 0 && needs_toolchange)) {
-        if (is_ramming)
-            gcodegen.m_wipe.reset_path(); // We don't want wiping on the ramming lines.
+    if (new_extruder_id >= 0 && needs_toolchange) {
         toolchange_gcode_str = gcodegen.set_extruder(new_extruder_id, tcr.print_z); // TODO: toolchange_z vs print_z
         if (gcodegen.config().wipe_tower)
             deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer Z");

@@ -48,7 +48,7 @@ public:
         {
             // adds tag for analyzer:
             std::ostringstream str;
-            str << ";" << GCodeProcessor::reserved_tag(GCodeProcessor::ETags::Height) << m_layer_height << "\n"; // don't rely on GCodeAnalyzer knowing the layer height - it knows nothing at priming
+            str << ";" << GCodeProcessor::reserved_tag(GCodeProcessor::ETags::Height) << m_layer_height << "\n";
             str << ";" << GCodeProcessor::reserved_tag(GCodeProcessor::ETags::Role) << gcode_extrusion_role_to_string(GCodeExtrusionRole::WipeTower) << "\n";
             m_gcode += str.str();
             change_analyzer_line_width(line_width);
@@ -393,26 +393,9 @@ public:
 
 	WipeTowerWriter& append(const std::string& text) { m_gcode += text; return *this; }
 
-    const std::vector<Vec2f>& wipe_path() const
-    {
-        return m_wipe_path;
-    }
-
-    WipeTowerWriter& add_wipe_point(const Vec2f& pt)
-    {
-        m_wipe_path.push_back(rotate(pt));
-        return *this;
-    }
-
-    WipeTowerWriter& add_wipe_point(float x, float y)
-    {
-        return add_wipe_point(Vec2f(x, y));
-    }
-
 private:
 	Vec2f         m_start_pos;
 	Vec2f         m_current_pos;
-    std::vector<Vec2f>  m_wipe_path;
 	float    	  m_current_z;
 	float 	  	  m_current_feedrate;
     size_t        m_current_tool;
@@ -479,21 +462,18 @@ private:
 
 
 WipeTower::ToolChangeResult WipeTower::construct_tcr(WipeTowerWriter& writer,
-                                                     bool priming,
                                                      size_t old_tool) const
 {
     ToolChangeResult result;
-    result.priming      = priming;
     result.initial_tool = int(old_tool);
     result.new_tool     = int(m_current_tool);
     result.print_z      = m_z_pos;
     result.layer_height = m_layer_height;
     result.elapsed_time = writer.elapsed_time();
     result.start_pos    = writer.start_pos_rotated();
-    result.end_pos      = priming ? writer.pos() : writer.pos_rotated();
+    result.end_pos      = writer.pos_rotated();
     result.gcode        = std::move(writer.gcode());
     result.extrusions   = std::move(writer.extrusions());
-    result.wipe_path    = std::move(writer.wipe_path());
     return result;
 }
 
@@ -698,7 +678,7 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         // complete layer
         wipe_lines_1(writer, extrude_speed_infill);
 
-        layer_tcr = construct_tcr(writer, false, old_tool);
+        layer_tcr = construct_tcr(writer, old_tool);
         layer_result.emplace_back(std::move(layer_tcr));
 		result.emplace_back(std::move(layer_result));
 

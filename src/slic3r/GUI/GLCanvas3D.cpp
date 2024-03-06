@@ -7279,18 +7279,15 @@ void GLCanvas3D::_load_wipe_tower_toolpaths(const BuildVolume& build_volume, con
                     heights.assign(n_lines, extrusions.layer_height);
                     WipeTower::Extrusion e_prev = extrusions.extrusions[i-1];
 
-                    if (!extrusions.priming) { // wipe tower extrusions describe the wipe tower at the origin with no rotation
-                        e_prev.pos = Eigen::Rotation2Df(ctxt.wipe_tower_angle) * e_prev.pos;
-                        e_prev.pos += ctxt.wipe_tower_pos;
-                    }
+                    // wipe tower extrusions describe the wipe tower at the origin with no rotation
+                    e_prev.pos = Eigen::Rotation2Df(ctxt.wipe_tower_angle) * e_prev.pos;
+                    e_prev.pos += ctxt.wipe_tower_pos;
 
                     for (; i < j; ++i) {
                         WipeTower::Extrusion e = extrusions.extrusions[i];
                         assert(e.width > 0.f);
-                        if (!extrusions.priming) {
-                            e.pos = Eigen::Rotation2Df(ctxt.wipe_tower_angle) * e.pos;
-                            e.pos += ctxt.wipe_tower_pos;
-                        }
+                        e.pos = Eigen::Rotation2Df(ctxt.wipe_tower_angle) * e.pos;
+                        e.pos += ctxt.wipe_tower_pos;
 
                         lines.emplace_back(Point::new_scale(e_prev.pos.x(), e_prev.pos.y()), Point::new_scale(e.pos.x(), e.pos.y()));
                         widths.emplace_back(e.width);

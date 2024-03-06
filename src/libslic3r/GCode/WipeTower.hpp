@@ -59,9 +59,6 @@ public:
 		// This is useful not only for the print time estimation, but also for the control of layer cooling.
 		float  				    elapsed_time;
 
-        // Is this a priming extrusion? (If so, the wipe tower rotation & translation will not be applied later)
-        bool                    priming;
-
         // Pass a polyline so that normal G-code generator can do a wipe for us.
         // The wipe cannot be done by the wipe tower because it has to pass back
         // a loaded extruder, so it would have to either do a wipe with no retraction
@@ -125,7 +122,6 @@ public:
     // Construct ToolChangeResult from current state of WipeTower and WipeTowerWriter.
     // WipeTowerWriter is moved from !
     ToolChangeResult construct_tcr(WipeTowerWriter& writer,
-                                   bool priming,
                                    size_t old_tool) const;
 
 	// x			-- x coordinates of wipe tower in mm ( left bottom corner )

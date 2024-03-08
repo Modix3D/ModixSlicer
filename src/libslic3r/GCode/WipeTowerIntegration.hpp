@@ -31,7 +31,7 @@ public:
 
     std::string prime(GCodeGenerator &gcodegen);
     void next_layer() { ++ m_layer_idx; m_tool_change_idx = 0; }
-    std::string tool_change(GCodeGenerator &gcodegen, int extruder_id, bool finish_layer);
+    std::string tool_change(GCodeGenerator &gcodegen, int extruder_id);
     std::string finalize(GCodeGenerator &gcodegen);
     std::vector<float> used_filament_length() const;
 

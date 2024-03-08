@@ -69,6 +69,9 @@ public:
         // Initial tool
         int initial_tool;
 
+        //
+        int mid_tool;
+
         // New tool
         int new_tool;
 
@@ -122,7 +125,8 @@ public:
     // Construct ToolChangeResult from current state of WipeTower and WipeTowerWriter.
     // WipeTowerWriter is moved from !
     ToolChangeResult construct_tcr(WipeTowerWriter& writer,
-                                   size_t old_tool) const;
+                                   int old_tool,
+                                   int mid_tool) const;
 
 	// x			-- x coordinates of wipe tower in mm ( left bottom corner )
 	// y			-- y coordinates of wipe tower in mm ( left bottom corner )
@@ -273,9 +277,10 @@ private:
     // to store information about tool changes for a given layer
 	struct WipeTowerInfo{
 		struct ToolChange {
-            size_t old_tool;
-            size_t new_tool;
-            ToolChange(size_t old, size_t newtool)
+            int   old_tool;
+            int   mid_tool;
+            int   new_tool;
+            ToolChange(int old, int midtool, int newtool)
             : old_tool{old}, new_tool{newtool} {}
 		};
 		float z;		// z position of the layer

@@ -462,11 +462,13 @@ private:
 
 
 WipeTower::ToolChangeResult WipeTower::construct_tcr(WipeTowerWriter& writer,
-                                                     size_t old_tool) const
+                                                     int old_tool,
+                                                     int mid_tool) const
 {
     ToolChangeResult result;
-    result.initial_tool = int(old_tool);
-    result.new_tool     = int(m_current_tool);
+    result.initial_tool = old_tool;
+    result.mid_tool     = mid_tool;
+    result.new_tool     = m_current_tool;
     result.print_z      = m_z_pos;
     result.layer_height = m_layer_height;
     result.elapsed_time = writer.elapsed_time();
@@ -572,7 +574,7 @@ void WipeTower::plan_toolchange(float z_par, float layer_height_par, unsigned in
     if (old_tool == new_tool)	// new layer without toolchanges - we are done
         return;
 
-	m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, new_tool));
+    m_plan.back().tool_changes.push_back(WipeTowerInfo::ToolChange(old_tool, -1, new_tool));
 }
 
 
@@ -613,13 +615,15 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         ToolChangeResult layer_tcr;
 
         int old_tool = m_current_tool;
+        int mid_tool = -1;
 
         WipeTowerWriter writer(m_layer_height, current_nozzle_diameter(), m_gcode_flavor, m_filpar);
         writer.set_z(m_z_pos);
         writer.set_initial_tool(m_current_tool);
 
-        if (m_wipe_tower_extruder) {
+        if (m_wipe_tower_extruder > 0) {
             change_tool(writer, m_wipe_tower_extruder-1);
+            mid_tool = m_current_tool;
         } else {
             change_tool(writer, m_current_tool);
         }
@@ -678,7 +682,7 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         // complete layer
         wipe_lines_1(writer, extrude_speed_infill);
 
-        layer_tcr = construct_tcr(writer, old_tool);
+        layer_tcr = construct_tcr(writer, old_tool, mid_tool);
         layer_result.emplace_back(std::move(layer_tcr));
 		result.emplace_back(std::move(layer_result));
 
@@ -712,17 +716,10 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     if (m_current_tool < m_used_filament_length.size())
         m_used_filament_length[m_current_tool] += writer.get_and_reset_used_filament_length();
 
-#if 0
     // This is where we want to place the custom gcodes. We will use placeholders for this.
     // These will be substituted by the actual gcodes when the gcode is generated.
     //writer.append("[end_filament_gcode]\n");
     writer.append("[toolchange_gcode_from_wipe_tower_generator]\n");
-#else
-    // Perform the switch in-place, that way we can be sure there's no issue with the
-    // gcode generation getting confused with the tool changes.
-    writer.append("T" + std::to_string(new_tool) + "\n");
-#endif
-
 
     // Travel to where we assume we are. Custom toolchange or some special T code handling (parking extruder etc)
     // gcode could have left the extruder somewhere, we cannot just start extruding. We should also inform the

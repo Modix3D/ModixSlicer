@@ -2240,7 +2240,7 @@ LayerResult GCodeGenerator::process_layer(
     for (unsigned int extruder_id : layer_tools.extruders)
     {
         gcode += (layer_tools.has_wipe_tower && m_wipe_tower) ?
-            m_wipe_tower->tool_change(*this, extruder_id, extruder_id == layer_tools.extruders.back()) :
+            m_wipe_tower->tool_change(*this, extruder_id) :
             this->set_extruder(extruder_id, print_z);
 
         // let analyzer tag generator aware of a role type change

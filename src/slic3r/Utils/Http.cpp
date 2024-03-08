@@ -77,11 +77,11 @@ struct CurlGlobalInit
 
             if (!bundle)
                 message = _u8L("Could not detect system SSL certificate store. "
-                               "PrusaSlicer will be unable to establish secure "
+                               "ModixSlicer will be unable to establish secure "
                                "network connections.");
             else
                 message = Slic3r::GUI::format(
-					_L("PrusaSlicer detected system SSL certificate store in: %1%"),
+					_L("ModixSlicer detected system SSL certificate store in: %1%"),
                     bundle);
 
             message += "\n" + Slic3r::GUI::format(
@@ -94,7 +94,7 @@ struct CurlGlobalInit
 #endif // OPENSSL_CERT_OVERRIDE
 
         if (CURLcode ec = ::curl_global_init(CURL_GLOBAL_DEFAULT)) {
-            message += _u8L("CURL init has failed. PrusaSlicer will be unable to establish "
+            message += _u8L("CURL init has failed. ModixSlicer will be unable to establish "
                             "network connections. See logs for additional details.");
 
             BOOST_LOG_TRIVIAL(error) << ::curl_easy_strerror(ec);

@@ -42,7 +42,7 @@ public:
     /// Load font style list from config
     /// Also select actual activ font
     /// </summary>
-    /// <param name="app_config">Application configuration loaded from file "PrusaSlicer.ini"
+    /// <param name="app_config">Application configuration loaded from file "ModixSlicer.ini"
     /// + cfg is stored to privat variable</param>
     void init(AppConfig *app_config);
     

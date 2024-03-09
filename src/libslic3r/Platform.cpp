@@ -90,6 +90,10 @@ void detect_platform()
     BOOST_LOG_TRIVIAL(info) << "Platform: OpenBSD";
 	s_platform 		  = Platform::BSDUnix;
 	s_platform_flavor = PlatformFlavor::OpenBSD;
+#elif defined(__DragonFly__)
+    BOOST_LOG_TRIVIAL(info) << "Platform: DragonFlyBSD";
+	s_platform 		  = Platform::BSDUnix;
+	s_platform_flavor = PlatformFlavor::DragonFlyBSD;
 #else
 	// This should not happen.
     BOOST_LOG_TRIVIAL(info) << "Platform: Unknown";
@@ -141,6 +145,7 @@ std::string platform_flavor_to_string(PlatformFlavor pf)
         case PlatformFlavor::GenericOSX      : return "GenericOSX";
         case PlatformFlavor::OSXOnX86        : return "OSXOnX86";
         case PlatformFlavor::OSXOnArm        : return "OSXOnArm";
+        case PlatformFlavor::DragonFlyBSD    : return "DragonFlyBSD";
     }
     assert(false);
     return "";

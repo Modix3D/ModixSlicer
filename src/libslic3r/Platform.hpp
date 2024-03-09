@@ -32,6 +32,7 @@ enum class PlatformFlavor
     GenericOSX,      // For Platform::OSX
     OSXOnX86,        // For Apple's on Intel X86 CPU
     OSXOnArm,        // For Apple's on Arm CPU
+    DragonFlyBSD,    // For Platform::BSDUnix
 };
 
 // To be called on program start-up.

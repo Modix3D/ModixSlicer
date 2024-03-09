@@ -32,7 +32,9 @@ endif ()
 
 if (SLIC3R_GUI)
     add_subdirectory(imgui)
+if (NOT BSD)
     add_subdirectory(hidapi)
+endif ()
     include_directories(hidapi/include)
 
     if(WIN32)

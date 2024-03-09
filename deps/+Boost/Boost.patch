@@ -1,0 +1,51 @@
+diff -Naur a/libs/regex/CMakeLists.txt b/libs/regex/CMakeLists.txt
+--- a/libs/regex/CMakeLists.txt	2024-03-08 22:36:04.425153000 -0500
++++ b/libs/regex/CMakeLists.txt	2024-03-08 22:42:19.105213000 -0500
+@@ -8,17 +8,16 @@
+ 
+ project(boost_regex VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
+ 
+-add_library(boost_regex INTERFACE)
++add_library(boost_regex src/regex.cpp)
+ add_library(Boost::regex ALIAS boost_regex)
+ 
+-target_include_directories(boost_regex INTERFACE include)
++target_include_directories(boost_regex PUBLIC include)
+ 
+ option(BOOST_REGEX_STANDALONE "Boost.Regex: Enable Standalone Mode (i.e. no Boost dependencies)")
+ 
+ if(NOT BOOST_REGEX_STANDALONE)
+ 
+    target_link_libraries(boost_regex
+-     INTERFACE
+        Boost::config
+        Boost::throw_exception
+        Boost::predef
+@@ -28,7 +27,7 @@
+ else()
+ 
+    target_compile_definitions(boost_regex
+-     INTERFACE BOOST_REGEX_STANDALONE
++     BOOST_REGEX_STANDALONE
+    )
+ 
+ endif()
+diff -Naur a/libs/system/CMakeLists.txt b/libs/system/CMakeLists.txt
+--- a/libs/system/CMakeLists.txt	2024-03-08 22:36:05.575150000 -0500
++++ b/libs/system/CMakeLists.txt	2024-03-08 22:39:07.825181000 -0500
+@@ -6,13 +6,12 @@
+ 
+ project(boost_system VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
+ 
+-add_library(boost_system INTERFACE)
++add_library(boost_system src/error_code.cpp)
+ add_library(Boost::system ALIAS boost_system)
+ 
+-target_include_directories(boost_system INTERFACE include)
++target_include_directories(boost_system PUBLIC include)
+ 
+ target_link_libraries(boost_system
+-  INTERFACE
+     Boost::assert
+     Boost::config
+     Boost::throw_exception

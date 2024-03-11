@@ -1,0 +1,12 @@
+diff -Naur a/gzlib.c b/gzlib.c
+--- a/gzlib.c	2024-03-11 02:43:40.465450261 -0400
++++ b/gzlib.c	2024-03-11 02:43:58.835338673 -0400
+@@ -240,7 +240,7 @@
+     /* open the file with the appropriate flags (or just use fd) */
+     state->fd = fd > -1 ? fd : (
+ #ifdef WIDECHAR
+-        fd == -2 ? _wopen(path, oflag, 0666) :
++        fd == -2 ? open(path, oflag, 0666) :
+ #endif
+         open((const char *)path, oflag, 0666));
+     if (state->fd == -1) {

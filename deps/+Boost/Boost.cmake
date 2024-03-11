@@ -16,7 +16,7 @@ add_cmake_project(Boost
     LIST_SEPARATOR |
     PATCH_COMMAND COMMAND ${PATCH_CMD} ${CMAKE_CURRENT_LIST_DIR}/Boost.patch
     CMAKE_ARGS
-        -DBOOST_EXCLUDE_LIBRARIES:STRING=contract|fiber|numpy|stacktrace|wave|test
+        -DBOOST_EXCLUDE_LIBRARIES:STRING=asio|log|context|coroutine|contract|fiber|numpy|stacktrace|wave|test
         -DBOOST_LOCALE_ENABLE_ICU:BOOL=OFF # do not link to libicu, breaks compatibility between distros
         -DBUILD_TESTING:BOOL=OFF
         "${_context_abi_line}"

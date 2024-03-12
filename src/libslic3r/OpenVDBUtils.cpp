@@ -4,6 +4,9 @@
 ///|/
 #include "OpenVDBUtils.hpp"
 
+// workaround for a bug in imath
+#define IMATH_HALF_NO_LOOKUP_TABLE
+
 #ifdef _MSC_VER
 // Suppress warning C4146 in OpenVDB: unary minus operator applied to unsigned type, result still unsigned 
 #pragma warning(push)

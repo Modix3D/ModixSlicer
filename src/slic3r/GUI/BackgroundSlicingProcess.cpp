@@ -264,7 +264,7 @@ void BackgroundSlicingProcess::thread_proc()
 	// End of the background processing thread. The UI thread should join m_thread now.
 }
 
-#ifdef _WIN32
+#ifdef _MSVC_VER
 // Only these SEH exceptions will be catched and turned into Slic3r::HardCrash C++ exceptions.
 static bool is_win32_seh_harware_exception(unsigned long ex) throw() {
 	return
@@ -350,7 +350,7 @@ void BackgroundSlicingProcess::call_process(std::exception_ptr &ex) throw()
 	}
 }
 
-#ifdef _WIN32
+#ifdef _MSVC_VER
 unsigned long BackgroundSlicingProcess::thread_proc_safe_seh() throw()
 {
 	unsigned long win32_seh_catched = 0;

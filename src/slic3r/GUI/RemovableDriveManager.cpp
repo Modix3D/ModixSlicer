@@ -23,8 +23,11 @@
 #include <devpkey.h>
 #include <usbioctl.h>
 
+#if _MSVC_VER
 #include <atlbase.h>
 #include <atlcom.h>
+#include <shldisp.h>
+#endif
 #include <shldisp.h>
 #else
 // unix, linux & OSX includes
@@ -599,6 +602,51 @@ void eject_alt(std::string path, wxEvtHandler* callback_evt_handler, DriveData d
 // from https://superuser.com/a/1750403
 bool eject_inner(const std::string& path)
 {
+#if __MINGW32__
+	std::wstring wpath = boost::nowide::widen(path);
+	IShellDispatch *pISD;
+	HRESULT hr;
+	CoInitialize(nullptr);
+	hr = CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER, IID_IShellDispatch, (void **)&pISD);
+	if (!SUCCEEDED(hr)) {
+		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to get Shell pointer has failed.", path);
+		CoUninitialize();
+		return false;
+	}
+	Folder *pFolder;
+	VARIANT vtDrives;
+	VariantInit(&vtDrives);
+	vtDrives.vt = VT_I4;
+	vtDrives.lVal = ssfDRIVES;
+	hr = pISD->NameSpace(vtDrives, &pFolder);
+	if (!SUCCEEDED(hr)) {
+		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to create Namespace has failed.", path);
+		CoUninitialize();
+		return false;
+	}
+	FolderItem *pItem;
+	hr = pFolder->ParseName(static_cast<BSTR>(const_cast<wchar_t*>(wpath.c_str())), &pItem);
+	if (!SUCCEEDED(hr)) {
+		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to Parse name has failed.", path);
+		CoUninitialize();
+		return false;
+	}
+	VARIANT vtEject;
+	VariantInit(&vtEject);
+	vtEject.vt = VT_BSTR;
+	vtEject.bstrVal = SysAllocString(L"Eject");
+	hr = pItem->InvokeVerb(vtEject);
+	if (!SUCCEEDED(hr)) {
+		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to Invoke Verb has failed.", path);
+		VariantClear(&vtEject);
+		CoUninitialize();
+		return false;
+	}
+	BOOST_LOG_TRIVIAL(debug) << "Ejecting via InvokeVerb has succeeded.";
+	VariantClear(&vtEject);
+	CoUninitialize();
+	return true;
+#elif _MSVC_VER
 	std::wstring wpath = boost::nowide::widen(path);
 	CoInitialize(nullptr);
 	CComPtr<IShellDispatch> pShellDisp;
@@ -641,6 +689,7 @@ bool eject_inner(const std::string& path)
 	VariantClear(&vtEject);
 	CoUninitialize();
 	return true;
+#endif
 }
 
 } // namespace

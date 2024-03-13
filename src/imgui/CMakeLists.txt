@@ -18,4 +18,6 @@ add_library(imgui STATIC
     imstb_truetype.h
 )
 
-target_link_libraries(imgui imm32.lib)
+if (MINGW)
+    target_link_libraries(imgui imm32.lib)
+endif()

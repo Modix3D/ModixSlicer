@@ -17,3 +17,5 @@ add_library(imgui STATIC
     imstb_textedit.h
     imstb_truetype.h
 )
+
+target_link_libraries(imgui imm32.lib)

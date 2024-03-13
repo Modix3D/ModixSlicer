@@ -234,7 +234,7 @@ void BackgroundSlicingProcess::thread_proc()
 		m_state = STATE_RUNNING;
 		lck.unlock();
 		std::exception_ptr exception;
-#ifdef _WIN32
+#ifdef _MSVC_VER
 		this->call_process_seh_throw(exception);
 #else
 		this->call_process(exception);
@@ -413,7 +413,7 @@ bool BackgroundSlicingProcess::start()
 		// The worker thread is not running yet. Start it.
 		assert(! m_thread.joinable());
 		m_thread = create_thread([this]{
-#ifdef _WIN32
+#ifdef _MSVC_VER
 			this->thread_proc_safe_seh_throw();
 #else // _WIN32
 			this->thread_proc_safe();

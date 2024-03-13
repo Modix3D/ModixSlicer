@@ -267,10 +267,8 @@ endif ()
 # Slic3r binary install target
 if (WIN32)
     install(TARGETS ModixSlicer RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
-    if (MSVC)
-        install(TARGETS ModixSlicer_app_gui RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
-        install(TARGETS ModixSlicer_app_console RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
-    endif ()
+    install(TARGETS ModixSlicer_app_gui RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(TARGETS ModixSlicer_app_console RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
 else ()
     install(TARGETS ModixSlicer RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 

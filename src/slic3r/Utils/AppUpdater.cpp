@@ -27,7 +27,6 @@
 
 #ifdef _WIN32
 #include <shellapi.h>
-#include <Shlobj_core.h>
 #include <windows.h>
 #include <KnownFolders.h>
 #include <shlobj.h>

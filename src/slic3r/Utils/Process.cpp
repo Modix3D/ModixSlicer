@@ -39,7 +39,7 @@ enum class NewSlicerInstanceType {
 // Optionally load a 3MF, STL or a G-code on start.
 static void start_new_slicer_or_gcodeviewer(const NewSlicerInstanceType instance_type, const std::vector<wxString> paths_to_open, bool single_instance, bool delete_after_load)
 {
-#ifdef _WIN32
+#ifdef _MSVC_VER
 	wxString path;
 	wxFileName::SplitPath(wxStandardPaths::Get().GetExecutablePath(), &path, nullptr, nullptr, wxPATH_NATIVE);
 	path += "\\";

@@ -234,7 +234,7 @@ void BackgroundSlicingProcess::thread_proc()
 		m_state = STATE_RUNNING;
 		lck.unlock();
 		std::exception_ptr exception;
-#ifdef _WIN32
+#ifdef _MSVC_VER
 		this->call_process_seh_throw(exception);
 #else
 		this->call_process(exception);
@@ -264,7 +264,7 @@ void BackgroundSlicingProcess::thread_proc()
 	// End of the background processing thread. The UI thread should join m_thread now.
 }
 
-#ifdef _WIN32
+#ifdef _MSVC_VER
 // Only these SEH exceptions will be catched and turned into Slic3r::HardCrash C++ exceptions.
 static bool is_win32_seh_harware_exception(unsigned long ex) throw() {
 	return
@@ -350,7 +350,7 @@ void BackgroundSlicingProcess::call_process(std::exception_ptr &ex) throw()
 	}
 }
 
-#ifdef _WIN32
+#ifdef _MSVC_VER
 unsigned long BackgroundSlicingProcess::thread_proc_safe_seh() throw()
 {
 	unsigned long win32_seh_catched = 0;
@@ -413,7 +413,7 @@ bool BackgroundSlicingProcess::start()
 		// The worker thread is not running yet. Start it.
 		assert(! m_thread.joinable());
 		m_thread = create_thread([this]{
-#ifdef _WIN32
+#ifdef _MSVC_VER
 			this->thread_proc_safe_seh_throw();
 #else // _WIN32
 			this->thread_proc_safe();

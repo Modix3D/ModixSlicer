@@ -108,12 +108,12 @@ static bool WindowsSetThreadName(HANDLE hThread, const char *thread_name)
 
 bool set_thread_name(std::thread &thread, const char *thread_name)
 {
-   	return WindowsSetThreadName(static_cast<HANDLE>(thread.native_handle()), thread_name);
+   	return WindowsSetThreadName((HANDLE)(thread.native_handle()), thread_name);
 }
 
 bool set_thread_name(boost::thread &thread, const char *thread_name)
 {
-   	return WindowsSetThreadName(static_cast<HANDLE>(thread.native_handle()), thread_name);
+   	return WindowsSetThreadName((HANDLE)(thread.native_handle()), thread_name);
 }
 
 bool set_current_thread_name(const char *thread_name)

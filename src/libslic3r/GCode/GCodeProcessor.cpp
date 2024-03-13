@@ -2559,6 +2559,9 @@ void GCodeProcessor::process_G1(const std::array<std::optional<double>, 4>& axes
 
     const float volume_extruded_filament = area_filament_cross_section * delta_pos[E];
 
+    if (volume_extruded_filament != 0.)
+        m_used_filaments.increase_caches(volume_extruded_filament, m_extruder_id, 0, 0);
+
     const EMoveType type = move_type(delta_pos);
     if (type == EMoveType::Extrude) {
         const float delta_xyz = std::sqrt(sqr(delta_pos[X]) + sqr(delta_pos[Y]) + sqr(delta_pos[Z]));

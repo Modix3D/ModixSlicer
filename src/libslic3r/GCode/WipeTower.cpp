@@ -190,6 +190,15 @@ public:
 	WipeTowerWriter& travel(const Vec2f &dest, float f = 0.f)
 		{ return extrude_explicit(dest.x(), dest.y(), 0.f, f); }
 
+    WipeTowerWriter& travel_z_hop(const Vec2f &dest, float z_hop = 0.f, float f = 0.f)
+    {
+        // Apply the Z-HOP lift as needed.
+        this->z_hop( z_hop );
+        travel(dest, f);
+        this->z_hop_reset();
+        return *this;
+    }
+
 	// Extrude a line from current position to x, y with the extrusion amount given by m_extrusion_flow.
 	WipeTowerWriter& extrude(float x, float y, float f = 0.f)
 	{
@@ -497,7 +506,8 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
 	m_extra_perimeters(config.wipe_tower_perimeters-1),
 	m_density(float(config.wipe_tower_density)),
 	m_brim_layers(float(config.wipe_tower_brim_layers/100.f)),
-	m_wipe_tower_extruder(config.wipe_tower_extruder)
+	m_wipe_tower_extruder(config.wipe_tower_extruder),
+    m_retract_lift(config.retract_lift.values)
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -618,14 +628,15 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         int mid_tool = -1;
 
         WipeTowerWriter writer(m_layer_height, current_nozzle_diameter(), m_gcode_flavor, m_filpar);
+        writer.set_initial_position({0.f,0.f,}, m_wipe_tower_width, m_wipe_tower_depth, 0);
         writer.set_z(m_z_pos);
         writer.set_initial_tool(m_current_tool);
 
         if (m_wipe_tower_extruder > 0) {
-            change_tool(writer, m_wipe_tower_extruder-1);
+            tool_change(writer, m_wipe_tower_extruder-1);
             mid_tool = m_current_tool;
         } else {
-            change_tool(writer, m_current_tool);
+            tool_change(writer, m_current_tool);
         }
 
         int extrude_speed_perimeter, extrude_speed_infill;
@@ -670,7 +681,7 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         {
         case 1:
             // there is one tool change
-            change_tool(writer, layer.tool_changes.front().new_tool);
+            tool_change(writer, layer.tool_changes.front().new_tool);
             break;
         case 0:
             break;
@@ -691,7 +702,7 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
 
 void
-WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
+WipeTower::tool_change(WipeTowerWriter& writer, int new_tool)
 {
     writer.append(";----------------------\n");
     writer.append(";--  TOOL CHANGE START \n");
@@ -726,7 +737,7 @@ WipeTower::change_tool(WipeTowerWriter& writer, int new_tool)
     // postprocessor that we absolutely want to have this in the gcode, even if it thought it is the same as before.
     Vec2f current_pos = writer.pos_rotated();
     writer.feedrate(m_travel_speed * 60.f) // see https://github.com/prusa3d/PrusaSlicer/issues/5483
-            .append(std::string("G1 X") + Slic3r::float_to_string_decimal_point(current_pos.x())
+            .append(std::string( "G1 X") + Slic3r::float_to_string_decimal_point(current_pos.x())
                                 +  " Y"  + Slic3r::float_to_string_decimal_point(current_pos.y())
                                 + never_skip_tag() + "\n"
     );
@@ -774,7 +785,7 @@ WipeTower::wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed)
     {   // the first loop (always)
         Polygon poly {a,b,c,d};
         int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
-        writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed * 60.f);
+        writer.travel_z_hop(unscale(poly.points[cp]).cast<float>(), m_retract_lift[m_current_tool], m_travel_speed * 60.f);
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
@@ -842,9 +853,9 @@ WipeTower::wipe_lines_1(WipeTowerWriter& writer, int extrude_speed)
     }
 
     polylines = filler->fill_surface(&surface, params);
+    writer.travel_z_hop(unscale(polylines[0].points[0]).cast<float>(), m_retract_lift[m_current_tool], m_travel_speed * 60.f);
 
     for (const Polyline& line: polylines) {
-        writer.travel(unscale(line.points.front()).cast<float>(), m_travel_speed * 60.f);
         for (auto& point: line.points) {
             writer.extrude(unscale(point).cast<float>(), extrude_speed);
         }

@@ -146,7 +146,7 @@ public:
 
 	// Iterates through prepared m_plan, generates ToolChangeResults and appends them to "result"
 	void generate(std::vector<std::vector<ToolChangeResult>> &result);
-	void change_tool(WipeTowerWriter& writer, int new_tool);
+	void tool_change(WipeTowerWriter& writer, int new_tool);
 	void wipe_contour_2(WipeTowerWriter& writer, int loops, int extrude_speed);
 	void wipe_lines_1(WipeTowerWriter& writer, int extrude_speed);
 
@@ -244,6 +244,7 @@ private:
 	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
 	int    m_wipe_tower_extruder;
     size_t m_current_tool  = 0;
+    std::vector<double> m_retract_lift;  // Z-HOP parameter.
 
     float current_nozzle_diameter()
     {

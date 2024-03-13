@@ -151,9 +151,6 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
         "retract_layer_change",
         "retract_length",
         "retract_length_toolchange",
-        "retract_lift",
-        "retract_lift_above",
-        "retract_lift_below",
         "retract_restart_extra",
         "retract_restart_extra_toolchange",
         "retract_speed",
@@ -229,7 +226,10 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "travel_speed"
             || opt_key == "travel_speed_z"
             || opt_key == "first_layer_speed"
-            || opt_key == "z_offset") {
+            || opt_key == "z_offset"
+            || opt_key == "lift_retract"
+            || opt_key == "lift_retract_above"
+            || opt_key == "lift_retract_below") {
             steps.emplace_back(psWipeTower);
             steps.emplace_back(psSkirtBrim);
         } else if (opt_key == "filament_soluble") {

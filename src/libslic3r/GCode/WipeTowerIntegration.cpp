@@ -65,28 +65,27 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
     }
 
     std::string toolchange_gcode_str[2];
-    // XXX std::string deretraction_str;
-    // if (new_extruder_id >= 0 && needs_toolchange) {
-    //     toolchange_gcode_str = gcodegen.set_extruder(new_extruder_id, tcr.print_z); // TODO: toolchange_z vs print_z
-    //     if (gcodegen.config().wipe_tower)
-    //         deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer Z");
-    //         deretraction_str += gcodegen.unretract();
-    // }
-    // assert(toolchange_gcode_str.empty() || toolchange_gcode_str.back() == '\n');
-    // assert(deretraction_str.empty() || deretraction_str.back() == '\n');
-
-
-    if (tcr.mid_tool >= 0) {
-        toolchange_gcode_str[0] = gcodegen.set_extruder(tcr.mid_tool, tcr.print_z);
-    toolchange_gcode_str[1] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
-    } else {
-        toolchange_gcode_str[0] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
+    std::string deretraction_str;
+    if (new_extruder_id >= 0 && needs_toolchange) {
+        if (tcr.mid_tool >= 0) {
+            toolchange_gcode_str[0] = gcodegen.set_extruder(tcr.mid_tool, tcr.print_z);
+            toolchange_gcode_str[1] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
+        } else {
+            toolchange_gcode_str[0] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
+        }
+        if (gcodegen.config().wipe_tower)
+            deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer Z");
+            deretraction_str += gcodegen.unretract();
     }
+    assert(toolchange_gcode_str.empty() || toolchange_gcode_str.back() == '\n');
+    assert(deretraction_str.empty() || deretraction_str.back() == '\n');
+
+
 
     // Insert the toolchanges and deretractions gcode into the generated gcode.
     boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", toolchange_gcode_str[0]);
     boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", toolchange_gcode_str[1]);
-    // XXX boost::replace_all(tcr_rotated_gcode, "[deretraction_from_wipe_tower_generator]", deretraction_str);
+    boost::replace_all(tcr_rotated_gcode, "[deretraction_from_wipe_tower_generator]", deretraction_str);
 
     std::string tcr_gcode;
     unescape_string_cstyle(tcr_rotated_gcode, tcr_gcode);

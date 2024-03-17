@@ -872,4 +872,17 @@ std::vector<std::pair<float, float>> WipeTower::get_z_and_depth_pairs() const
     return out;
 }
 
+float WipeTower::width()
+{
+    return m_wipe_tower_width;
+}
+
+float WipeTower::get_effective_brim_width()
+{
+    float width1 = *std::max_element(m_nozzle_diameter.begin(), m_nozzle_diameter.end());
+    width1 *= m_wipe_tower_perimeters;
+    float width2 = m_wipe_tower_brim_width;
+    return std::max( width1, width2 );
+}
+
 } // namespace Slic3r

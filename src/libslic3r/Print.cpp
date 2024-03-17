@@ -1491,7 +1491,7 @@ void Print::_make_wipe_tower()
     wipe_tower.generate(m_wipe_tower_data.tool_changes);
     m_wipe_tower_data.depth = wipe_tower.get_depth();
     m_wipe_tower_data.z_and_depth_pairs = wipe_tower.get_z_and_depth_pairs();
-    m_wipe_tower_data.brim_width = wipe_tower.get_brim_width();
+    m_wipe_tower_data.brim_width = wipe_tower.get_effective_brim_width();
     m_wipe_tower_data.height = wipe_tower.get_wipe_tower_height();
     m_wipe_tower_data.used_filament = wipe_tower.get_used_filament();
     m_wipe_tower_data.number_of_toolchanges = wipe_tower.get_number_of_toolchanges();

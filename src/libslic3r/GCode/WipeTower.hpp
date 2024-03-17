@@ -177,10 +177,14 @@ public:
             ++ m_num_layer_changes;
 	}
 
+    // Return the width of the wipe tower.
+    float width();
+
+    // Return the value used for skirt calculation.
+    float get_effective_brim_width();
+
 	// Return the wipe tower position.
 	const Vec2f& 		 position() const { return m_wipe_tower_pos; }
-	// Return the wipe tower width.
-	float     		 width()    const { return m_wipe_tower_width; }
 	// The wipe tower is finished, there should be no more tool changes or wipe tower prints.
 	bool 	  		 finished() const { return m_max_color_changes == 0; }
 

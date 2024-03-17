@@ -153,7 +153,6 @@ public:
 
     float get_depth() const { return m_wipe_tower_depth; }
 	std::vector<std::pair<float, float>> get_z_and_depth_pairs() const;
-    float get_brim_width() const { return m_wipe_tower_brim_width; }
 	float get_wipe_tower_height() const { return m_wipe_tower_height; }
 
 
@@ -188,16 +187,6 @@ public:
 	// The wipe tower is finished, there should be no more tool changes or wipe tower prints.
 	bool 	  		 finished() const { return m_max_color_changes == 0; }
 
-	// Returns gcode to prime the nozzles at the front edge of the print bed.
-	std::vector<ToolChangeResult> prime(
-		// print_z of the first layer.
-		float 						first_layer_height,
-		// Extruder indices, in the order to be primed. The last extruder will later print the wipe tower brim, print brim and the object.
-		const std::vector<unsigned int> &tools,
-		// If true, the last priming are will be the same as the other priming areas, and the rest of the wipe will be performed inside the wipe tower.
-		// If false, the last priming are will be large enough to wipe the last extruder sufficiently.
-		bool 						last_wipe_inside_wipe_tower);
-
 	// Returns gcode for a toolchange and a final print head position.
 	// On the first layer, extrude a brim around the future wipe tower first.
     ToolChangeResult tool_change(size_t new_tool);
@@ -214,7 +203,6 @@ public:
         int  			    temperature = 0;
         int  			    first_layer_temperature = 0;
         float               max_e_speed = std::numeric_limits<float>::max();
-        float               nozzle_diameter;
         float               filament_area;
     };
 
@@ -243,17 +231,28 @@ private:
 	float  m_perimeter_speed    = 0.f;
     float  m_first_layer_speed  = 0.f;
     size_t m_first_layer_idx    = size_t(-1);
-	size_t m_extra_perimeters   = 0;     // Extra perimeters to increase stability of the wipe tower
+    size_t m_wipe_tower_perimeters = 0;
 	float  m_density            = 0.f;
 	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
 	int    m_wipe_tower_extruder;
     size_t m_current_tool  = 0;
-    std::vector<double> m_retract_lift;  // Z-HOP parameter.
+    const std::vector<double> m_retract_lift;  // Z-HOP parameter.
+    const std::vector<double> m_nozzle_diameter;
 
-    float current_nozzle_diameter()
+    double get_nozzle_diameter(int index)
     {
-        return m_filpar[m_current_tool].nozzle_diameter;
+        assert(m_nozzle_diameter.size());
+        assert(index >= 0 && index <= 1);
+        return m_nozzle_diameter[index];
     }
+
+    double get_current_nozzle_diameter()
+    {
+        assert(m_current_tool >= 0 && m_current_tool <= 1);
+        return get_nozzle_diameter(m_current_tool);
+    }
+
+    unsigned int suggest_perimeters_count();
 
 	// G-code generator parameters.
     GCodeFlavor     m_gcode_flavor;

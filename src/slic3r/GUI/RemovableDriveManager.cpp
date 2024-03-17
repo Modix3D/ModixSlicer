@@ -23,7 +23,7 @@
 #include <devpkey.h>
 #include <usbioctl.h>
 
-#if _MSVC_VER
+#if _MSC_VER
 #include <atlbase.h>
 #include <atlcom.h>
 #include <shldisp.h>
@@ -646,7 +646,7 @@ bool eject_inner(const std::string& path)
 	VariantClear(&vtEject);
 	CoUninitialize();
 	return true;
-#elif _MSVC_VER
+#elif _MSC_VER
 	std::wstring wpath = boost::nowide::widen(path);
 	CoInitialize(nullptr);
 	CComPtr<IShellDispatch> pShellDisp;

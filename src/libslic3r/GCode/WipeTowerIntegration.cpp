@@ -67,17 +67,21 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
     std::string toolchange_gcode_str[2];
     std::string deretraction_str;
     if (new_extruder_id >= 0 && needs_toolchange) {
+        // *IF* there is a valid mid_tool given, then we have to switch to the mid_tool.
+        //
         if (tcr.mid_tool >= 0) {
             toolchange_gcode_str[0] = gcodegen.set_extruder(tcr.mid_tool, tcr.print_z);
             toolchange_gcode_str[1] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
-        } else {
-            toolchange_gcode_str[0] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
+        } else {            
+            toolchange_gcode_str[0] = gcodegen.set_extruder(tcr.initial_tool, tcr.print_z);
+            toolchange_gcode_str[1] = gcodegen.set_extruder(new_extruder_id, tcr.print_z);
         }
         if (gcodegen.config().wipe_tower)
             deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer Z");
             deretraction_str += gcodegen.unretract();
     }
-    assert(toolchange_gcode_str.empty() || toolchange_gcode_str.back() == '\n');
+    assert(toolchange_gcode_str[0].empty() || toolchange_gcode_str[0].back() == '\n');
+    assert(toolchange_gcode_str[1].empty() || toolchange_gcode_str[1].back() == '\n');
     assert(deretraction_str.empty() || deretraction_str.back() == '\n');
 
 

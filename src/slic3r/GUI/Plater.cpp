@@ -7557,7 +7557,7 @@ void Plater::set_bed_shape(const Pointfs& shape, const double max_print_height, 
 
 void Plater::set_default_bed_shape() const
 {
-    set_bed_shape({ { 0.0, 0.0 }, { 200.0, 0.0 }, { 200.0, 200.0 }, { 0.0, 200.0 } }, 0.0, {}, {}, true);
+    set_bed_shape({ { 0.0, 0.0 }, { 1200.0, 0.0 }, { 1200.0, 650.0 }, { 0.0, 650.0 } }, 0.0, {}, {}, true);
 }
 
 void Plater::force_filament_colors_update()

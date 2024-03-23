@@ -267,7 +267,7 @@ AboutDialog::AboutDialog()
     // text
     m_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO/*NEVER*/);
     {
-        m_html->SetMinSize(wxSize(-1, 16 * wxGetApp().em_unit()));
+        m_html->SetMinSize(wxSize(-1, 20 * wxGetApp().em_unit()));
         wxFont font = wxGetApp().normal_font();// get_default_font(this);
         const auto text_clr = wxGetApp().get_label_clr_default();
         const auto text_clr_str = encode_color(ColorRGB(text_clr.Red(), text_clr.Green(), text_clr.Blue()));

@@ -3,7 +3,7 @@
 
 set(SLIC3R_APP_NAME "ModixSlicer")
 set(SLIC3R_APP_KEY "ModixSlicer")
-set(SLIC3R_VERSION "2.7.2-alpha2")
+set(SLIC3R_VERSION "2.7.2-beta1")
 set(SLIC3R_BUILD_ID "ModixSlicer-${SLIC3R_VERSION}+UNKNOWN")
 set(SLIC3R_RC_VERSION "2,7,2,0")
 set(SLIC3R_RC_VERSION_DOTS "2.7.2.0")

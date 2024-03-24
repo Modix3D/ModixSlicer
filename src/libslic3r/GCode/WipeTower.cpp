@@ -613,10 +613,9 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         }
     }
 
-    for (auto& used : m_used_filament_length) {
-        // reset used filament stats
-        used = 0.f;
-    }
+    m_used_filament_length.assign(m_used_filament_length.size(), 0.f); // reset used filament stats
+    assert(m_used_filament_length_until_layer.empty());
+    m_used_filament_length_until_layer.emplace_back(0.f, m_used_filament_length);
 
     for (const WipeTower::WipeTowerInfo& layer : m_plan)
     {
@@ -686,6 +685,9 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
         layer_result.emplace_back(std::move(layer_tcr));
 		result.emplace_back(std::move(layer_result));
 
+        if (m_used_filament_length_until_layer.empty() || m_used_filament_length_until_layer.back().first != layer.z)
+            m_used_filament_length_until_layer.emplace_back();
+        m_used_filament_length_until_layer.back() = std::make_pair(layer.z, m_used_filament_length);
 	}//layer
 }
 

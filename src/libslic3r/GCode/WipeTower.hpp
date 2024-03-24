@@ -195,7 +195,7 @@ public:
 	// Call this method only if layer_finished() is false.
 	ToolChangeResult finish_layer();
 
-    std::vector<float> get_used_filament() const { return m_used_filament_length; }
+    std::vector<std::pair<float, std::vector<float>>> get_used_filament_until_layer() const { return m_used_filament_length_until_layer; }
     int get_number_of_toolchanges() const { return m_num_tool_changes; }
 
     struct FilamentParameters {
@@ -301,6 +301,7 @@ private:
 
     // Stores information about used filament length per extruder:
     std::vector<float> m_used_filament_length;
+	std::vector<std::pair<float, std::vector<float>>> m_used_filament_length_until_layer;
 
     // Return index of first toolchange that switches to non-soluble extruder
     // ot -1 if there is no such toolchange.

@@ -721,8 +721,13 @@ WipeTower::suggest_perimeters_count()
     bool brim_is_active = (m_z_pos < (m_brim_layers * m_wipe_tower_height));
 
     if (brim_is_active) {
+
+        // What's the "progress" of the brim, it should be a linear correlation of the print's z position.
+        //
+        float factor1 = 1.f - (m_z_pos / (m_brim_layers * m_wipe_tower_height));
+
         float brim_width1 = result * get_current_nozzle_diameter();
-        float brim_width2 = m_wipe_tower_brim_width;
+        float brim_width2 = m_wipe_tower_brim_width * factor1;
         float effective_brim_width = std::max(brim_width1, brim_width2);
 
         result = effective_brim_width / get_current_nozzle_diameter();

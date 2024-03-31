@@ -1,0 +1,11 @@
+--- a/include/cereal/types/optional.hpp
++++ b/include/cereal/types/optional.hpp
+@@ -56,7 +56,7 @@ namespace cereal {
+     if (nullopt) {
+       optional = std::nullopt;
+     } else {
+-      optional.emplace();
++      optional.emplace(T {});
+       ar(CEREAL_NVP_("data", *optional));
+     }
+   }

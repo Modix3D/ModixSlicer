@@ -98,7 +98,7 @@ SET PS_RUN=none
 SET PS_DESTDIR=
 SET PS_VERSION=
 SET PS_PRODUCT=%PS_PRODUCT_DEFAULT%
-SET PS_PRIORITY=normal
+SET PS_PRIORITY=low
 CALL :RESOLVE_DESTDIR_CACHE
 
 REM Set up parameters used by help menu
@@ -220,7 +220,7 @@ IF %ERRORLEVEL% NEQ 0 IF "%PS_STEPS_DIRTY%" NEQ "" (
     (del CMakeCache.txt && cmake.exe .. -DDESTDIR="%PS_DESTDIR%") || GOTO :END
 ) ELSE GOTO :END
 (echo %PS_DESTDIR%)> "%PS_DEPS_PATH_FILE%"
-msbuild /m ALL_BUILD.vcxproj /p:Configuration=%PS_CONFIG% /v:quiet %PS_PRIORITY% || GOTO :END
+msbuild /m ALL_BUILD.vcxproj /p:Configuration=%PS_CONFIG% /v:normal /m:1 %PS_PRIORITY% || GOTO :END
 cd ..\..
 IF /I "%PS_STEPS:~0,4%" EQU "deps" GOTO :RUN_APP
 
@@ -243,7 +243,7 @@ IF %ERRORLEVEL% NEQ 0 IF "%PS_STEPS_DIRTY%" NEQ "" (
     (del CMakeCache.txt && cmake.exe .. -DCMAKE_PREFIX_PATH="%PS_DESTDIR%\usr\local" -DCMAKE_CONFIGURATION_TYPES=%PS_CONFIG_LIST%) || GOTO :END
 ) ELSE GOTO :END
 REM Skip the build step if we're using the undocumented app-cmake to regenerate the full config from inside devenv
-IF "%PS_STEPS%" NEQ "app-cmake" msbuild /m ALL_BUILD.vcxproj /p:Configuration=%PS_CONFIG% /v:quiet %PS_PRIORITY% || GOTO :END
+IF "%PS_STEPS%" NEQ "app-cmake" msbuild /m ALL_BUILD.vcxproj /p:Configuration=%PS_CONFIG% /v:normal %PS_PRIORITY% || GOTO :END
 (echo %PS_DESTDIR%)> "%PS_DEPS_PATH_FILE_FOR_CONFIG%"
 
 REM Run app

@@ -334,12 +334,11 @@ template<class T> struct NilValueTempl<T, std::enable_if_t<std::is_integral_v<T>
 
 template<> struct NilValueTempl<bool> : public NilValueTempl<int>{};
 
-// For enums the nil is the max value of the underlying type.
 template<class T>
 struct NilValueTempl<T, std::enable_if_t<std::is_enum_v<T>, void>>
 {
     using NilType = T;
-    static constexpr auto value = static_cast<T>(std::numeric_limits<std::underlying_type_t<T>>::max());
+    static constexpr auto value = 0;
 };
 
 template<class T> struct NilValueTempl<T, std::enable_if_t<std::is_floating_point_v<T>, void>> {

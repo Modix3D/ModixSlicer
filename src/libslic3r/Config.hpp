@@ -1909,21 +1909,21 @@ private:
         m_values = v;
         assert(m_labels.empty() || m_labels.size() == m_values.size());
     }
-    void set_values(const std::initializer_list<std::string_view> il) {
+    void set_values(const std::initializer_list<std::tuple<std::string_view>> il) {
         m_values.clear();
         m_values.reserve(il.size());
-        for (const std::string_view& p : il)
-            m_values.emplace_back(p);
+        for (const std::tuple<std::string_view>& p : il)
+            m_values.emplace_back(std::get<0>(p));
         assert(m_labels.empty() || m_labels.size() == m_values.size());
     }
-    void set_values(const std::initializer_list<std::pair<std::string_view, std::string_view>> il) {
+    void set_values(const std::initializer_list<std::tuple<std::string_view, std::string_view>> il) {
         m_values.clear();
         m_values.reserve(il.size());
         m_labels.clear();
         m_labels.reserve(il.size());
-        for (const std::pair<std::string_view, std::string_view>& p : il) {
-            m_values.emplace_back(p.first);
-            m_labels.emplace_back(p.second);
+        for (const std::tuple<std::string_view, std::string_view>& p : il) {
+            m_values.emplace_back(std::get<0>(p));
+            m_labels.emplace_back(std::get<1>(p));
         }
     }
     void set_labels(const std::initializer_list<std::string_view> il) {
@@ -2143,24 +2143,24 @@ public:
 
     Slic3r::clonable_ptr<ConfigOptionEnumDef> enum_def;
 
-    void set_enum_values(const std::initializer_list<std::string_view> il) {
+    void set_enum_values(const std::initializer_list<std::tuple<std::string_view>> il) {
         this->enum_def_new();
         enum_def->set_values(il);
     }
 
-    void set_enum_values(GUIType gui_type, const std::initializer_list<std::string_view> il) {
+    void set_enum_values(GUIType gui_type, const std::initializer_list<std::tuple<std::string_view>> il) {
         this->enum_def_new();
         assert(is_gui_type_enum_open(gui_type));
         this->gui_type = gui_type;
         enum_def->set_values(il);
     }
 
-    void set_enum_values(const std::initializer_list<std::pair<std::string_view, std::string_view>> il) {
+    void set_enum_values(const std::initializer_list<std::tuple<std::string_view, std::string_view>> il) {
         this->enum_def_new();
         enum_def->set_values(il);
     }
 
-    void set_enum_values(GUIType gui_type, const std::initializer_list<std::pair<std::string_view, std::string_view>> il) {
+    void set_enum_values(GUIType gui_type, const std::initializer_list<std::tuple<std::string_view, std::string_view>> il) {
         this->enum_def_new();
         assert(gui_type == GUIType::i_enum_open || gui_type == GUIType::f_enum_open);
         this->gui_type = gui_type;
@@ -2182,13 +2182,13 @@ public:
     }
 
     template<typename EnumType>
-    void set_enum(std::initializer_list<std::string_view> il) {
+    void set_enum(std::initializer_list<std::tuple<std::string_view>> il) {
         this->set_enum_values(il);
         enum_def->set_enum_map<EnumType>();
     }
 
     template<typename EnumType>
-    void set_enum(std::initializer_list<std::pair<std::string_view, std::string_view>> il) {
+    void set_enum(std::initializer_list<std::tuple<std::string_view, std::string_view>> il) {
         this->set_enum_values(il);
         enum_def->set_enum_map<EnumType>();
     }

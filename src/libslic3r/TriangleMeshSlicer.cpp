@@ -91,6 +91,15 @@ class IntersectionLine : public Line
 {
 public:
     IntersectionLine() = default;
+    IntersectionLine(auto line, auto a, auto b, auto ea, auto eb, auto et)
+    	: Line(line)
+	, a_id(a)
+	, b_id(b)
+	, edge_a_id(ea)
+	, edge_b_id(eb)
+	, edge_type(et)
+    {
+    }
 
     bool skip() const { return (this->flags & SKIP) != 0; }
     void set_skip() { this->flags |= SKIP; }
@@ -554,7 +563,7 @@ void slice_facet_with_slabs(
                         assert(vertices[i].z() == zs[slice_id]);
                         assert(vertices[j].z() == zs[slice_id]);
                         IntersectionLine il {
-                            { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
+                            Line { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
                             indices(i), indices(j), -1, -1, 
                             ProjectionFromTop ? IntersectionLine::FacetEdgeType::Bottom : IntersectionLine::FacetEdgeType::Top
                         };
@@ -595,7 +604,7 @@ void slice_facet_with_slabs(
                     assert(ProjectionFromTop ? vertices[j].z() >= zs[slab_id] : vertices[j].z() <= zs[slab_id]);
                     emit_slab_edge(
                         IntersectionLine {
-                            { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
+                            Line { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
                             indices(i), indices(j), -1, -1, IntersectionLine::FacetEdgeType::Slab
                         },
                         slab_id, ! ProjectionFromTop);
@@ -710,7 +719,7 @@ void slice_facet_with_slabs(
                             assert((vertices[i].z() > *it && vertices[j].z() < *it) || (vertices[i].z() < *it && vertices[j].z() > *it));
                             assert(il.edge_a_id == edge_id || il.edge_b_id == edge_id);
                             emit_slab_edge(
-                                IntersectionLine { {
+                                IntersectionLine { Line {
                                         to_2d(edge_up ? vertices[i] : vertices[j]).cast<coord_t>(),
                                         il.edge_a_id == edge_id ? il.a : il.b
                                     },
@@ -728,7 +737,7 @@ void slice_facet_with_slabs(
                             }
 #endif // NDEBUG
                             emit_slab_edge(
-                                IntersectionLine { {
+                                IntersectionLine { Line {
                                         il_prev.edge_a_id == edge_id ? il_prev.a : il_prev.b,
                                         to_2d(edge_up ? vertices[j] : vertices[i]).cast<coord_t>()
                                     },
@@ -762,7 +771,7 @@ void slice_facet_with_slabs(
                                 assert(ProjectionFromTop ? vertices[j].z() >= zs[slab_id] : vertices[j].z() <= zs[slab_id]);
                                 emit_slab_edge(
                                     IntersectionLine {
-                                        { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
+                                        Line { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
                                         indices(i), indices(j), -1, -1, IntersectionLine::FacetEdgeType::Slab
                                     },
                                     slab_id, ! ProjectionFromTop);
@@ -790,7 +799,7 @@ void slice_facet_with_slabs(
                         assert((vertices[i].z() > *it && vertices[j].z() < *it) || (vertices[i].z() < *it && vertices[j].z() > *it));
                         bool edge_up = vertices[j].z() > vertices[i].z();
                         emit_slab_edge(
-                            IntersectionLine{ {
+                            IntersectionLine{ Line {
                                     il_prev.edge_a_id == edge_id ? il_prev.a : il_prev.b,
                                     to_2d(edge_up ? vertices[j] : vertices[i]).cast<coord_t>()
                                 },
@@ -804,7 +813,7 @@ void slice_facet_with_slabs(
                         assert(max_layer == zs.end() || (zi < *max_layer && zj < *max_layer));
                         emit_slab_edge(
                             IntersectionLine{
-                                { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
+                                Line { to_2d(vertices[i]).cast<coord_t>(), to_2d(vertices[j]).cast<coord_t>() },
                                 indices(i), indices(j), -1, -1, IntersectionLine::FacetEdgeType::Slab
                             },
                             slab_id, ! ProjectionFromTop);

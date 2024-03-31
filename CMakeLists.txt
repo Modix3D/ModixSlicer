@@ -165,8 +165,8 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
 
 enable_testing ()
 
-# Enable C++17 language standard.
-set(CMAKE_CXX_STANDARD 17)
+# Enable C++20 language standard.
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT WIN32)

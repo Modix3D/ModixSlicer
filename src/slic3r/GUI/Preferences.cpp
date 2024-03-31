@@ -223,7 +223,7 @@ static void append_enum_option( std::shared_ptr<ConfigOptionsGroup> optgroup,
 								const std::string& label,
 								const std::string& tooltip,
 								const ConfigOption* def_val,
-								std::initializer_list<std::pair<std::string_view, std::string_view>> enum_values,
+								std::initializer_list<std::tuple<std::string_view, std::string_view>> enum_values,
 								ConfigOptionMode mode = comSimple)
 {
 	ConfigOptionDef def = {opt_key, coEnum };

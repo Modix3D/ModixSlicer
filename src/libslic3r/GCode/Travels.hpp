@@ -219,7 +219,7 @@ Points3 generate_elevated_travel(
 double get_first_crossed_line_distance(
     tcb::span<const Line> xy_path,
     const AABBTreeLines::LinesDistancer<ObjectOrExtrusionLinef> &distancer,
-    const ObjectsLayerToPrint &objects_to_print = {},
+    const ObjectsLayerToPrint &objects_to_print,
     const std::function<bool(const ObjectOrExtrusionLinef &)> &predicate = [](const ObjectOrExtrusionLinef &) { return true; },
     bool ignore_starting_object_intersection = true);
 

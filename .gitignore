@@ -25,3 +25,7 @@ CMakeUserPresets.json
 
 build-debug
 build-release
+
+*~
+*.swp
+*.swo

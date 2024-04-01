@@ -97,30 +97,6 @@ inline bool DenseBase<Derived>::all() const
   }
 }
 
-/** \returns true if at least one coefficient is true
-  *
-  * \sa all()
-  */
-template<typename Derived>
-inline bool DenseBase<Derived>::any() const
-{
-  typedef internal::evaluator<Derived> Evaluator;
-  enum {
-    unroll = SizeAtCompileTime != Dynamic
-          && SizeAtCompileTime * (Evaluator::CoeffReadCost + NumTraits<Scalar>::AddCost) <= EIGEN_UNROLLING_LIMIT
-  };
-  Evaluator evaluator(derived());
-  if(unroll)
-    return internal::any_unroller<Evaluator, unroll ? int(SizeAtCompileTime) : Dynamic>::run(evaluator);
-  else
-  {
-    for(Index j = 0; j < cols(); ++j)
-      for(Index i = 0; i < rows(); ++i)
-        if (evaluator.coeff(i, j)) return true;
-    return false;
-  }
-}
-
 /** \returns the number of coefficients which evaluate to true
   *
   * \sa all(), any()

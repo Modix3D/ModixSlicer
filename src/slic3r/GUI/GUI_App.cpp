@@ -79,7 +79,6 @@
 #include "../Utils/WinRegistry.hpp"
 #include "slic3r/Config/Snapshot.hpp"
 #include "ConfigSnapshotDialog.hpp"
-#include "FirmwareDialog.hpp"
 #include "Preferences.hpp"
 #include "Tab.hpp"
 #include "SysInfoDialog.hpp"
@@ -2608,7 +2607,6 @@ void GUI_App::add_config_menu(wxMenuBar *menu)
             break;
         }
         case ConfigMenuFlashFirmware:
-            FirmwareDialog::run(mainframe);
             break;
         case ConfigMenuWifiConfigFile:
         {

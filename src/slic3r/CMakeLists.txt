@@ -358,7 +358,7 @@ endforeach()
 
 encoding_check(libslic3r_gui)
 
-target_link_libraries(libslic3r_gui libslic3r libcereal imgui GLEW::GLEW OpenGL::GL hidapi libcurl ${wxWidgets_LIBRARIES} NanoSVG::nanosvg NanoSVG::nanosvgrast)
+target_link_libraries(libslic3r_gui libslic3r libcereal imgui glad OpenGL::GL hidapi libcurl ${wxWidgets_LIBRARIES} NanoSVG::nanosvg NanoSVG::nanosvgrast)
 
 if (MSVC)
     target_link_libraries(libslic3r_gui Setupapi.lib)

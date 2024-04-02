@@ -34,6 +34,8 @@ if (SLIC3R_GUI)
     add_subdirectory(imgui)
     add_subdirectory(hidapi)
     include_directories(hidapi/include)
+    add_subdirectory(glad)
+    include_directories(glad/include)
 
     if(WIN32)
         message(STATUS "WXWIN environment set to: $ENV{WXWIN}")

@@ -20,7 +20,7 @@
 #include "slic3r/GUI/MsgDialog.hpp"
 
 
-#include <GL/glew.h>
+#include <glad/gl.h>
 #include <algorithm>
 
 

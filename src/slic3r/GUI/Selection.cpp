@@ -24,7 +24,7 @@
 #include "libslic3r/PresetBundle.hpp"
 #include "libslic3r/BuildVolume.hpp"
 
-#include <GL/glew.h>
+#include <glad/gl.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/log/trivial.hpp>

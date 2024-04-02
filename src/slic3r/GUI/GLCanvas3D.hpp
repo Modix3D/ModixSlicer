@@ -1069,7 +1069,7 @@ private:
     void _render_thumbnail_internal(ThumbnailData& thumbnail_data, const ThumbnailsParams& thumbnail_params, const GLVolumeCollection& volumes, Camera::EType camera_type);
     // render thumbnail using an off-screen framebuffer
     void _render_thumbnail_framebuffer(ThumbnailData& thumbnail_data, unsigned int w, unsigned int h, const ThumbnailsParams& thumbnail_params, const GLVolumeCollection& volumes, Camera::EType camera_type);
-    // render thumbnail using an off-screen framebuffer when GLEW_EXT_framebuffer_object is supported
+    // render thumbnail using an off-screen framebuffer when GL_EXT_framebuffer_object is supported
     void _render_thumbnail_framebuffer_ext(ThumbnailData& thumbnail_data, unsigned int w, unsigned int h, const ThumbnailsParams& thumbnail_params, const GLVolumeCollection& volumes, Camera::EType camera_type);
     // render thumbnail using the default framebuffer
     void _render_thumbnail_legacy(ThumbnailData& thumbnail_data, unsigned int w, unsigned int h, const ThumbnailsParams& thumbnail_params, const GLVolumeCollection& volumes, Camera::EType camera_type);

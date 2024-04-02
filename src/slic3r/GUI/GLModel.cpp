@@ -32,7 +32,7 @@
 #include <igl/per_vertex_normals.h>
 #endif // ENABLE_SMOOTH_NORMALS
 
-#include <GL/glew.h>
+#include <glad/gl.h>
 
 namespace Slic3r {
 namespace GUI {
@@ -905,11 +905,11 @@ void GLModel::render_instanced(unsigned int instances_vbo, unsigned int instance
     const size_t instance_stride = 5 * sizeof(float);
     glsafe(::glVertexAttribPointer(offset_id, 3, GL_FLOAT, GL_FALSE, instance_stride, (const void*)0));
     glsafe(::glEnableVertexAttribArray(offset_id));
-    glsafe(::glVertexAttribDivisor(offset_id, 1));
+    glsafe(::glVertexAttribDivisorARB(offset_id, 1));
 
     glsafe(::glVertexAttribPointer(scales_id, 2, GL_FLOAT, GL_FALSE, instance_stride, (const void*)(3 * sizeof(float))));
     glsafe(::glEnableVertexAttribArray(scales_id));
-    glsafe(::glVertexAttribDivisor(scales_id, 1));
+    glsafe(::glVertexAttribDivisorARB(scales_id, 1));
 
     const Geometry& data = m_render_data.geometry;
 

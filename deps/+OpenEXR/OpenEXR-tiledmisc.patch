@@ -1,0 +1,10 @@
+--- a/OpenEXR/IlmImf/ImfTiledMisc.cpp
++++ b/OpenEXR/IlmImf/ImfTiledMisc.cpp
+@@ -46,6 +46,7 @@
+ #include <ImfTileDescription.h>
+ #include <algorithm>
+ #include <limits>
++#include <cstdint>
+ 
+ #include "ImfNamespace.h"
+ 

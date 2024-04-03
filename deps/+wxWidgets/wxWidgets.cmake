@@ -40,6 +40,7 @@ add_cmake_project(wxWidgets
         -DwxUSE_GLCANVAS_EGL=OFF
         -DwxUSE_WEBREQUEST=OFF
         -DwxUSE_PRIVATE_FONTS=ON
+		-DCMAKE_POLICY_DEFAULT_CMP0057=NEW
 )
 
 set(DEP_wxWidgets_DEPENDS ZLIB PNG EXPAT TIFF JPEG NanoSVG)

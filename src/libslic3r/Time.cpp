@@ -43,7 +43,7 @@ namespace __get_put_time_emulation {
 // compile or do not pass the tests on the build server. If we switch to newer
 // compilers, this namespace can be deleted with all its content.
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 // VS2019 implementation fails with ISO8601Z_TIME_FMT.
 // VS2019 does not have std::strptime either. See bug:
 // https://developercommunity.visualstudio.com/content/problem/140618/c-stdget-time-not-parsing-correctly.html

@@ -1,0 +1,13 @@
+diff --git a/build/cmake/init.cmake b/build/cmake/init.cmake
+index ed0cb89f7c..7ee134644b 100644
+--- a/build/cmake/init.cmake
++++ b/build/cmake/init.cmake
+@@ -178,6 +178,8 @@ if(WIN32)
+         set(wxCOMPILER_PREFIX "gcc")
+     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+         set(wxCOMPILER_PREFIX "clang")
++    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "IntelLLVM")
++        set(wxCOMPILER_PREFIX "vc")
+     else()
+         message(FATAL_ERROR "Unknown WIN32 compiler type")
+     endif()

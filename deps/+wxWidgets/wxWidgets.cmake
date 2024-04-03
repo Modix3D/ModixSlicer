@@ -15,12 +15,9 @@ if (UNIX AND NOT APPLE) # wxWidgets will not use char as the underlying type for
 endif()
 
 add_cmake_project(wxWidgets
-    #URL https://github.com/prusa3d/wxWidgets/archive/78aa2dc0ea7ce99dc19adc1140f74c3e2e3f3a26.zip
-    #URL_HASH SHA256=94b7d972373503e380e5a8b0ca63b1ccb956da4006402298dd89a0c5c7041b1e
-    GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets
-	GIT_TAG 613a4c46c1807320153685766a466f0022c1e48a
-    PATCH_COMMAND COMMAND ${PATCH_CMD} ${CMAKE_CURRENT_LIST_DIR}/wxWidgets.patch
-	CMAKE_ARGS
+    URL https://github.com/prusa3d/wxWidgets/archive/78aa2dc0ea7ce99dc19adc1140f74c3e2e3f3a26.zip
+    URL_HASH SHA256=94b7d972373503e380e5a8b0ca63b1ccb956da4006402298dd89a0c5c7041b1e
+    CMAKE_ARGS
         "-DCMAKE_DEBUG_POSTFIX:STRING="
         -DwxBUILD_PRECOMP=ON
         ${_wx_toolkit}
@@ -29,11 +26,14 @@ add_cmake_project(wxWidgets
         -DwxUSE_UNICODE=ON
         -DwxUSE_UNICODE_UTF8=${_unicode_utf8}
         -DwxUSE_OPENGL=ON
+        -DwxUSE_LIBPNG=sys
         -DwxUSE_ZLIB=sys
         -DwxUSE_NANOSVG=sys
         -DwxUSE_NANOSVG_EXTERNAL=ON
         -DwxUSE_REGEX=OFF
         -DwxUSE_LIBXPM=builtin
+        -DwxUSE_LIBJPEG=sys
+        -DwxUSE_LIBTIFF=sys
         -DwxUSE_EXPAT=sys
         -DwxUSE_LIBSDL=OFF
         -DwxUSE_XTEST=OFF
@@ -43,4 +43,4 @@ add_cmake_project(wxWidgets
 		-DCMAKE_POLICY_DEFAULT_CMP0057=NEW
 )
 
-set(DEP_wxWidgets_DEPENDS ZLIB EXPAT NanoSVG)
+set(DEP_wxWidgets_DEPENDS ZLIB PNG EXPAT TIFF JPEG NanoSVG)

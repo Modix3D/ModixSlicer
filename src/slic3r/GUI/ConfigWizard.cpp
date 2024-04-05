@@ -1337,42 +1337,6 @@ PageCustom::PageCustom(ConfigWizard *parent)
     append(profile_name_sizer);
 }
 
-PageUpdate::PageUpdate(ConfigWizard *parent)
-    : ConfigWizardPage(parent, _L("Automatic updates"), _L("Updates"))
-    , version_check(true)
-    , preset_update(true)
-{
-    const AppConfig *app_config = wxGetApp().app_config;
-    auto boldfont = wxGetApp().bold_font();
-
-    auto *box_slic3r = new wxCheckBox(this, wxID_ANY, _L("Check for application updates"));
-    box_slic3r->SetValue(app_config->get("notify_release") != "none");
-    append(box_slic3r);
-    append_text(wxString::Format(_L(
-        "If enabled, %s checks for new application versions online. When a new version becomes available, "
-         "a notification is displayed at the next application startup (never during program usage). "
-         "This is only a notification mechanisms, no automatic installation is done."), SLIC3R_APP_NAME));
-
-    append_spacer(VERTICAL_SPACING);
-
-    auto *box_presets = new wxCheckBox(this, wxID_ANY, _L("Update built-in Presets automatically"));
-    box_presets->SetValue(app_config->get_bool("preset_update"));
-    append(box_presets);
-    append_text(wxString::Format(_L(
-        "If enabled, %s downloads updates of built-in system presets in the background."
-        "These updates are downloaded into a separate temporary location."
-        "When a new preset version becomes available it is offered at application startup."), SLIC3R_APP_NAME));
-    const auto text_bold = _L("Updates are never applied without user's consent and never overwrite user's customized settings.");
-    auto *label_bold = new wxStaticText(this, wxID_ANY, text_bold);
-    label_bold->SetFont(boldfont);
-    label_bold->Wrap(WRAP_WIDTH);
-    append(label_bold);
-    append_text(_L("Additionally a backup snapshot of the whole configuration is created before an update is applied."));
-
-    box_slic3r->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent &event) { this->version_check = event.IsChecked(); });
-    box_presets->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent &event) { this->preset_update = event.IsChecked(); });
-}
-
 
 
 namespace DownloaderUtils
@@ -2405,7 +2369,6 @@ void ConfigWizard::priv::load_pages()
     // there should to be selected at least one printer
     btn_finish->Enable(any_fff_selected || any_sla_selected || custom_printer_selected || custom_printer_in_bundle);
 
-    index->add_page(page_update);
 #if !defined(__linux__) || (defined(__linux__) && defined(SLIC3R_DESKTOP_INTEGRATION))
     index->add_page(page_downloader);
 #endif
@@ -3214,8 +3177,6 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
 
     app_config->set_vendors(appconfig_new);
 
-    app_config->set("notify_release", page_update->version_check ? "all" : "none");
-    app_config->set("preset_update", page_update->preset_update ? "1" : "0");
     app_config->set("export_sources_full_pathnames", page_reload_from_disk->full_pathnames ? "1" : "0");
 
 #ifdef _WIN32
@@ -3403,7 +3364,6 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
         _L("SLA Material Profiles Selection") + " ", _L("SLA Materials"), _L("Type:") ));
 
     
-    p->add_page(p->page_update   = new PageUpdate(this));
 #if !defined(__linux__) || (defined(__linux__) && defined(SLIC3R_DESKTOP_INTEGRATION))
     p->add_page(p->page_downloader = new PageDownloader(this));
 #endif

@@ -414,16 +414,6 @@ private:
 
 };
 
-struct PageUpdate: ConfigWizardPage
-{
-    bool version_check;
-    bool preset_update;
-    wxTextCtrl* path_text_ctrl;
-
-    PageUpdate(ConfigWizard *parent);
-};
-
-
 struct PageDownloader : ConfigWizardPage
 {
     DownloaderUtils::Worker* m_downloader { nullptr };
@@ -622,7 +612,6 @@ struct ConfigWizard::priv
     PageMaterials    *page_filaments = nullptr;
     PageMaterials    *page_sla_materials = nullptr;
     PageCustom       *page_custom = nullptr;
-    PageUpdate* page_update = nullptr;
     PageDownloader* page_downloader = nullptr;
     PageReloadFromDisk *page_reload_from_disk = nullptr;
 #ifdef _WIN32

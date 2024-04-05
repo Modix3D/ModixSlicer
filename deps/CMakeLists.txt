@@ -22,9 +22,7 @@
 #
 # WARNING: On UNIX platforms wxWidgets hardcode the destdir path into its `wx-conffig` utility,
 # therefore, unfortunatelly, the installation cannot be copied/moved elsewhere without re-installing wxWidgets.
-#
-# There's a bug after cmake version 3.25, projects don't generate correctly.
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 cmake_policy(SET CMP0135 NEW)
 project(PrusaSlicer_deps)
 

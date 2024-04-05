@@ -21,7 +21,6 @@
 
 #include "libslic3r/libslic3r.h"
 #include "libslic3r/Utils.hpp"
-#include "../Utils/AppUpdater.hpp"
 #include "GUI.hpp"
 #include "GUI_App.hpp"
 #include "I18N.hpp"

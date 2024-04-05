@@ -35,9 +35,7 @@ class AppConfig;
 class PresetBundle;
 class PresetUpdater;
 class ModelObject;
-class PrintHostJobQueue;
 class Model;
-class AppUpdater;
 
 namespace GUI{
 
@@ -51,7 +49,6 @@ class ObjectList;
 class ObjectLayers;
 class Plater;
 class NotificationManager;
-class Downloader;
 struct GUI_InitParams;
 class GalleryDialog;
 
@@ -167,11 +164,8 @@ private:
     std::unique_ptr<RemovableDriveManager> m_removable_drive_manager;
 
     std::unique_ptr<ImGuiWrapper> m_imgui;
-    std::unique_ptr<PrintHostJobQueue> m_printhost_job_queue;
 	std::unique_ptr <OtherInstanceMessageHandler> m_other_instance_message_handler;
-    std::unique_ptr <AppUpdater> m_app_updater;
     std::unique_ptr <wxSingleInstanceChecker> m_single_instance_checker;
-    std::unique_ptr <Downloader> m_downloader;
     std::string m_instance_hash_string;
 	size_t m_instance_hash_int;
 
@@ -318,7 +312,6 @@ public:
     Model&      		 model();
     NotificationManager* notification_manager();
     GalleryDialog *      gallery_dialog();
-    Downloader*          downloader();
 
     // Parameters extracted from the command line to be passed to GUI after initialization.
     GUI_InitParams* init_params { nullptr };
@@ -347,8 +340,6 @@ public:
 	size_t      get_instance_hash_int ()              { return m_instance_hash_int; }
 
     ImGuiWrapper* imgui() { return m_imgui.get(); }
-
-    PrintHostJobQueue& printhost_job_queue() { return *m_printhost_job_queue.get(); }
 
     void            open_web_page_localized(const std::string &http_address);
     bool            may_switch_to_SLA_preset(const wxString& caption);

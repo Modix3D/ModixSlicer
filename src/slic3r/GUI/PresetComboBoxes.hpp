@@ -57,20 +57,10 @@ public:
 
     void set_selection_changed_function(std::function<void(int)> sel_changed) { on_selection_changed = sel_changed; }
 
-    bool is_selected_physical_printer();
-
-    // Return true, if physical printer was selected 
-    // and next internal selection was accomplished
-    bool selection_is_changed_according_to_physical_printers();
-
     void update(std::string select_preset);
     // select preset which is selected in PreseBundle
     void update_from_bundle();
 
-    void edit_physical_printer();
-    void add_physical_printer();
-    void open_physical_printer_url();
-    bool del_physical_printer(const wxString& note_string = wxEmptyString);
     void show_modif_preset_separately() { m_show_modif_preset_separately = true; }
 
     virtual wxString get_preset_name(const Preset& preset); 

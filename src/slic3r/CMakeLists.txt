@@ -124,8 +124,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/EditGCodeDialog.cpp
     GUI/SavePresetDialog.hpp
     GUI/SavePresetDialog.cpp
-    GUI/PhysicalPrinterDialog.hpp
-    GUI/PhysicalPrinterDialog.cpp
     GUI/GUI_Factories.cpp
     GUI/GUI_Factories.hpp
     GUI/GUI_ObjectList.cpp
@@ -172,14 +170,10 @@ set(SLIC3R_GUI_SOURCES
     GUI/RammingChart.hpp
     GUI/RemovableDriveManager.cpp
     GUI/RemovableDriveManager.hpp
-    GUI/SendSystemInfoDialog.cpp
-    GUI/SendSystemInfoDialog.hpp
     GUI/SurfaceDrag.cpp
     GUI/SurfaceDrag.hpp
     GUI/TextLines.cpp
     GUI/TextLines.hpp
-    GUI/BonjourDialog.cpp
-    GUI/BonjourDialog.hpp
     GUI/ButtonsDescription.cpp
     GUI/ButtonsDescription.hpp
     GUI/ImGuiWrapper.hpp
@@ -199,8 +193,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/MsgDialog.hpp
     GUI/UpdateDialogs.cpp
     GUI/UpdateDialogs.hpp
-    GUI/PrintHostDialogs.cpp
-    GUI/PrintHostDialogs.hpp
     GUI/WifiConfigDialog.cpp
     GUI/WifiConfigDialog.hpp
     GUI/Jobs/Job.hpp
@@ -277,36 +269,12 @@ set(SLIC3R_GUI_SOURCES
     GUI/Widgets/UIColors.hpp
     GUI/FileArchiveDialog.cpp
     GUI/FileArchiveDialog.hpp
-    GUI/Downloader.cpp
-    GUI/Downloader.hpp
-    GUI/DownloaderFileGet.cpp
-    GUI/DownloaderFileGet.hpp
-    Utils/AppUpdater.cpp
-    Utils/AppUpdater.hpp
-    Utils/Http.cpp
-    Utils/Http.hpp
     Utils/FixModelByWin10.cpp
     Utils/FixModelByWin10.hpp
-    Utils/Moonraker.cpp
-    Utils/Moonraker.hpp
-    Utils/OctoPrint.cpp
-    Utils/OctoPrint.hpp
-    Utils/Duet.cpp
-    Utils/Duet.hpp
     Utils/EmbossStyleManager.cpp
     Utils/EmbossStyleManager.hpp
-    Utils/FlashAir.cpp
-    Utils/FlashAir.hpp
     Utils/FontConfigHelp.cpp
     Utils/FontConfigHelp.hpp
-    Utils/AstroBox.cpp
-    Utils/AstroBox.hpp
-    Utils/Repetier.cpp
-    Utils/Repetier.hpp
-    Utils/PrintHost.cpp
-    Utils/PrintHost.hpp
-    Utils/Bonjour.cpp
-    Utils/Bonjour.hpp
     Utils/PresetUpdater.cpp
     Utils/PresetUpdater.hpp
     Utils/Process.cpp
@@ -319,8 +287,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/HexFile.hpp
     Utils/TCPConsole.cpp
     Utils/TCPConsole.hpp
-    Utils/MKS.cpp
-    Utils/MKS.hpp
     Utils/WinRegistry.cpp
     Utils/WinRegistry.hpp
     Utils/WxFontUtils.cpp
@@ -358,7 +324,7 @@ endforeach()
 
 encoding_check(libslic3r_gui)
 
-target_link_libraries(libslic3r_gui libslic3r libcereal imgui glad OpenGL::GL hidapi libcurl ${wxWidgets_LIBRARIES} NanoSVG::nanosvg NanoSVG::nanosvgrast)
+target_link_libraries(libslic3r_gui libslic3r libcereal imgui glad OpenGL::GL hidapi ${wxWidgets_LIBRARIES} NanoSVG::nanosvg NanoSVG::nanosvgrast)
 
 if (MSVC)
     target_link_libraries(libslic3r_gui Setupapi.lib)

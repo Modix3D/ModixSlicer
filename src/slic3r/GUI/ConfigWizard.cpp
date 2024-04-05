@@ -65,7 +65,6 @@
 #include "format.hpp"
 #include "MsgDialog.hpp"
 #include "UnsavedChangesDialog.hpp"
-#include "slic3r/Utils/AppUpdater.hpp"
 #include "slic3r/GUI/I18N.hpp"
 #include "slic3r/Config/Version.hpp"
 

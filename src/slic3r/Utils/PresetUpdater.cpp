@@ -17,7 +17,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
-#include <curl/curl.h>
 
 #include <wx/app.h>
 #include <wx/msgdlg.h>
@@ -36,7 +35,6 @@
 #include "slic3r/GUI/Plater.hpp"
 #include "slic3r/GUI/format.hpp"
 #include "slic3r/GUI/NotificationManager.hpp"
-#include "slic3r/Utils/Http.hpp"
 #include "slic3r/Config/Version.hpp"
 #include "slic3r/Config/Snapshot.hpp"
 
@@ -76,17 +74,28 @@ void copy_file_fix(const fs::path &source, const fs::path &target)
 }
 std::string escape_string_url(const std::string& unescaped)
 {
-	std::string ret_val;
-	CURL* curl = curl_easy_init();
-	if (curl) {
-		char* decoded = curl_easy_escape(curl, unescaped.c_str(), unescaped.size());
-		if (decoded) {
-			ret_val = std::string(decoded);
-			curl_free(decoded);
-		}
-		curl_easy_cleanup(curl);
-	}
-	return ret_val;
+    auto ISUNRESERVED = [](char c){
+        bool ISURLPUNTCS =
+            c == '-' ||
+            c == '.' ||
+            c == '_' ||
+            c == '~';
+        return std::isalpha(c) || ISURLPUNTCS;
+    };
+
+    std::string res;
+    for (auto& c: unescaped) {
+        if (ISUNRESERVED(c)) {
+            res += c;
+        } else {
+            // encode it
+            const char hex[] = "0123456789ABCDEF";
+            res += '%';
+            res += hex[c>>4];
+            res += hex[c & 0xf];
+        }
+    }
+    return res;
 }
 }
 
@@ -229,36 +238,7 @@ void PresetUpdater::priv::set_download_prefs(const AppConfig *app_config)
 // Downloads a file (http get operation). Cancels if the Updater is being destroyed.
 bool PresetUpdater::priv::get_file(const std::string &url, const fs::path &target_path) const
 {
-	bool res = false;
-	fs::path tmp_path = target_path;
-	tmp_path += format(".%1%%2%", get_current_pid(), TMP_EXTENSION);
-
-	BOOST_LOG_TRIVIAL(info) << format("Get: `%1%`\n\t-> `%2%`\n\tvia tmp path `%3%`",
-		url,
-		target_path.string(),
-		tmp_path.string());
-
-	Http::get(url)
-        .on_progress([](Http::Progress, bool &cancel) {
-			if (cancel) { cancel = true; }
-		})
-		.on_error([&](std::string body, std::string error, unsigned http_status) {
-			(void)body;
-			BOOST_LOG_TRIVIAL(error) << format("Error getting: `%1%`: HTTP %2%, %3%",
-				url,
-				http_status,
-				error);
-		})
-		.on_complete([&](std::string body, unsigned /* http_status */) {
-			fs::fstream file(tmp_path, std::ios::out | std::ios::binary | std::ios::trunc);
-			file.write(body.c_str(), body.size());
-			file.close();
-			fs::rename(tmp_path, target_path);
-			res = true;
-		})
-		.perform_sync();
-
-	return res;
+	return false;
 }
 
 // Remove leftover paritally downloaded files, if any.
@@ -273,42 +253,6 @@ void PresetUpdater::priv::prune_tmps() const
 
 void PresetUpdater::priv::get_missing_resource(const std::string& vendor, const std::string& filename, const std::string& url) const
 {
-	if (filename.empty() || vendor.empty())
-		return;
-
-	if (!boost::starts_with(url, "http://files.prusa3d.com/wp-content/uploads/repository/") &&
-		!boost::starts_with(url, "https://files.prusa3d.com/wp-content/uploads/repository/"))
-	{
-		throw Slic3r::CriticalException(GUI::format("URL outside prusa3d.com network: %1%", url));
-	}
-
-	std::string escaped_filename = escape_string_url(filename);
-	const fs::path file_in_vendor(vendor_path / (vendor + "/" + filename));
-	const fs::path file_in_rsrc(rsrc_path / (vendor + "/" + filename));
-	const fs::path file_in_cache(cache_path / (vendor + "/" + filename));
-
-	if (fs::exists(file_in_vendor)) { // Already in vendor. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in vendor folder. No need to download.";
-		return;
-	}
-	if (fs::exists(file_in_rsrc)) { // In resources dir since installation. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in resources folder. No need to download.";
-		return;
-	}
-	if (fs::exists(file_in_cache)) { // In cache/venodr_name/ dir. No need to do anything.
-		BOOST_LOG_TRIVIAL(info) << "Resource " << vendor << " / " << filename << " found in cache folder. No need to download.";
-		return;
-	}
-
-	BOOST_LOG_TRIVIAL(info) << "Resources check could not find " << vendor << " / " << filename << " bed texture. Downloading.";
-
-	const auto resource_url = format("%1%%2%%3%", url, url.back() == '/' ? "" : "/", escaped_filename); // vendor should already be in url 
-
-	if (!fs::exists(file_in_cache.parent_path()))
-		fs::create_directory(file_in_cache.parent_path());
-
-	get_file(resource_url, file_in_cache);
-	return;
 }
 
 void PresetUpdater::priv::get_or_copy_missing_resource(const std::string& vendor, const std::string& filename, const std::string& url) const

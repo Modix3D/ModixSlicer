@@ -36,7 +36,6 @@
 #include "Tab.hpp"
 #include "ProgressStatusBar.hpp"
 #include "3DScene.hpp"
-#include "PrintHostDialogs.hpp"
 #include "wxExtensions.hpp"
 #include "GUI_ObjectList.hpp"
 #include "Mouse3DController.hpp"
@@ -135,8 +134,7 @@ static wxIcon main_frame_icon(GUI_App::EAppMode app_mode)
 
 MainFrame::MainFrame(const int font_point_size) :
 DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE, "mainframe", font_point_size),
-    m_printhost_queue_dlg(new PrintHostQueueDialog(this))
-    , m_recent_projects(9)
+      m_recent_projects(9)
     , m_settings_dialog(this)
     , diff_dialog(this)
 {
@@ -1496,10 +1494,6 @@ void MainFrame::init_menubar_as_editor()
                         m_plater->sidebar().obj_list()->load_shape_object_from_gallery(input_files);
                 }
             }, "shape_gallery", nullptr, []() {return true; }, this);
-        
-        windowMenu->AppendSeparator();
-        append_menu_item(windowMenu, wxID_ANY, _L("Print &Host Upload Queue") + "\tCtrl+J", _L("Display the Print Host Upload Queue window"),
-            [this](wxCommandEvent&) { m_printhost_queue_dlg->Show(); }, "upload_queue", nullptr, []() {return true; }, this);
         
         windowMenu->AppendSeparator();
         append_menu_item(windowMenu, wxID_ANY, _L("Open New Instance") + "\tCtrl+Shift+I", _L("Open a new PrusaSlicer instance"),

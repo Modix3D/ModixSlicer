@@ -427,20 +427,6 @@ slic3r_remap_configs(TBB::tbbmalloc RelWithDebInfo Release)
 # The Intel TBB library will use the std::exception_ptr feature of C++11.
 # add_definitions(-DTBB_USE_CAPTURED_EXCEPTION=0)
 
-find_package(CURL REQUIRED)
-
-add_library(libcurl INTERFACE)
-target_link_libraries(libcurl INTERFACE CURL::libcurl)
-
-# Fixing curl's cmake config script bugs
-if (NOT WIN32)
-    # Required by libcurl
-    find_package(ZLIB REQUIRED)
-    target_link_libraries(libcurl INTERFACE ZLIB::ZLIB)
-else()
-    target_link_libraries(libcurl INTERFACE crypt32)
-endif()
-
 ## OPTIONAL packages
 
 # Find eigen3 or use bundled version

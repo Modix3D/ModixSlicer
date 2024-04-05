@@ -29,9 +29,6 @@
 #include "libslic3r/GCode/GCodeWriter.hpp"
 #include "libslic3r/GCode/Thumbnails.hpp"
 
-#include "slic3r/Utils/Http.hpp"
-#include "slic3r/Utils/PrintHost.hpp"
-#include "BonjourDialog.hpp"
 #include "WipeTowerDialog.hpp"
 #include "ButtonsDescription.hpp"
 #include "Search.hpp"
@@ -162,15 +159,9 @@ void Tab::create_preset_tab()
     // preset chooser
     m_presets_choice = new TabPresetComboBox(panel, m_type);
     m_presets_choice->set_selection_changed_function([this](int selection) {
-        if (!m_presets_choice->selection_is_changed_according_to_physical_printers())
-        {
-            if (m_type == Preset::TYPE_PRINTER && !m_presets_choice->is_selected_physical_printer())
-                m_preset_bundle->physical_printers.unselect_printer();
-
-            // select preset
-            std::string preset_name = m_presets_choice->GetString(selection).ToUTF8().data();
-            select_preset(Preset::remove_suffix_modified(preset_name));
-        }
+        // select preset
+        std::string preset_name = m_presets_choice->GetString(selection).ToUTF8().data();
+        select_preset(Preset::remove_suffix_modified(preset_name));
     });
 
     //buttons
@@ -353,14 +344,6 @@ void Tab::create_preset_tab()
     m_btn_hide_incompatible_presets->Bind(wxEVT_BUTTON, ([this](wxCommandEvent e) {
         toggle_show_hide_incompatible();
     }));
-
-    if (m_btn_edit_ph_printer)
-        m_btn_edit_ph_printer->Bind(wxEVT_BUTTON, [this](wxCommandEvent e) {
-            if (m_preset_bundle->physical_printers.has_selection())
-                m_presets_choice->edit_physical_printer();
-            else
-                m_presets_choice->add_physical_printer();
-        });
 
     // Initialize the DynamicPrintConfig by default keys/values.
     build();
@@ -4282,7 +4265,7 @@ void Tab::save_preset(std::string name /*= ""*/, bool detach)
     on_presets_changed();
     // If current profile is saved, "delete/rename preset" buttons have to be shown
     m_btn_delete_preset->Show();
-    m_btn_rename_preset->Show(!m_presets_choice->is_selected_physical_printer());
+    m_btn_rename_preset->Show(true);
     m_btn_delete_preset->GetParent()->Layout();
 
     if (m_type == Preset::TYPE_PRINTER)
@@ -4333,9 +4316,6 @@ void Tab::save_preset(std::string name /*= ""*/, bool detach)
 
 void Tab::rename_preset()
 {
-    if (m_presets_choice->is_selected_physical_printer())
-        return;
-
     wxString msg;
 
     if (m_type == Preset::TYPE_PRINTER && !m_preset_bundle->physical_printers.empty()) {
@@ -4413,18 +4393,6 @@ void Tab::delete_preset()
 
     PhysicalPrinterCollection& physical_printers = m_preset_bundle->physical_printers;
     wxString msg;
-    if (m_presets_choice->is_selected_physical_printer())
-    {
-        PhysicalPrinter& printer = physical_printers.get_selected_printer();
-        if (printer.preset_names.size() == 1) {
-            if (m_presets_choice->del_physical_printer(_L("It's a last preset for this physical printer.")))
-                Layout();
-            return;
-        }
-        
-        msg = format_wxstr(_L("Are you sure you want to delete \"%1%\" preset from the physical printer \"%2%\"?"), current_preset.name, printer.name);
-    }
-    else
     {
         if (m_type == Preset::TYPE_PRINTER && !physical_printers.empty())
         {
@@ -4465,19 +4433,6 @@ void Tab::delete_preset()
         //wxID_YES != wxMessageDialog(parent(), msg, title, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION).ShowModal())
         wxID_YES != MessageDialog(parent(), msg, title, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION).ShowModal())
         return;
-
-    // if we just delete preset from the physical printer
-    if (m_presets_choice->is_selected_physical_printer()) {
-        PhysicalPrinter& printer = physical_printers.get_selected_printer();
-
-        // just delete this preset from the current physical printer
-        printer.delete_preset(m_presets->get_edited_preset().name);
-        // select first from the possible presets for this printer
-        physical_printers.select_printer(printer);
-
-        this->select_preset(physical_printers.get_selected_printer_preset_name());
-        return;
-    }
 
     // delete selected preset from printers and printer, if it's needed
     if (m_type == Preset::TYPE_PRINTER && !physical_printers.empty())

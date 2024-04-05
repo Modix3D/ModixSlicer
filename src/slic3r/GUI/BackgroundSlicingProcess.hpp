@@ -16,7 +16,6 @@
 
 #include "libslic3r/PrintBase.hpp"
 #include "libslic3r/GCode/ThumbnailData.hpp"
-#include "slic3r/Utils/PrintHost.hpp"
 #include "libslic3r/GCode/GCodeProcessor.hpp"
 
 
@@ -142,14 +141,10 @@ public:
 	// Set the export path of the G-code.
 	// Once the path is set, the G-code 
 	void schedule_export(const std::string &path, bool export_path_on_removable_media);
-	// Set print host upload job data to be enqueued to the PrintHostJobQueue
-	// after current print slicing is complete
-	void schedule_upload(Slic3r::PrintHostJob upload_job);
 	// Clear m_export_path.
 	void reset_export();
 	// Once the G-code export is scheduled, the apply() methods will do nothing.
 	bool is_export_scheduled() const { return ! m_export_path.empty(); }
-	bool is_upload_scheduled() const { return ! m_upload_job.empty(); }
 
 	enum State {
 		// m_thread  is not running yet, or it did not reach the STATE_IDLE yet (it does not wait on the condition yet).
@@ -230,9 +225,6 @@ private:
 	// but once set, it cannot be re-set.
 	std::string 				m_export_path;
 	bool 						m_export_path_on_removable_media = false;
-	// Print host upload job to schedule after slicing is complete, used by schedule_upload(),
-	// empty by default (ie. no upload to schedule)
-	PrintHostJob                m_upload_job;
 	// Thread, on which the background processing is executed. The thread will always be present
 	// and ready to execute the slicing process.
 	boost::thread		 		m_thread;

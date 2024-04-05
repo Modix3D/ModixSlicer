@@ -128,15 +128,13 @@ list_projects(FOUND_PACKAGES ${CMAKE_CURRENT_LIST_DIR})
 
 dep_message(STATUS "Found external package definitions: ${FOUND_PACKAGES}")
 
-# Current list of all required dependencies for PS (top level)
+# Current list of all required dependencies for MS (top level)
 set(REQUIRED_PACKAGES
     Boost
     Catch2
     Cereal
-    CURL
     EXPAT
     NLopt
-    GLEW
     TBB
     Qhull
     wxWidgets
@@ -153,11 +151,6 @@ set(SYSTEM_PROVIDED_PACKAGES OpenGL)
 if (UNIX)
     # On UNIX systems (including Apple) ZLIB should be available
     list(APPEND SYSTEM_PROVIDED_PACKAGES ZLIB)
-    if (APPLE)
-        # Deal with CURL on Apple (See issue #5984 on GH):
-        # Mac SDK should include CURL from at least version 10.12
-        list(APPEND SYSTEM_PROVIDED_PACKAGES CURL)
-    endif ()
 endif ()
 
 

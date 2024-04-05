@@ -60,7 +60,6 @@ enum {
 enum Technology {
     // Bitflag equivalent of PrinterTechnology
     T_FFF = 0x1,
-    T_SLA = 0x2,
     T_ANY = ~0,
 };
 
@@ -450,11 +449,6 @@ struct PageMode: ConfigWizardPage
     void serialize_mode(AppConfig *app_config) const;
 };
 
-struct PageVendors: ConfigWizardPage
-{
-    PageVendors(ConfigWizard *parent);
-};
-
 struct PageFirmware: ConfigWizardPage
 {
     const ConfigOptionDef &gcode_opt;
@@ -573,7 +567,6 @@ struct ConfigWizard::priv
                                   // Also we update the is_visible flag in printer Presets according to the
                                   // PrinterPickers state.
     Materials filaments;          // Holds available filament presets and their types & vendors
-    Materials sla_materials;      // Ditto for SLA materials
     PresetAliases aliases_fff;    // Map of alias to material presets
     PresetAliases aliases_sla;    // Map of alias to material presets
     std::unique_ptr<DynamicPrintConfig> custom_config;           // Backing for custom printer definition
@@ -581,8 +574,6 @@ struct ConfigWizard::priv
     bool any_sla_selected;        // Used to decide whether to display SLA Materials page
     bool custom_printer_selected { false }; // New custom printer is requested
     bool custom_printer_in_bundle { false }; // Older custom printer already exists when wizard starts
-    // Set to true if there are none FFF printers on the main FFF page. If true, only SLA printers are shown (not even custom printers)
-    bool only_sla_mode { false };
     bool template_profile_selected { false }; // This bool has one purpose - to tell that template profile should be installed if its not (because it cannot be added to appconfig)
 
     wxScrolledWindow *hscroll = nullptr;
@@ -598,16 +589,13 @@ struct ConfigWizard::priv
 
     PageWelcome      *page_welcome = nullptr;
     PagePrinters     *page_fff = nullptr;
-    PagePrinters     *page_msla = nullptr;
     PageMaterials    *page_filaments = nullptr;
-    PageMaterials    *page_sla_materials = nullptr;
     PageCustom       *page_custom = nullptr;
     PageReloadFromDisk *page_reload_from_disk = nullptr;
 #ifdef _WIN32
     PageFilesAssociation* page_files_association = nullptr;
 #endif // _WIN32
     PageMode         *page_mode = nullptr;
-    PageVendors      *page_vendors = nullptr;
     Pages3rdparty     pages_3rdparty;
 
     // Custom setup pages
@@ -624,7 +612,6 @@ struct ConfigWizard::priv
         : q(q)
         , appconfig_new(AppConfig::EAppMode::Editor)
         , filaments(T_FFF)
-        , sla_materials(T_SLA)
     {}
 
     void load_pages();
@@ -653,7 +640,6 @@ struct ConfigWizard::priv
 //    void perform_desktop_integration() const;
 //#endif
     bool check_fff_selected();        // Used to decide whether to display Filaments page
-    bool check_sla_selected();        // Used to decide whether to display SLA Materials page
 
     int em() const { return index->em(); }
 };

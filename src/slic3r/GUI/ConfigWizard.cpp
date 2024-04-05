@@ -625,8 +625,7 @@ PagePrinters::PagePrinters(ConfigWizard *parent,
     const auto families = vendor.families();
     for (const auto &family : families) {
         const auto filter = [&](const VendorProfile::PrinterModel &model) {
-            return ((model.technology == ptFFF && technology & T_FFF)
-                    || (model.technology == ptSLA && technology & T_SLA))
+            return ((model.technology == ptFFF && technology & T_FFF))
                 && model.family == family;
         };
 
@@ -1409,51 +1408,6 @@ void PageMode::serialize_mode(AppConfig *app_config) const
     app_config->set("use_inches", check_inch->GetValue() ? "1" : "0");
 }
 
-PageVendors::PageVendors(ConfigWizard *parent)
-    : ConfigWizardPage(parent, _L("Other Vendors"), _L("Other Vendors"))
-{
-    const AppConfig &appconfig = this->wizard_p()->appconfig_new;
-
-    append_text(wxString::Format(_L("Pick another vendor supported by %s"), SLIC3R_APP_NAME) + ":");
-
-    auto boldfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    boldfont.SetWeight(wxFONTWEIGHT_BOLD);
-    // Copy vendors from bundle map to vector, so we can sort it without case sensitivity
-    std::vector<std::pair<std::wstring, const VendorProfile*>> vendors;
-    for (const auto& pair : wizard_p()->bundles) {
-        vendors.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(pair.second.vendor_profile->name)),pair.second.vendor_profile);
-    }
-    std::sort(vendors.begin(), vendors.end(), [](const std::pair<std::wstring, const VendorProfile*>& a, const std::pair<std::wstring, const VendorProfile*>& b) {
-        return a.first < b.first;
-        });
-
-    for (const std::pair<std::wstring, const VendorProfile*>& v : vendors) {
-        const VendorProfile* vendor = v.second;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
-        if (vendor && vendor->templates_profile)
-            continue;
-
-        auto *cbox = new wxCheckBox(this, wxID_ANY, vendor->name);
-        cbox->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent &event) {
-            wizard_p()->on_3rdparty_install(vendor, cbox->IsChecked());
-        });
-
-        const auto &acvendors = appconfig.vendors();
-        const bool enabled = acvendors.find(vendor->id) != acvendors.end();
-        if (enabled) {
-            cbox->SetValue(true);
-
-            auto pages = wizard_p()->pages_3rdparty.find(vendor->id);
-            wxCHECK_RET(pages != wizard_p()->pages_3rdparty.end(), "Internal error: 3rd party vendor printers page not created");
-
-            for (PagePrinters* page : { pages->second.first, pages->second.second })
-                if (page) page->install = true;
-        }
-
-        append(cbox);
-    }
-}
-
 PageFirmware::PageFirmware(ConfigWizard *parent)
     : ConfigWizardPage(parent, _L("Firmware Type"), _L("Firmware"), 1)
     , gcode_opt(*print_config_def.get("gcode_flavor"))
@@ -2064,49 +2018,43 @@ void ConfigWizard::priv::load_pages()
     index->add_page(page_welcome);
 
     // Printers
-    if (!only_sla_mode)
-        index->add_page(page_fff);
-    index->add_page(page_msla);
-    if (!only_sla_mode) {
-        index->add_page(page_vendors);
+    index->add_page(page_fff);
 
-        // Copy pages names from map to vector, so we can sort it without case sensitivity
-        std::vector<std::pair<std::wstring, std::string>> sorted_vendors;
-        for (const auto& pages : pages_3rdparty) {
-            sorted_vendors.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(pages.first)), pages.first);
-        }
-        std::sort(sorted_vendors.begin(), sorted_vendors.end(), [](const std::pair<std::wstring, std::string>& a, const std::pair<std::wstring, std::string>& b) {
-            return a.first < b.first;
-            });
-
-        for (const std::pair<std::wstring, std::string> &v : sorted_vendors) {
-            const auto& pages = pages_3rdparty.find(v.second);
-            if (pages == pages_3rdparty.end())
-                continue; // Should not happen
-            for ( PagePrinters* page : { pages->second.first, pages->second.second })
-                if (page && page->install)
-                    index->add_page(page);
-        }
-
-        index->add_page(page_custom);
-        if (page_custom->custom_wanted()) {
-            index->add_page(page_firmware);
-            index->add_page(page_bed);
-            index->add_page(page_bvolume);
-            index->add_page(page_diams);
-            index->add_page(page_temps);
-        }
-   
-        // Filaments & Materials
-        if (any_fff_selected) { index->add_page(page_filaments); }
-        // Filaments page if only custom printer is selected 
-        const AppConfig* app_config = wxGetApp().app_config;
-        if (!any_fff_selected && (custom_printer_selected || custom_printer_in_bundle) && (app_config->get("no_templates") == "0")) {
-            update_materials(T_ANY);
-            index->add_page(page_filaments);
-        }
+    // Copy pages names from map to vector, so we can sort it without case sensitivity
+    std::vector<std::pair<std::wstring, std::string>> sorted_vendors;
+    for (const auto& pages : pages_3rdparty) {
+        sorted_vendors.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(pages.first)), pages.first);
     }
-    if (any_sla_selected) { index->add_page(page_sla_materials); }
+    std::sort(sorted_vendors.begin(), sorted_vendors.end(), [](const std::pair<std::wstring, std::string>& a, const std::pair<std::wstring, std::string>& b) {
+        return a.first < b.first;
+        });
+
+    for (const std::pair<std::wstring, std::string> &v : sorted_vendors) {
+        const auto& pages = pages_3rdparty.find(v.second);
+        if (pages == pages_3rdparty.end())
+            continue; // Should not happen
+        for ( PagePrinters* page : { pages->second.first, pages->second.second })
+            if (page && page->install)
+                index->add_page(page);
+    }
+
+    index->add_page(page_custom);
+    if (page_custom->custom_wanted()) {
+        index->add_page(page_firmware);
+        index->add_page(page_bed);
+        index->add_page(page_bvolume);
+        index->add_page(page_diams);
+        index->add_page(page_temps);
+    }
+
+    // Filaments & Materials
+    if (any_fff_selected) { index->add_page(page_filaments); }
+    // Filaments page if only custom printer is selected 
+    const AppConfig* app_config = wxGetApp().app_config;
+    if (!any_fff_selected && (custom_printer_selected || custom_printer_in_bundle) && (app_config->get("no_templates") == "0")) {
+        update_materials(T_ANY);
+        index->add_page(page_filaments);
+    }
 
     // there should to be selected at least one printer
     btn_finish->Enable(any_fff_selected || any_sla_selected || custom_printer_selected || custom_printer_in_bundle);
@@ -2138,7 +2086,7 @@ void ConfigWizard::priv::init_dialog_size()
         9*disp_rect.width / 10,
         9*disp_rect.height / 10);
 
-    const int width_hint = index->GetSize().GetWidth() + std::max(90 * em(), (only_sla_mode ? page_msla->get_width() : page_fff->get_width()) + 30 * em());    // XXX: magic constant, I found no better solution
+    const int width_hint = index->GetSize().GetWidth() + std::max(90 * em(), page_fff->get_width() + 30 * em());    // XXX: magic constant, I found no better solution
     if (width_hint < window_rect.width) {
         window_rect.x += (window_rect.width - width_hint) / 2;
         window_rect.width = width_hint;
@@ -2242,10 +2190,6 @@ void ConfigWizard::priv::set_start_page(ConfigWizard::StartPage start_page)
             index->go_to(page_filaments);
             btn_finish->SetFocus();
             break;
-        case ConfigWizard::SP_MATERIALS:
-            index->go_to(page_sla_materials);
-            btn_finish->SetFocus();
-            break;
         default:
             index->go_to(page_welcome);
             btn_next->SetFocus();
@@ -2276,11 +2220,6 @@ void ConfigWizard::priv::create_3rdparty_pages()
         if (is_fff_technology) {
             pageFFF = new PagePrinters(q, vendor->name + " " +_L("FFF Technology Printers"), vendor->name+" FFF", *vendor, 1, T_FFF);
             add_page(pageFFF);
-        }
-
-        if (is_sla_technology) {
-            pageSLA = new PagePrinters(q, vendor->name + " " + _L("SLA Technology Printers"), vendor->name+" MSLA", *vendor, 1, T_SLA);
-            add_page(pageSLA);
         }
 
         pages_3rdparty.insert({vendor->id, {pageFFF, pageSLA}});
@@ -2329,27 +2268,6 @@ void ConfigWizard::priv::update_materials(Technology technology)
             }
         }
     }
-
-    if (any_sla_selected && (technology & T_SLA)) {
-        sla_materials.clear();
-        aliases_sla.clear();
-
-        // Iterate SLA materials in all bundles
-        for (const auto& [name, bundle] : bundles) {
-            for (const auto &material : bundle.preset_bundle->sla_materials) {
-                // Iterate printers in all bundles
-				// For now, we only allow the profiles to be compatible with another profiles inside the same bundle.
-                for (const auto& printer : bundle.preset_bundle->printers) {
-                    if(!printer.is_visible || printer.printer_technology() != ptSLA)
-                        continue;
-                    // Filter out inapplicable printers
-                    if (is_compatible_with_printer(PresetWithVendorProfile(material, nullptr), PresetWithVendorProfile(printer, nullptr)))
-                        // Check if material is already added
-                        add_material(sla_materials, aliases_sla, material, &printer);
-                }
-            }
-        }
-    }
 }
 
 void ConfigWizard::priv::on_custom_setup(const bool custom_wanted)
@@ -2360,10 +2278,8 @@ void ConfigWizard::priv::on_custom_setup(const bool custom_wanted)
 
 void ConfigWizard::priv::on_printer_pick(PagePrinters *page, const PrinterPickerEvent &evt)
 {
-    if (check_sla_selected() != any_sla_selected ||
-        check_fff_selected() != any_fff_selected) {
+    if (check_fff_selected() != any_fff_selected) {
         any_fff_selected = check_fff_selected();
-        any_sla_selected = check_sla_selected();
 
         load_pages();
     }
@@ -2386,21 +2302,19 @@ void ConfigWizard::priv::on_printer_pick(PagePrinters *page, const PrinterPicker
 
     if (page->technology & T_FFF) {
         page_filaments->clear();
-    } else if (page->technology & T_SLA) {
-        page_sla_materials->clear();
     }
 }
 
 void ConfigWizard::priv::select_default_materials_for_printer_model(const VendorProfile::PrinterModel &printer_model, Technology technology)
 {
-    PageMaterials* page_materials = technology & T_FFF ? page_filaments : page_sla_materials;
+    PageMaterials* page_materials = page_filaments;
     for (const std::string& material : printer_model.default_materials)
         appconfig_new.set(page_materials->materials->appconfig_section(), material, "1");
 }
 
 void ConfigWizard::priv::select_default_materials_for_printer_models(Technology technology, const std::set<const VendorProfile::PrinterModel*> &printer_models)
 {
-    PageMaterials     *page_materials    = technology & T_FFF ? page_filaments : page_sla_materials;
+    PageMaterials     *page_materials    = page_filaments;
     const std::string &appconfig_section = page_materials->materials->appconfig_section();
     
     // Following block was unnecessary. Its enough to iterate printer_models once. Not for every vendor printer page. 
@@ -2452,7 +2366,7 @@ void ConfigWizard::priv::select_default_materials_for_printer_models(Technology 
     }
 
     update_materials(technology);
-    ((technology & T_FFF) ? page_filaments : page_sla_materials)->reload_presets();
+    page_filaments->reload_presets();
 }
 
 void ConfigWizard::priv::on_3rdparty_install(const VendorProfile *vendor, bool install)
@@ -2483,8 +2397,6 @@ bool ConfigWizard::priv::on_bnt_finish()
      */
     if (page_filaments)
         page_filaments->check_and_update_presets();
-    if (page_sla_materials)
-        page_sla_materials->check_and_update_presets();
     
     // Even if we have only custom printer installed, check filament selection. 
     // Template filaments could be selected in this case. 
@@ -2614,24 +2526,6 @@ bool ConfigWizard::priv::check_and_install_missing_materials(Technology technolo
 				select_default_materials_for_printer_model(**printer_models_without_material.begin(), T_FFF);
 			return false;
 		}
-    }
-
-    if (any_sla_selected && (technology & T_SLA)) {
-    	std::set<const VendorProfile::PrinterModel*> printer_models_without_material = printer_models_missing_materials(ptSLA, AppConfig::SECTION_MATERIALS, no_templates);
-    	if (! printer_models_without_material.empty()) {
-	        if (only_for_model_id.empty())
-	            ask_and_select_default_materials(
-					_L("The following SLA printer models have no materials selected:") +
-	            	"\n\n" +
-				   	printer_model_list(printer_models_without_material) +
-					"\n\n" +
-					_L("Do you want to select default SLA materials for these printer models?"),
-					printer_models_without_material,
-	            	T_SLA);
-	        else
-				select_default_materials_for_printer_model(**printer_models_without_material.begin(), T_SLA);
-	        return false;
-	    }
     }
 
     return true;
@@ -2926,7 +2820,7 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
         preset_bundle->load_presets(*app_config, ForwardCompatibilitySubstitutionRule::EnableSilentDisableSystem, 
                                     {preferred_model, preferred_variant, first_added_filament, first_added_sla_material});
 
-    if (!only_sla_mode && page_custom->custom_wanted() && page_custom->is_valid_profile_name()) {
+    if (page_custom->custom_wanted() && page_custom->is_valid_profile_name()) {
         // if unsaved changes was not cheched till this moment
         if (!check_unsaved_preset_changes && 
             !wxGetApp().check_and_keep_current_preset_changes(caption, _L("Custom printer was installed and it will be activated."), act_btns, &apply_keeped_changes))
@@ -2974,15 +2868,6 @@ bool ConfigWizard::priv::check_fff_selected()
     for (const auto& printer: pages_3rdparty)
         if (printer.second.first)               // FFF page
             ret |= printer.second.first->any_selected();
-    return ret;
-}
-
-bool ConfigWizard::priv::check_sla_selected()
-{
-    bool ret = page_msla->any_selected();
-    for (const auto& printer: pages_3rdparty)
-        if (printer.second.second)               // SLA page
-            ret |= printer.second.second->any_selected();
     return ret;
 }
 
@@ -3055,37 +2940,19 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
 
     
     p->page_fff = new PagePrinters(this, _L("Prusa FFF Technology Printers"), "Prusa FFF", *vendor_prusa, 0, T_FFF);
-    p->only_sla_mode = !p->page_fff->has_printers;
-    if (!p->only_sla_mode) {
-        p->add_page(p->page_fff);
-        p->page_fff->is_primary_printer_page = true;
-    }
+    p->add_page(p->page_fff);
+    p->page_fff->is_primary_printer_page = true;
   
+    // Pages for 3rd party vendors
+    p->create_3rdparty_pages();   // Needs to be done _before_ creating PageVendors
+    p->add_page(p->page_custom = new PageCustom(this));
+    p->custom_printer_selected = p->page_custom->custom_wanted();
 
-    p->page_msla = new PagePrinters(this, _L("Prusa MSLA Technology Printers"), "Prusa MSLA", *vendor_prusa, 0, T_SLA);
-    p->add_page(p->page_msla);
-    if (p->only_sla_mode) {
-        p->page_msla->is_primary_printer_page = true;
-    }
-
-    if (!p->only_sla_mode) {
-	    // Pages for 3rd party vendors
-	    p->create_3rdparty_pages();   // Needs to be done _before_ creating PageVendors
-	    p->add_page(p->page_vendors = new PageVendors(this));
-	    p->add_page(p->page_custom = new PageCustom(this));
-        p->custom_printer_selected = p->page_custom->custom_wanted();
-    }
-
-    p->any_sla_selected = p->check_sla_selected();
-    p->any_fff_selected = ! p->only_sla_mode && p->check_fff_selected();
+    p->any_fff_selected = p->check_fff_selected();
 
     p->update_materials(T_ANY);
-    if (!p->only_sla_mode)
-        p->add_page(p->page_filaments = new PageMaterials(this, &p->filaments,
-            _L("Filament Profiles Selection"), _L("Filaments"), _L("Type:") ));
-
-    p->add_page(p->page_sla_materials = new PageMaterials(this, &p->sla_materials,
-        _L("SLA Material Profiles Selection") + " ", _L("SLA Materials"), _L("Type:") ));
+    p->add_page(p->page_filaments = new PageMaterials(this, &p->filaments,
+        _L("Filament Profiles Selection"), _L("Filaments"), _L("Type:") ));
 
     
     p->add_page(p->page_reload_from_disk = new PageReloadFromDisk(this));
@@ -3123,7 +2990,7 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
         // check, that there is selected at least one filament/material
         ConfigWizardPage* active_page = this->p->index->active_page();
         if (// Leaving the filaments or SLA materials page and 
-        	(active_page == p->page_filaments || active_page == p->page_sla_materials) && 
+        	(active_page == p->page_filaments) && 
         	// some Printer models had no filament or SLA material selected.
         	! p->check_and_install_missing_materials(dynamic_cast<PageMaterials*>(active_page)->materials->technology))
         	// In that case don't leave the page and the function above queried the user whether to install default materials.
@@ -3141,7 +3008,6 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
         p->any_sla_selected = true;
         p->load_pages();
         p->page_fff->select_all(true, false);
-        p->page_msla->select_all(true, false);
         p->index->go_to(p->page_mode);
     });
 

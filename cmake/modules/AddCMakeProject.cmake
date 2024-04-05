@@ -68,6 +68,11 @@ function(add_cmake_project projectname)
             -DCMAKE_C_FLAGS_${_build_type_upper}:STRING=${CMAKE_C_FLAGS_${_build_type_upper}}
             -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+			
+			# Force the use of /MT, /MTd.
+			-DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+			-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>
+			
             "${_configs_line}"
             ${DEP_CMAKE_OPTS}
             ${P_ARGS_CMAKE_ARGS}

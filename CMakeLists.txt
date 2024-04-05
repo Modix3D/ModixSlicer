@@ -115,6 +115,11 @@ else ()
 endif ()
 
 if (MSVC)
+
+	# Force the use of /MT, /MTd.
+	set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
     if (SLIC3R_MSVC_COMPILE_PARALLEL AND NOT IS_CLANG_CL)
            add_compile_options(/MP)
     endif ()

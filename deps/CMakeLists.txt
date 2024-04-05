@@ -25,6 +25,7 @@
 #
 # There's a bug after cmake version 3.25, projects don't generate correctly.
 cmake_minimum_required(VERSION 3.25)
+cmake_policy(SET CMP0135 NEW)
 project(PrusaSlicer_deps)
 
 # Redefine BUILD_SHARED_LIBS with default being OFF
@@ -46,15 +47,14 @@ endif ()
 # Slightly controversial
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../cmake/modules)
 
-if (MSVC)
-  option(DEP_DEBUG "Build in debug version of packages automatically" ON)
-endif ()
-
-if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
-    cmake_policy(SET CMP0135 NEW)
-endif ()
-
 include(${PROJECT_SOURCE_DIR}/../cmake/modules/AddCMakeProject.cmake)
+
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if (is_multi_config)
+	# Generate only the required configuration type, less confusing on MSVC
+	# where mixing configurations fails linker.
+	set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+endif()
 
 macro(list_projects result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -229,73 +229,6 @@ endforeach()
 list(REMOVE_DUPLICATES _build_list)
 dep_message(STATUS "Building dep targets (${CMAKE_BUILD_TYPE}): ${_build_list}")
 add_custom_target(deps ALL DEPENDS ${_build_list_toplevel})
-
-# Support legacy option DEP_DEBUG on MSVC to build debug libraries in the same cmake run as for CMAKE_BUILD_TYPE:
-if (DEP_DEBUG AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-  # MSVC has this nice feature to not be able to link release mode libs to Debug mode
-  # projects
-
-  # Exclude the libraries which have no problem to link to Debug builds in
-  # Release mode (mostly C libraries)
-  set(DEP_DEBUG_EXCLUDES GMP MPFR OpenSSL NanoSVG TIFF JPEG ZLIB heatshrink)
-  if (UNIX)
-    # Making a separate debug build on Unix of wx is a nightmare
-    list(APPEND DEP_DEBUG_EXCLUDES wxWidgets)
-  endif ()
-  
-  # Create the list of targets needed in debug mode
-  set(_build_list_dbg "")
-  set(_build_list_filt ${_build_list})
-  list(JOIN  DEP_DEBUG_EXCLUDES "|" _excl_regexp)
-  list(FILTER _build_list_filt EXCLUDE REGEX "${_excl_regexp}")
-
-  foreach (t ${_build_list_filt})
-    list(APPEND _build_list_dbg ${t}_debug)
-  endforeach()
-
-  # Create a subdirectory for the Debug build within the current binary dir:
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_d)
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR} -G${CMAKE_GENERATOR} 
-      -DCMAKE_BUILD_TYPE=Debug
-      -DDEP_WX_GTK3=${DEP_WX_GTK3}
-      -D${PROJECT_NAME}_DEP_DOWNLOAD_DIR=${${PROJECT_NAME}_DEP_DOWNLOAD_DIR}
-      -D${PROJECT_NAME}_DEP_INSTALL_PREFIX=${${PROJECT_NAME}_DEP_INSTALL_PREFIX}
-      -D${PROJECT_NAME}_PACKAGE_EXCLUDES="${_excl_regexp}"
-      -D${PROJECT_NAME}_SELECT_ALL=${${PROJECT_NAME}_SELECT_ALL}
-      -D${PROJECT_NAME}_DEP_BUILD_VERBOSE=${${PROJECT_NAME}_DEP_BUILD_VERBOSE}
-      -DCMAKE_DEBUG_POSTFIX=d
-      #TODO: forward per-package selector variables
-      -DDEP_MESSAGES_WRITTEN=ON
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_d 
-    OUTPUT_QUIET
-  )
-
-  dep_message(STATUS "Building dep targets (Debug): ${_build_list_dbg}")
-
-  # Each lib will have a dep_<package>_debug target to build only the debug counterpart
-  # Not part of ALL (problem with parallelization)
-  foreach(pkgtgt ${_build_list_filt})
-    add_custom_target(${pkgtgt}_debug
-      COMMAND ${CMAKE_COMMAND} --build . --target ${pkgtgt}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_d
-      USES_TERMINAL
-    )
-  endforeach()
-
-  # Can be used to build all the debug libs
-  string(JOIN " " _build_list_filt_targets "${_build_list_filt}")
-  add_custom_target(deps_debug ALL 
-    COMMAND ${CMAKE_COMMAND} --build . --target ${_build_list_filt_targets}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_d
-    USES_TERMINAL
-  )
-
-  # The Release must be built before, as there are libs in this debug session which need
-  # the release versions of the excluded libs
-  add_dependencies(deps_debug deps)
-
-endif ()
 
 set(DEP_MESSAGES_WRITTEN ON CACHE BOOL "")
 

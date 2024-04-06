@@ -178,6 +178,7 @@ enable_testing ()
 # Enable C++20 language standard.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_COLOR_DIAGNOSTICS ON)
 
 if(NOT WIN32)
     # Add DEBUG flags to debug builds.

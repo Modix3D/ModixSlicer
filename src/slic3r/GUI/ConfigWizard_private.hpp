@@ -178,7 +178,6 @@ struct PageWelcome: ConfigWizardPage
     PageWelcome(ConfigWizard *parent);
 
     bool reset_user_profile() const { return cbox_reset != nullptr ? cbox_reset->GetValue() : false; }
-    bool integrate_desktop() const { return cbox_integrate != nullptr ? cbox_integrate->GetValue() : false; }
 
     virtual void set_run_reason(ConfigWizard::RunReason run_reason) override;
 };
@@ -414,15 +413,6 @@ private:
 
 };
 
-struct PageDownloader : ConfigWizardPage
-{
-    DownloaderUtils::Worker* m_downloader { nullptr };
-
-    PageDownloader(ConfigWizard* parent);
-
-    bool on_finish_downloader() const ;
-};
-
 struct PageReloadFromDisk : ConfigWizardPage
 {
     bool full_pathnames;
@@ -612,7 +602,6 @@ struct ConfigWizard::priv
     PageMaterials    *page_filaments = nullptr;
     PageMaterials    *page_sla_materials = nullptr;
     PageCustom       *page_custom = nullptr;
-    PageDownloader* page_downloader = nullptr;
     PageReloadFromDisk *page_reload_from_disk = nullptr;
 #ifdef _WIN32
     PageFilesAssociation* page_files_association = nullptr;

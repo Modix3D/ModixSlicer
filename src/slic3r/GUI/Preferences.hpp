@@ -37,10 +37,6 @@ namespace GUI {
 class ConfigOptionsGroup;
 class OG_CustomCtrl;
 
-namespace DownloaderUtils {
-	class Worker;
-}
-
 class PreferencesDialog : public DPIDialog
 {
 	std::map<std::string, std::string>	m_values;
@@ -67,8 +63,6 @@ class PreferencesDialog : public DPIDialog
 	wxColourPickerCtrl*					m_mode_simple    { nullptr };
 	wxColourPickerCtrl*					m_mode_advanced  { nullptr };
 	wxColourPickerCtrl*					m_mode_expert    { nullptr };
-
-	DownloaderUtils::Worker*			downloader { nullptr };
 
 	wxBookCtrlBase*						tabs {nullptr};
 

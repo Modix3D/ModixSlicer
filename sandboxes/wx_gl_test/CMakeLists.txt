@@ -5,7 +5,7 @@ project(wxGL_Test)
 add_executable(wxgltest WIN32 main.cpp )
 
 set (wxWidgets_CONFIG_OPTIONS "--toolkit=gtk${SLIC3R_GTK}")
-find_package(wxWidgets 3.1 REQUIRED COMPONENTS core base gl html)
+find_package(wxWidgets CONFIG 3.1 REQUIRED COMPONENTS core base gl html)
 find_package(OpenGL REQUIRED)
 find_package(NanoSVG REQUIRED)
 include(${wxWidgets_USE_FILE})

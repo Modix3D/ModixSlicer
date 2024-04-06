@@ -51,15 +51,7 @@ if (SLIC3R_GUI)
     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set (wxWidgets_CONFIG_OPTIONS "--toolkit=gtk${SLIC3R_GTK}")
     endif ()
-    find_package(wxWidgets 3.2 MODULE REQUIRED COMPONENTS base core adv html gl)
-
-    include(${wxWidgets_USE_FILE})
-
-    slic3r_remap_configs(wx::wxhtml wx::wxadv wx::wxgl wx::wxcore wx::wxbase RelWithDebInfo Release)
-
-    if(UNIX)
-        message(STATUS "wx-config path: ${wxWidgets_CONFIG_EXECUTABLE}")
-    endif()
+    find_package(wxWidgets 3.2 CONFIG REQUIRED COMPONENTS base core adv html gl)
 
     find_package(JPEG MODULE QUIET)
     find_package(TIFF MODULE QUIET) # Tiff exported config is broken for static build

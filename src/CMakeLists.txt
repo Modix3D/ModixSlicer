@@ -10,7 +10,6 @@ add_subdirectory(miniz)
 add_subdirectory(glu-libtess)
 add_subdirectory(semver)
 add_subdirectory(libigl)
-add_subdirectory(hints)
 add_subdirectory(qoi)
 add_subdirectory(libnest2d)
 
@@ -80,7 +79,7 @@ if (SLIC3R_GUI)
         list(FILTER wxWidgets_LIBRARIES EXCLUDE REGEX expat)
         list(APPEND wxWidgets_LIBRARIES libexpat)
     endif ()
-    
+
     # This is an issue in the new wxWidgets cmake build, doesn't deal with librt
     find_library(LIBRT rt)
     if(LIBRT)
@@ -91,7 +90,7 @@ if (SLIC3R_GUI)
     # wrong libs for opengl in the link line and it does not link to it by himself.
     # libslic3r_gui will link to opengl anyway, so lets override wx
     list(FILTER wxWidgets_LIBRARIES EXCLUDE REGEX OpenGL)
-    
+
     if (UNIX AND NOT APPLE)
         list(APPEND wxWidgets_LIBRARIES X11 wayland-client wayland-egl EGL)
     endif ()

@@ -84,11 +84,11 @@ using Config::SnapshotDB;
 
 // Configuration data structures extensions needed for the wizard
 
-bool Bundle::load(fs::path source_path, BundleLocation location, bool ais_prusa_bundle)
+bool Bundle::load(fs::path source_path, BundleLocation location, bool ais_modix_bundle)
 {
     this->preset_bundle = std::make_unique<PresetBundle>();
     this->location = location;
-    this->is_prusa_bundle = ais_prusa_bundle;
+    this->is_modix_bundle = ais_modix_bundle;
 
     std::string path_string = source_path.string();
     // Throw when parsing invalid configuration. Only valid configuration is supposed to be provided over the air.
@@ -116,7 +116,7 @@ Bundle::Bundle(Bundle &&other)
     : preset_bundle(std::move(other.preset_bundle))
     , vendor_profile(other.vendor_profile)
     , location(other.location)
-    , is_prusa_bundle(other.is_prusa_bundle)
+    , is_modix_bundle(other.is_modix_bundle)
 {
     other.vendor_profile = nullptr;
 }
@@ -129,21 +129,21 @@ BundleMap BundleMap::load()
     const auto archive_dir = (boost::filesystem::path(Slic3r::data_dir()) / "cache" / "vendor").make_preferred();
     const auto rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
     const auto cache_dir = boost::filesystem::path(Slic3r::data_dir()) / "cache"; // for Index
-    // Load Prusa bundle from the datadir/vendor directory or from datadir/cache/vendor (archive) or from resources/profiles.
-    auto prusa_bundle_path = (vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-    BundleLocation prusa_bundle_loc = BundleLocation::IN_VENDOR;
-    if (! boost::filesystem::exists(prusa_bundle_path)) {
-        prusa_bundle_path = (archive_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-        prusa_bundle_loc = BundleLocation::IN_ARCHIVE;
+    // Load Modix bundle from the datadir/vendor directory or from datadir/cache/vendor (archive) or from resources/profiles.
+    auto modix_bundle_path = (vendor_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+    BundleLocation modix_bundle_loc = BundleLocation::IN_VENDOR;
+    if (! boost::filesystem::exists(modix_bundle_path)) {
+        modix_bundle_path = (archive_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+        modix_bundle_loc = BundleLocation::IN_ARCHIVE;
     }
-    if (!boost::filesystem::exists(prusa_bundle_path)) {
-        prusa_bundle_path = (rsrc_vendor_dir / PresetBundle::PRUSA_BUNDLE).replace_extension(".ini");
-        prusa_bundle_loc = BundleLocation::IN_RESOURCES;
+    if (!boost::filesystem::exists(modix_bundle_path)) {
+        modix_bundle_path = (rsrc_vendor_dir / PresetBundle::MODIX_BUNDLE).replace_extension(".ini");
+        modix_bundle_loc = BundleLocation::IN_RESOURCES;
     }
     {
-        Bundle prusa_bundle;
-        if (prusa_bundle.load(std::move(prusa_bundle_path), prusa_bundle_loc, true))
-            res.emplace(PresetBundle::PRUSA_BUNDLE, std::move(prusa_bundle)); 
+        Bundle modix_bundle;
+        if (modix_bundle.load(std::move(modix_bundle_path), modix_bundle_loc, true))
+            res.emplace(PresetBundle::MODIX_BUNDLE, std::move(modix_bundle)); 
     }
 
     // Load the other bundles in the datadir/vendor directory
@@ -214,19 +214,19 @@ BundleMap BundleMap::load()
     return res;
 }
 
-Bundle& BundleMap::prusa_bundle()
+Bundle& BundleMap::modix_bundle()
 {
-    auto it = find(PresetBundle::PRUSA_BUNDLE);
+    auto it = find(PresetBundle::MODIX_BUNDLE);
     if (it == end()) {
-        throw Slic3r::RuntimeError("ConfigWizard: Internal error in BundleMap: PRUSA_BUNDLE not loaded");
+        throw Slic3r::RuntimeError("ConfigWizard: Internal error in BundleMap: MODIX_BUNDLE not loaded");
     }
 
     return it->second;
 }
 
-const Bundle& BundleMap::prusa_bundle() const
+const Bundle& BundleMap::modix_bundle() const
 {
-    return const_cast<BundleMap*>(this)->prusa_bundle();
+    return const_cast<BundleMap*>(this)->modix_bundle();
 }
 
 
@@ -690,7 +690,7 @@ void PagePrinters::set_run_reason(ConfigWizard::RunReason run_reason)
     if (is_primary_printer_page
         && (run_reason == ConfigWizard::RR_DATA_EMPTY || run_reason == ConfigWizard::RR_DATA_LEGACY)
         && printer_pickers.size() > 0 
-        && printer_pickers[0]->vendor_id == PresetBundle::PRUSA_BUNDLE) {
+        && printer_pickers[0]->vendor_id == PresetBundle::MODIX_BUNDLE) {
         printer_pickers[0]->select_one(0, true);
     }
 }
@@ -1171,11 +1171,11 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
 // get data from list
 // sort data
 // first should be <all>
-// then prusa profiles
+// then modix profiles
 // then the rest
 // in alphabetical order
     
-    std::vector<std::reference_wrapper<const std::string>> prusa_profiles;
+    std::vector<std::reference_wrapper<const std::string>> modix_profiles;
     std::vector<std::pair<std::wstring ,std::reference_wrapper<const std::string>>> other_profiles; // first is lower case id for sorting
     bool add_TEMPLATES_item = false;
     for (int i = 0 ; i < list->size(); ++i) {
@@ -1186,8 +1186,8 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
             add_TEMPLATES_item = true;
             continue;
         }
-        if (!material_type_ordering && data.find("Prusa") != std::string::npos)
-            prusa_profiles.push_back(data);
+        if (!material_type_ordering && data.find("Modix") != std::string::npos)
+            modix_profiles.push_back(data);
         else 
             other_profiles.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(data)),data);
     }
@@ -1212,7 +1212,7 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
             }
         }
     } else {
-        std::sort(prusa_profiles.begin(), prusa_profiles.end(), [](std::reference_wrapper<const std::string> a, std::reference_wrapper<const std::string> b) {
+        std::sort(modix_profiles.begin(), modix_profiles.end(), [](std::reference_wrapper<const std::string> a, std::reference_wrapper<const std::string> b) {
             return a.get() < b.get();
             });
         std::sort(other_profiles.begin(), other_profiles.end(), [](const std::pair<std::wstring, std::reference_wrapper<const std::string>>& a, const std::pair<std::wstring, std::reference_wrapper<const std::string>>& b) {
@@ -1225,7 +1225,7 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
         list->append(_L("(All)"), &EMPTY);
     if (materials->technology == T_FFF && add_TEMPLATES_item)
         list->append(_L("(Templates)"), &TEMPLATES);
-    for (const auto& item : prusa_profiles)
+    for (const auto& item : modix_profiles)
         list->append(item, &const_cast<std::string&>(item.get()));
     for (const auto& item : other_profiles)
         list->append(item.second, &const_cast<std::string&>(item.second.get()));
@@ -1235,32 +1235,32 @@ void PageMaterials::sort_list_data(StringList* list, bool add_All_item, bool mat
 void PageMaterials::sort_list_data(PresetList* list, const std::vector<ProfilePrintData>& data)
 {
     // sort data
-    // then prusa profiles
+    // then modix profiles
     // then the rest
     // in alphabetical order
-    std::vector<ProfilePrintData> prusa_profiles;
+    std::vector<ProfilePrintData> modix_profiles;
     std::vector<std::pair<std::wstring, ProfilePrintData>> other_profiles; // first is lower case id for sorting
     for (const auto& item : data) {
         const std::string& name = item.name;
-        if (name.find("Prusa") != std::string::npos)
-            prusa_profiles.emplace_back(item);
+        if (name.find("Modix") != std::string::npos)
+            modix_profiles.emplace_back(item);
         else
             other_profiles.emplace_back(boost::algorithm::to_lower_copy(boost::nowide::widen(name)), item);
     }
-    std::sort(prusa_profiles.begin(), prusa_profiles.end(), [](ProfilePrintData a, ProfilePrintData b) {
+    std::sort(modix_profiles.begin(), modix_profiles.end(), [](ProfilePrintData a, ProfilePrintData b) {
         return a.name.get() < b.name.get();
         });
     std::sort(other_profiles.begin(), other_profiles.end(), [](const std::pair<std::wstring, ProfilePrintData>& a, const std::pair<std::wstring, ProfilePrintData>& b) {
         return a.first < b.first;
         });
     list->Clear();
-    for (size_t i = 0; i < prusa_profiles.size(); ++i) {
-        list->append(std::string(prusa_profiles[i].name) + (prusa_profiles[i].omnipresent || template_shown ? "" : " *"), &const_cast<std::string&>(prusa_profiles[i].name.get()));
-        list->Check(i, prusa_profiles[i].checked);
+    for (size_t i = 0; i < modix_profiles.size(); ++i) {
+        list->append(std::string(modix_profiles[i].name) + (modix_profiles[i].omnipresent || template_shown ? "" : " *"), &const_cast<std::string&>(modix_profiles[i].name.get()));
+        list->Check(i, modix_profiles[i].checked);
     }
     for (size_t i = 0; i < other_profiles.size(); ++i) {
         list->append(std::string(other_profiles[i].second.name) + (other_profiles[i].second.omnipresent || template_shown ? "" : " *"), &const_cast<std::string&>(other_profiles[i].second.name.get()));
-        list->Check(i + prusa_profiles.size(), other_profiles[i].second.checked);
+        list->Check(i + modix_profiles.size(), other_profiles[i].second.checked);
     }
 }
 
@@ -2201,7 +2201,7 @@ void ConfigWizard::priv::create_3rdparty_pages()
 {
     for (const auto &pair : bundles) {
         const VendorProfile *vendor = pair.second.vendor_profile;
-        if (vendor->id == PresetBundle::PRUSA_BUNDLE) { continue; }
+        if (vendor->id == PresetBundle::MODIX_BUNDLE) { continue; }
 
         bool is_fff_technology = false;
         bool is_sla_technology = false;
@@ -2595,11 +2595,11 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
         }
         return ptAny;
     };
-    // Prusa printers are considered first, then 3rd party.
-    if (preferred_pt = get_preferred_printer_technology("PrusaResearch", bundles.prusa_bundle());
+    // Modix printers are considered first, then 3rd party.
+    if (preferred_pt = get_preferred_printer_technology("Modix", bundles.modix_bundle());
         preferred_pt == ptAny || (preferred_pt == ptSLA && suppress_sla_printer)) {
         for (const auto& bundle : bundles) {
-            if (bundle.second.is_prusa_bundle) { continue; }
+            if (bundle.second.is_modix_bundle) { continue; }
             if (PrinterTechnology pt = get_preferred_printer_technology(bundle.first, bundle.second); pt == ptAny)
                 continue;
             else if (preferred_pt == ptAny)
@@ -2624,8 +2624,8 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
     for (const auto &pair : bundles) {
         if (pair.second.location == BundleLocation::IN_VENDOR) { continue; }
 
-        if (pair.second.is_prusa_bundle) {
-            // Always install Prusa bundle, because it has a lot of filaments/materials
+        if (pair.second.is_modix_bundle) {
+            // Always install Modix bundle, because it has a lot of filaments/materials
             // likely to be referenced by other profiles.
             install_bundles.emplace_back(pair.first);
             continue;
@@ -2727,11 +2727,11 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
             variant.clear();
         return std::string();
     };
-    // Prusa printers are considered first, then 3rd party.
-    if (preferred_model = get_preferred_printer_model("PrusaResearch", bundles.prusa_bundle(), preferred_variant);
+    // Modix printers are considered first, then 3rd party.
+    if (preferred_model = get_preferred_printer_model("Modix", bundles.modix_bundle(), preferred_variant);
         preferred_model.empty()) {
         for (const auto& bundle : bundles) {
-            if (bundle.second.is_prusa_bundle) { continue; }
+            if (bundle.second.is_modix_bundle) { continue; }
             if (preferred_model = get_preferred_printer_model(bundle.first, bundle.second, preferred_variant);
                 !preferred_model.empty())
                     break;
@@ -2932,14 +2932,14 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
     wxGetApp().SetWindowVariantForButton(p->btn_finish);
     wxGetApp().SetWindowVariantForButton(p->btn_cancel);
 
-    const auto prusa_it = p->bundles.find("PrusaResearch");
-    wxCHECK_RET(prusa_it != p->bundles.cend(), "Vendor PrusaResearch not found");
-    const VendorProfile *vendor_prusa = prusa_it->second.vendor_profile;
+    const auto modix_it = p->bundles.find("Modix");
+    wxCHECK_RET(modix_it != p->bundles.cend(), "Vendor Modix not found");
+    const VendorProfile *vendor_modix = modix_it->second.vendor_profile;
 
     p->add_page(p->page_welcome = new PageWelcome(this));
 
     
-    p->page_fff = new PagePrinters(this, _L("Prusa FFF Technology Printers"), "Prusa FFF", *vendor_prusa, 0, T_FFF);
+    p->page_fff = new PagePrinters(this, _L("Modix FFF Technology Printers"), "Modix FFF", *vendor_modix, 0, T_FFF);
     p->add_page(p->page_fff);
     p->page_fff->is_primary_printer_page = true;
   

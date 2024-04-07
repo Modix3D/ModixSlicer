@@ -94,7 +94,6 @@ bool Bundle::load(fs::path source_path, BundleLocation location, bool ais_modix_
     // Throw when parsing invalid configuration. Only valid configuration is supposed to be provided over the air.
     auto [config_substitutions, presets_loaded] = preset_bundle->load_configbundle(
         path_string, PresetBundle::LoadConfigBundleAttribute::LoadSystem, ForwardCompatibilitySubstitutionRule::Disable);
-    UNUSED(config_substitutions);
     // No substitutions shall be reported when loading a system config bundle, no substitutions are allowed.
     assert(config_substitutions.empty());
     auto first_vendor = preset_bundle->vendors.begin();

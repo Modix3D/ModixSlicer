@@ -35,6 +35,7 @@
 #include <cmath>
 #include <type_traits>
 #include <optional>
+#include <numbers> // (since C++20)
 
 #ifdef _WIN32
 // On MSVC, std::deque degenerates to a list of pointers, which defeats its purpose of reducing allocator load and memory fragmentation.
@@ -46,15 +47,7 @@
 #include "Technologies.hpp"
 #include "Semver.hpp"
 
-using coord_t = 
-#if 1
-// Saves around 32% RAM after slicing step, 6.7% after G-code export (tested on PrusaSlicer 2.2.0 final).
-    int32_t;
-#else
-    //FIXME At least FillRectilinear2 and std::boost Voronoi require coord_t to be 32bit.
-    int64_t;
-#endif
-
+using coord_t = int32_t;
 using coordf_t = double;
 
 //FIXME This epsilon value is used for many non-related purposes:
@@ -62,13 +55,8 @@ using coordf_t = double;
 // for a trheshold in a difference of radians,
 // for a threshold of a cross product of two non-normalized vectors etc.
 static constexpr double EPSILON = 1e-4;
-// Scaling factor for a conversion from coord_t to coordf_t: 10e-6
-// This scaling generates a following fixed point representation with for a 32bit integer:
-// 0..4294mm with 1nm resolution
-// int32_t fits an interval of (-2147.48mm, +2147.48mm)
-// with int64_t we don't have to worry anymore about the size of the int.
 static constexpr double SCALING_FACTOR = 0.000001;
-static constexpr double PI = 3.141592653589793238;
+static constexpr double PI = std::numbers::pi; // (since C++20)
 // When extruding a closed loop, the loop is interrupted and shortened a bit to reduce the seam.
 static constexpr double LOOP_CLIPPING_LENGTH_OVER_NOZZLE_DIAMETER = 0.15;
 // Maximum perimeter length for the loop to apply the small perimeter speed. 
@@ -77,15 +65,11 @@ static constexpr double INSET_OVERLAP_TOLERANCE = 0.4;
 // 3mm ring around the top / bottom / bridging areas.
 //FIXME This is quite a lot.
 static constexpr double EXTERNAL_INFILL_MARGIN = 3.;
-//FIXME Better to use an inline function with an explicit return type.
-//inline coord_t scale_(coordf_t v) { return coord_t(floor(v / SCALING_FACTOR + 0.5f)); }
-#define scale_(val) ((val) / SCALING_FACTOR)
-
-#define SCALED_EPSILON scale_(EPSILON)
-
-#ifndef UNUSED
-#define UNUSED(x) (void)(x)
-#endif /* UNUSED */
+static auto scale_(auto v)
+{
+    return std::round(v / SCALING_FACTOR);
+}
+static auto SCALED_EPSILON = scale_(EPSILON);
 
 // Write slices as SVG images into out directory during the 2D processing of the slices.
 // #define SLIC3R_DEBUG_SLICE_PROCESSING

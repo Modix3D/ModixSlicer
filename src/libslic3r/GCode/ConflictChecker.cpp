@@ -18,8 +18,8 @@ namespace RasterizationImpl {
 using IndexPair = std::pair<int64_t, int64_t>;
 using Grids     = std::vector<IndexPair>;
 
-inline constexpr int64_t RasteXDistance = scale_(1);
-inline constexpr int64_t RasteYDistance = scale_(1);
+inline int64_t RasteXDistance = scale_(1);
+inline int64_t RasteYDistance = scale_(1);
 
 inline IndexPair point_map_grid_index(const Point &pt, int64_t xdist, int64_t ydist)
 {

@@ -1149,7 +1149,6 @@ ConfigSubstitutions PresetBundle::load_config_file_config_bundle(
     // Load the config bundle, but don't save the loaded presets to user profile directory, as only the presets marked as active in the loaded preset bundle
     // will be loaded into the master PresetBundle and activated.
     auto [presets_substitutions, presets_imported] = tmp_bundle.load_configbundle(path, {}, compatibility_rule);
-    UNUSED(presets_imported);
 
     std::string bundle_name = std::string(" - ") + boost::filesystem::path(path).filename().string();
 

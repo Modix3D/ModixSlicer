@@ -712,7 +712,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         std::istringstream iss(str);
 
         if (str == "nil") {
@@ -902,7 +901,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         std::istringstream iss(str);
 
         if (str == "nil") {
@@ -1040,7 +1038,6 @@ public:
 
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         return unescape_string_cstyle(str, this->value);
     }
 
@@ -1115,7 +1112,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         // don't try to parse the trailing % since it's optional
         std::istringstream iss(str);
         iss >> this->value;
@@ -1229,7 +1225,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         this->percent = str.find_first_of("%") != std::string::npos;
         std::istringstream iss(str);
         iss >> this->value;
@@ -1395,7 +1390,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         char dummy;
         return sscanf(str.data(), " %lf , %lf %c", &this->value(0), &this->value(1), &dummy) == 2 ||
                sscanf(str.data(), " %lf x %lf %c", &this->value(0), &this->value(1), &dummy) == 2;
@@ -1509,7 +1503,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         char dummy;
         return sscanf(str.data(), " %lf , %lf , %lf %c", &this->value(0), &this->value(1), &this->value(2), &dummy) == 3 ||
                sscanf(str.data(), " %lf x %lf x %lf %c", &this->value(0), &this->value(1), &this->value(2), &dummy) == 3;
@@ -1541,7 +1534,6 @@ public:
     
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         if (str == "1") {
             this->value = true;
             return true;
@@ -1712,7 +1704,6 @@ public:
 
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         return from_string(str, this->value);
     }
 
@@ -1783,7 +1774,6 @@ public:
 
     bool deserialize(const std::string &str, bool append = false) override
     {
-        UNUSED(append);
         auto it = this->keys_map->find(str);
         if (it == this->keys_map->end())
             return false;

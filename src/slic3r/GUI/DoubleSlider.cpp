@@ -42,8 +42,8 @@ using GUI::format_wxstr;
 
 namespace DoubleSlider {
 
-constexpr double min_delta_area = scale_(scale_(25));  // equal to 25 mm2
-constexpr double miscalculation = scale_(scale_(1));   // equal to 1 mm2
+double min_delta_area = scale_(scale_(25));  // equal to 25 mm2
+double miscalculation = scale_(scale_(1));   // equal to 1 mm2
 
 bool equivalent_areas(const double& bottom_area, const double& top_area)
 {

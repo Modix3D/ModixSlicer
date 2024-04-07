@@ -140,7 +140,6 @@ void enforce_thread_count(const std::size_t count)
 	}
 #else // TBB_HAS_GLOBAL_CONTROL
     static tbb::task_scheduler_init *tbb_init = new tbb::task_scheduler_init(count);
-    UNUSED(tbb_init);
 #endif // TBB_HAS_GLOBAL_CONTROL
 }
 

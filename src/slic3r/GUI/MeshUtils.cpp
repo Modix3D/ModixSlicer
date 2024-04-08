@@ -357,7 +357,7 @@ void MeshClipper::recalculate_triangles()
             int32_t limit = int32_t(std::min(std::numeric_limits<coord_t>::max() / (2. * std::max(1., scale_x)), std::numeric_limits<coord_t>::max() / (2. * std::max(1., scale_y))));
             int32_t max_coord = 0;
             for (const Point& pt : exp.contour)
-                max_coord = std::max(max_coord, std::max(std::abs(pt.x()), std::abs(pt.y())));
+                max_coord = std::max<coord_t>(max_coord, std::max(std::abs(pt.x()), std::abs(pt.y())));
             if (max_coord + m_contour_width >= limit)
                 extra_scale = 0.9 * double(limit) / max_coord;
 

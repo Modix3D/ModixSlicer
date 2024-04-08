@@ -83,7 +83,7 @@ enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
 // If defined, Clipper will work with 32bit signed int coordinates to reduce memory
 // consumption and to speed up exact orientation predicate calculation.
 // In that case, coordinates and their differences (vectors of the coordinates) have to fit int32_t.
-#define CLIPPERLIB_INT32
+//#define CLIPPERLIB_INT32
 
 // Point coordinate type
 #ifdef CLIPPERLIB_INT32
@@ -92,7 +92,7 @@ enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
   using CrossProductType = int64_t;
 #else
   using cInt = int64_t;
-  using CrossProductType = double;
+  using CrossProductType = int64_t;
   // Maximum cInt value to allow a cross product calculation using 32bit expressions.
   static constexpr cInt const loRange = 0x3FFFFFFF; // 0x3FFFFFFF = 1 073 741 823
   // Maximum allowed cInt value.

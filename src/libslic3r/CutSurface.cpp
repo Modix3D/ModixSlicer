@@ -1891,7 +1891,7 @@ uint32_t priv::get_closest_point_index(const SearchData &sd,
         const Polygon   &poly  = (id.polygon_index == 0) ?
                                            shape.contour :
                                            shape.holes[id.polygon_index - 1];
-        Vec2i p_ = p.cast<int>();
+        Vec2crd p_ = p.cast<coord_t>();
         return p_ == poly[id.point_index];
     };
 
@@ -3490,7 +3490,7 @@ Polygons priv::unproject_loops(const SurfacePatch &patch, const Project &project
             assert(p2_opt.has_value());
             if (!p2_opt.has_value()) continue;
 
-            pts.push_back(p2_opt->cast<Point::coord_type>());
+            pts.push_back(p2_opt->cast<coord_t>());
             depths.push_back(static_cast<float>(depth));
         }
         // minimal is triangle

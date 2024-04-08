@@ -47,7 +47,7 @@
 #include "Technologies.hpp"
 #include "Semver.hpp"
 
-using coord_t = int32_t;
+using coord_t = int64_t;
 using coordf_t = double;
 
 //FIXME This epsilon value is used for many non-related purposes:

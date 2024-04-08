@@ -133,7 +133,7 @@ std::vector<Vec3f> its_sample_surface(const indexed_triangle_set &its,
     std::vector<Vec3f> samples;
     std::uniform_real_distribution<float> rand01(0.f, 1.f);
     for (const auto &triangle_indices : its.indices) {
-        float area = triangle_area(triangle_indices, its.vertices);
+        float area = triangle_area(triangle_indices.cast<coord_t>(), its.vertices);
         float countf;
         float fractional = std::modf(area * sample_per_mm2, &countf);
         int count = static_cast<int>(countf);

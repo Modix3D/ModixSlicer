@@ -322,9 +322,9 @@ void CreateObjectJob::process(Ctl &ctl)
     Points bed_shape_;
     bed_shape_.reserve(m_input.bed_shape.size());
     for (const Vec2d &p : m_input.bed_shape)
-        bed_shape_.emplace_back(p.cast<int>());
+        bed_shape_.emplace_back(p.cast<coord_t>());
     Slic3r::Polygon bed(bed_shape_);
-    if (!bed.contains(bed_coor.cast<int>()))
+    if (!bed.contains(bed_coor.cast<coord_t>()))
         // mouse pose is out of build plate so create object in center of plate
         bed_coor = bed.centroid().cast<double>();
 
@@ -835,8 +835,6 @@ std::vector<BoundingBoxes> create_line_bounds(const ExPolygonsWithIds &shapes, s
 
 template<typename Fnc> TriangleMesh create_mesh_per_glyph(DataBase &input, Fnc was_canceled)
 {
-    // method use square of coord stored into int64_t
-    static_assert(std::is_same<Point::coord_type, int32_t>());
     const EmbossShape &shape = input.create_shape();
     if (shape.shapes_with_ids.empty())
         return {};

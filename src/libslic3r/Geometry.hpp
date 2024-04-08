@@ -45,7 +45,6 @@ enum Orientation
 // and d is limited to 63 bits + signum and we are good.
 static inline Orientation orient(const Point &a, const Point &b, const Point &c)
 {
-    static_assert(sizeof(coord_t) * 2 == sizeof(int64_t), "orient works with 32 bit coordinates");
     int64_t u = int64_t(b.x()) * int64_t(c.y()) - int64_t(b.y()) * int64_t(c.x());
     int64_t v = int64_t(a.x()) * int64_t(c.y()) - int64_t(a.y()) * int64_t(c.x());
     int64_t w = int64_t(a.x()) * int64_t(b.y()) - int64_t(a.y()) * int64_t(b.x());

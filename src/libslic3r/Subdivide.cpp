@@ -191,20 +191,20 @@ indexed_triangle_set its_subdivide(
     std::queue<TriangleLengths> tls;
 
     EdgeDivides edge_divides;
-    for (const Vec3crd &indices : its.indices) {
-        Edges edges(indices, vertices);
+    for (const Vec3i &indices : its.indices) {
+        Edges edges(indices.cast<coord_t>(), vertices);
         // speed up only sum not sqrt is apply
         if (!edges.is_dividable(max_length)) {
              // small triangle
             result.indices.push_back(indices);
             continue;
         }
-        TriangleLengths tl(indices, edges.lengths);
+        TriangleLengths tl(indices.cast<coord_t>(), edges.lengths);
         do {
             int divide_index = tl.get_divide_index(max_length);
             if (divide_index < 0) {
                 // no dividing
-                result.indices.push_back(tl.indices);
+                result.indices.push_back(tl.indices.cast<int32_t>());
                 if (tls.empty()) break;
                 tl = tls.front(); // copy
                 tls.pop();

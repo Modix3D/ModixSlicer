@@ -25,6 +25,7 @@ CMakeUserPresets.json
 
 build-debug
 build-release
+deps/build-clang-17
 
 *~
 *.swp

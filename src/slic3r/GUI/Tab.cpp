@@ -1579,6 +1579,9 @@ void TabPrint::build()
         optgroup->append_single_option_line("bridge_speed");
         optgroup->append_single_option_line("gap_fill_speed");
         optgroup->append_single_option_line("ironing_speed");
+        // modix options
+        optgroup->append_single_option_line("wipe_tower_perimeter_speed");
+        optgroup->append_single_option_line("wipe_tower_infill_speed");
 
         optgroup = page->new_optgroup(L("Dynamic overhang speed"));
         optgroup->append_single_option_line("enable_dynamic_overhang_speeds");
@@ -1629,6 +1632,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("ooze_prevention");
         optgroup->append_single_option_line("standby_temperature_delta");
 
+#if 0
         optgroup = page->new_optgroup(L("Wipe tower"));
         optgroup->append_single_option_line("wipe_tower");
         optgroup->append_single_option_line("wipe_tower_x");
@@ -1642,6 +1646,20 @@ void TabPrint::build()
         optgroup->append_single_option_line("wipe_tower_extra_flow");
         optgroup->append_single_option_line("wipe_tower_no_sparse_layers");
         optgroup->append_single_option_line("single_extruder_multi_material_priming");
+#else
+        // modix options
+        optgroup = page->new_optgroup(L("Wipe tower"));
+        optgroup->append_single_option_line("wipe_tower");
+        optgroup->append_single_option_line("wipe_tower_x");
+        optgroup->append_single_option_line("wipe_tower_y");
+        optgroup->append_single_option_line("wipe_tower_width");
+        optgroup->append_single_option_line("wipe_tower_depth");
+        optgroup->append_single_option_line("wipe_tower_perimeters");
+        optgroup->append_single_option_line("wipe_tower_density");
+        optgroup->append_single_option_line("wipe_tower_rotation_angle");
+        optgroup->append_single_option_line("wipe_tower_brim_width");
+        optgroup->append_single_option_line("wipe_tower_brim_layers");
+#endif
 
         optgroup = page->new_optgroup(L("Advanced"));
         optgroup->append_single_option_line("interface_shells");

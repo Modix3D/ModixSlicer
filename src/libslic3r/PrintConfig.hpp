@@ -662,6 +662,11 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloat,                top_solid_min_thickness))
     ((ConfigOptionFloatOrPercent,       top_solid_infill_speed))
     ((ConfigOptionBool,                 wipe_into_infill))
+
+    // modix options
+    ((ConfigOptionFloat,                wipe_tower_perimeter_speed))
+    ((ConfigOptionFloat,                wipe_tower_infill_speed))
+
 )
 
 PRINT_CONFIG_CLASS_DEFINE(
@@ -885,6 +890,12 @@ PRINT_CONFIG_CLASS_DERIVED_DEFINE(
     ((ConfigOptionFloats,             wiping_volumes_matrix))
     ((ConfigOptionBool,               wiping_volumes_use_custom_matrix))
     ((ConfigOptionFloat,              z_offset))
+
+    // modix options
+    ((ConfigOptionFloat,              wipe_tower_depth))
+    ((ConfigOptionInt,                wipe_tower_perimeters))
+    ((ConfigOptionPercent,            wipe_tower_density))
+    ((ConfigOptionPercent,            wipe_tower_brim_layers))
 )
 
 PRINT_CONFIG_CLASS_DERIVED_DEFINE0(

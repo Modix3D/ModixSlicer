@@ -198,7 +198,8 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "ooze_prevention"
             || opt_key == "wipe_tower_x"
             || opt_key == "wipe_tower_y"
-            || opt_key == "wipe_tower_rotation_angle") {
+            || opt_key == "wipe_tower_rotation_angle"
+            ) {
             steps.emplace_back(psSkirtBrim);
         } else if (
                opt_key == "first_layer_height"
@@ -255,7 +256,23 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "travel_speed"
             || opt_key == "travel_speed_z"
             || opt_key == "first_layer_speed"
-            || opt_key == "z_offset") {
+            || opt_key == "z_offset"
+            || opt_key == "wipe_tower_depth"
+            || opt_key == "wipe_tower_perimeters"
+            || opt_key == "wipe_tower_density"
+            || opt_key == "wipe_tower_brim_width"
+            || opt_key == "wipe_tower_brim_layers"
+
+            // modix invalidations
+            || opt_key == "wipe_tower_width"
+            || opt_key == "wipe_tower_perimeters"
+            || opt_key == "wipe_tower_density"
+            || opt_key == "wipe_tower_brim_width"
+            || opt_key == "wipe_tower_brim_layers"
+            || opt_key == "wipe_tower_perimeter_speed"
+            || opt_key == "wipe_tower_infill_speed"
+
+        ) {
             steps.emplace_back(psWipeTower);
             steps.emplace_back(psSkirtBrim);
         } else if (opt_key == "filament_soluble") {

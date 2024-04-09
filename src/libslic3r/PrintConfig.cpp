@@ -3341,6 +3341,30 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(60.));
 
+    def = this->add("wipe_tower_depth", coFloat);
+    def->label = L("Depth");
+    def->tooltip = L("Depth of the wipe tower");
+    def->sidetext = L("mm");
+    def->min = 1;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60.));
+
+    def = this->add("wipe_tower_perimeters", coInt);
+    def->label = L("Wipe tower perimeters");
+    def->tooltip = L("This option sets the number of perimeters for each layer of the wipe tower. The purpose of    this option is to stabilize the wipe tower.");
+    def->mode = comAdvanced;
+    def->min = 1;
+    def->set_default_value(new ConfigOptionInt(2));
+
+    def = this->add("wipe_tower_density", coPercent);
+    def->label = L("Wipe tower purge lines density");
+    def->tooltip = L("Density of purge lines on the wipe tower.");
+    def->sidetext = L("%");
+    def->mode = comAdvanced;
+    def->min = 5;
+    def->max = 100;
+    def->set_default_value(new ConfigOptionPercent(100.));
+
     def = this->add("wipe_tower_rotation_angle", coFloat);
     def->label = L("Wipe tower rotation angle");
     def->tooltip = L("Wipe tower rotation angle with respect to x-axis.");
@@ -3355,6 +3379,36 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->min = 0.;
     def->set_default_value(new ConfigOptionFloat(2.));
+
+    def = this->add("wipe_tower_brim_layers", coPercent);
+    def->label = L("Add layers to the brim");
+    def->tooltip = L("This feature adds a number of layers to the brim. In cases where the prime tower is very"
+            " tall, and you still want to keep the tower small, this feature can provide additional"
+            " rigidity to the tower.  Zero to disable. You can set this to a value from 0% to 100%"
+            " of the wipe tower to support with extra brim layers.");
+    def->sidetext = L("%");
+    def->min = 0;
+    def->max = 100;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionPercent(5));
+
+    def = this->add("wipe_tower_perimeter_speed", coFloat);
+    def->label = L("Wipe tower perimeters");
+    def->category = L("Speed");
+    def->tooltip = L("Speed for wipe tower perimeters (contours, aka vertical shells). Set   to zero for auto.");
+    def->sidetext = L("mm/s");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60));
+
+    def = this->add("wipe_tower_infill_speed", coFloat);
+    def->label = L("Wipe tower infill");
+    def->category = L("Speed");
+    def->tooltip = L("Speed for printing the wipe tower's internal fill. Set to zero for     auto.");
+    def->sidetext = L("mm/s");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60));
 
     def = this->add("wipe_tower_cone_angle", coFloat);
     def->label = L("Stabilization cone apex angle");

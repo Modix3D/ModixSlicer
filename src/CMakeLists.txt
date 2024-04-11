@@ -50,7 +50,7 @@ if (SLIC3R_GUI)
     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set (wxWidgets_CONFIG_OPTIONS "--toolkit=gtk${SLIC3R_GTK}")
     endif ()
-    find_package(wxWidgets 3.3 CONFIG REQUIRED COMPONENTS base core adv html gl)
+    find_package(wxWidgets 3.2 CONFIG REQUIRED COMPONENTS base core adv html gl)
 
     find_package(JPEG MODULE QUIET)
     find_package(TIFF MODULE QUIET) # Tiff exported config is broken for static build

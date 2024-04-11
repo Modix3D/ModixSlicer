@@ -1451,24 +1451,11 @@ bool Print::has_wipe_tower() const
 
 const WipeTowerData& Print::wipe_tower_data(size_t extruders_cnt) const
 {
-    // If the wipe tower wasn't created yet, make sure the depth and brim_width members are set to default.
+    // If the wipe tower wasn't created yet.
     if (! is_step_done(psWipeTower) && extruders_cnt !=0) {
         const_cast<Print*>(this)->m_wipe_tower_data.brim_width = m_config.wipe_tower_brim_width;
-
-        // Calculating depth should take into account currently set wiping volumes.
-        // For a long time, the initial preview would just use 900/width per toolchange (15mm on a 60mm wide tower)
-        // and it worked well enough. Let's try to do slightly better by accounting for the purging volumes.
-        std::vector<std::vector<float>> wipe_volumes = WipeTower::extract_wipe_volumes(m_config);
-        std::vector<float> max_wipe_volumes;
-        for (const std::vector<float>& v : wipe_volumes)
-            max_wipe_volumes.emplace_back(*std::max_element(v.begin(), v.end()));
-        float maximum = std::accumulate(max_wipe_volumes.begin(), max_wipe_volumes.end(), 0.f);
-        maximum = maximum * extruders_cnt / max_wipe_volumes.size();
-
-        float width = float(m_config.wipe_tower_width);
-        float layer_height = 0.2f; // just assume fixed value, it will still be better than before.
-
-        const_cast<Print*>(this)->m_wipe_tower_data.depth = (maximum/layer_height)/width;
+        const_cast<Print*>(this)->m_wipe_tower_data.width = m_config.wipe_tower_width;
+        const_cast<Print*>(this)->m_wipe_tower_data.depth = m_config.wipe_tower_depth;
         const_cast<Print*>(this)->m_wipe_tower_data.height = -1.f; // unknown yet
     }
 
@@ -1544,19 +1531,9 @@ void Print::_make_wipe_tower()
             wipe_tower.plan_toolchange((float)layer_tools.print_z, (float)layer_tools.wipe_tower_layer_height, current_extruder_id, current_extruder_id, false);
             for (const auto extruder_id : layer_tools.extruders) {
                 if ((first_layer && extruder_id == m_wipe_tower_data.tool_ordering.all_extruders().back()) || extruder_id != current_extruder_id) {
-                    float volume_to_wipe = wipe_volumes[current_extruder_id][extruder_id];             // total volume to wipe after this toolchange
-                    // Not all of that can be used for infill purging:
-                    volume_to_wipe -= (float)m_config.filament_minimal_purge_on_wipe_tower.get_at(extruder_id);
-
-                    // try to assign some infills/objects for the wiping:
-                    volume_to_wipe = layer_tools.wiping_extrusions_nonconst().mark_wiping_extrusions(*this, layer_tools, current_extruder_id, extruder_id, volume_to_wipe);
-
-                    // add back the minimal amount toforce on the wipe tower:
-                    volume_to_wipe += (float)m_config.filament_minimal_purge_on_wipe_tower.get_at(extruder_id);
-
                     // request a toolchange at the wipe tower with at least volume_to_wipe purging amount
                     wipe_tower.plan_toolchange((float)layer_tools.print_z, (float)layer_tools.wipe_tower_layer_height,
-                                               current_extruder_id, extruder_id, volume_to_wipe);
+                                               current_extruder_id, extruder_id, 0);
                     current_extruder_id = extruder_id;
                 }
             }
@@ -1573,7 +1550,7 @@ void Print::_make_wipe_tower()
     m_wipe_tower_data.depth = wipe_tower.depth();
     m_wipe_tower_data.height = wipe_tower.get_wipe_tower_height();
     //m_wipe_tower_data.z_and_depth_pairs = wipe_tower.get_z_and_depth_pairs();
-    //m_wipe_tower_data.brim_width = wipe_tower.get_brim_width();
+    m_wipe_tower_data.brim_width = wipe_tower.get_effective_brim_width();
 
     m_wipe_tower_data.used_filament_until_layer = wipe_tower.get_used_filament_until_layer();
     m_wipe_tower_data.number_of_toolchanges = wipe_tower.get_number_of_toolchanges();

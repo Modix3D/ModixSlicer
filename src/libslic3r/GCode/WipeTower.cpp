@@ -895,12 +895,12 @@ std::vector<std::pair<float, float>> WipeTower::get_z_and_depth_pairs() const
 
 float WipeTower::width()
 {
-    return m_wipe_tower_width + 2*get_effective_brim_width();
+    return m_wipe_tower_width;
 }
 
 float WipeTower::depth()
 {
-    return m_wipe_tower_depth + 2*get_effective_brim_width();
+    return m_wipe_tower_depth;
 }
 
 float WipeTower::get_effective_brim_width()

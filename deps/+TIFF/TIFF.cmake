@@ -12,7 +12,8 @@ add_cmake_project(TIFF
         -Dzstd:BOOL=OFF
         -Dpixarlog:BOOL=OFF
         -Dlibdeflate:BOOL=OFF
-		-DCMAKE_POLICY_DEFAULT_CMP0057=NEW
+        -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
+        -Dtiff-contrib:BOOL=OFF
 )
 
 set(DEP_TIFF_DEPENDS ZLIB PNG JPEG OpenGL)

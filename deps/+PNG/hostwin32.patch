@@ -1,0 +1,21 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2024-04-11 03:57:25.831364213 -0400
++++ b/CMakeLists.txt	2024-04-11 03:58:27.082334035 -0400
+@@ -914,7 +914,7 @@
+   install(FILES libpng.3 libpngpf.3      DESTINATION ${PNG_MAN_DIR}/man3)
+   install(FILES png.5                    DESTINATION ${PNG_MAN_DIR}/man5)
+   # Install pkg-config files
+-  if(NOT CMAKE_HOST_WIN32 OR CYGWIN OR MINGW)
++  if(NOT WIN32 OR CYGWIN OR MINGW)
+     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpng.pc
+             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/libpng-config
+@@ -923,7 +923,7 @@
+             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PNGLIB_NAME}-config
+             DESTINATION bin)
+-  endif(NOT CMAKE_HOST_WIN32 OR CYGWIN OR MINGW)
++  endif(NOT WIN32 OR CYGWIN OR MINGW)
+ endif()
+ 
+ # On versions of CMake that support it, create an export file CMake

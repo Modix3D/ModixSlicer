@@ -84,7 +84,7 @@ public:
         if(wxGetApp().app_config->get("single_instance") == "0") {
             // Only allow opening a new PrusaSlicer instance on OSX if "single_instance" is disabled, 
             // as starting new instances would interfere with the locking mechanism of "single_instance" support.
-            append_menu_item(menu, wxID_ANY, _L("Open new instance"), _L("Open a new PrusaSlicer instance"),
+            append_menu_item(menu, wxID_ANY, _L("Open new instance"), _L("Open a new ModixSlicer instance"),
             [](wxCommandEvent&) { start_new_slicer(); }, "", nullptr);
         }
         append_menu_item(menu, wxID_ANY, _L("G-code preview") + dots, _L("Open G-code viewer"),
@@ -98,7 +98,7 @@ public:
     GCodeViewerTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
-        append_menu_item(menu, wxID_ANY, _L("Open PrusaSlicer"), _L("Open a new PrusaSlicer instance"),
+        append_menu_item(menu, wxID_ANY, _L("Open ModixSlicer"), _L("Open a new ModixSlicer instance"),
             [](wxCommandEvent&) { start_new_slicer(nullptr, true); }, "", nullptr);
         append_menu_item(menu, wxID_ANY, _L("G-code preview") + dots, _L("Open new G-code viewer"),
             [](wxCommandEvent&) { start_new_gcodeviewer_open_file(); }, "", nullptr);
@@ -153,7 +153,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_S
     default:
     case GUI_App::EAppMode::Editor:
         m_taskbar_icon = std::make_unique<PrusaSlicerTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("PrusaSlicer-mac_128px.png"), wxBITMAP_TYPE_PNG), "PrusaSlicer");
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("PrusaSlicer-mac_128px.png"), wxBITMAP_TYPE_PNG), "ModixSlicer");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         m_taskbar_icon = std::make_unique<GCodeViewerTaskBarIcon>(wxTBI_DOCK);
@@ -233,14 +233,14 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_S
         }
 
         if (m_plater != nullptr) {
-            int saved_project = m_plater->save_project_if_dirty(_L("Closing PrusaSlicer. Current project is modified."));
+            int saved_project = m_plater->save_project_if_dirty(_L("Closing ModixSlicer. Current project is modified."));
             if (saved_project == wxID_CANCEL) {
                 event.Veto();
                 return;
             }
             // check unsaved changes only if project wasn't saved
             else if (plater()->is_project_dirty() && saved_project == wxID_NO && event.CanVeto() &&
-                     (plater()->is_presets_dirty() && !wxGetApp().check_and_save_current_preset_changes(_L("PrusaSlicer is closing"), _L("Closing PrusaSlicer while some presets are modified.")))) {
+                     (plater()->is_presets_dirty() && !wxGetApp().check_and_save_current_preset_changes(_L("ModixSlicer is closing"), _L("Closing ModixSlicer while some presets are modified.")))) {
                 event.Veto();
                 return;
             }
@@ -1496,7 +1496,7 @@ void MainFrame::init_menubar_as_editor()
             }, "shape_gallery", nullptr, []() {return true; }, this);
         
         windowMenu->AppendSeparator();
-        append_menu_item(windowMenu, wxID_ANY, _L("Open New Instance") + "\tCtrl+Shift+I", _L("Open a new PrusaSlicer instance"),
+        append_menu_item(windowMenu, wxID_ANY, _L("Open New Instance") + "\tCtrl+Shift+I", _L("Open a new ModixSlicer instance"),
             [](wxCommandEvent&) { start_new_slicer(); }, "", nullptr, [this]() {return m_plater != nullptr && !wxGetApp().app_config->get_bool("single_instance"); }, this);
 
         windowMenu->AppendSeparator();
@@ -1621,7 +1621,7 @@ void MainFrame::init_menubar_as_gcodeviewer()
         append_menu_item(fileMenu, wxID_ANY, _L("Export &Toolpaths as OBJ") + dots, _L("Export toolpaths as OBJ"),
             [this](wxCommandEvent&) { if (m_plater != nullptr) m_plater->export_toolpaths_to_obj(); }, "export_plater", nullptr,
             [this]() {return can_export_toolpaths(); }, this);
-        append_menu_item(fileMenu, wxID_ANY, _L("Open &PrusaSlicer") + dots, _L("Open PrusaSlicer"),
+        append_menu_item(fileMenu, wxID_ANY, _L("Open &ModixSlicer") + dots, _L("Open ModixSlicer"),
             [](wxCommandEvent&) { start_new_slicer(); }, "", nullptr,
             []() { return true; }, this);
         fileMenu->AppendSeparator();

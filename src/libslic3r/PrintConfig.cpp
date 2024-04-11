@@ -2740,20 +2740,6 @@ void PrintConfigDef::init_fff_params()
     def->mode = comExpert;
     def->set_default_value(new ConfigOptionBool(false));
 
-    def = this->add("single_extruder_multi_material_priming", coBool);
-    def->label = L("Prime all printing extruders");
-    def->tooltip = L("If enabled, all printing extruders will be primed at the front edge of the print bed at the start of the print.");
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBool(true));
-
-    def = this->add("wipe_tower_no_sparse_layers", coBool);
-    def->label = L("No sparse layers (EXPERIMENTAL)");
-    def->tooltip = L("If enabled, the wipe tower will not be printed on layers with no toolchanges. "
-                     "On layers with a toolchange, extruder will travel downward to print the wipe tower. "
-                     "User is responsible for ensuring there is no collision with the print.");
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBool(false));
-
     def = this->add("slice_closing_radius", coFloat);
     def->label = L("Slice gap closing radius");
     def->category = L("Advanced");
@@ -5308,10 +5294,6 @@ OtherSlicingStatesConfigDef::OtherSlicingStatesConfigDef()
     def = this->add("current_object_idx", coInt);
     def->label = L("Current object index");
     def->tooltip = L("Specific for sequential printing. Zero-based index of currently printed object.");
-
-    def = this->add("has_single_extruder_multi_material_priming", coBool);
-    def->label = L("Has single extruder MM priming");
-    def->tooltip = L("Are the extra multi-material priming regions used in this print?");
 
     def = this->add("has_wipe_tower", coBool);
     def->label = L("Has wipe tower");

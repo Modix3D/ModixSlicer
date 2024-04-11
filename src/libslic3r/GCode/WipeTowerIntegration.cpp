@@ -19,7 +19,7 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
 
     std::string gcode;
 
-    // Toolchangeresult.gcode assumes the wipe tower corner is at the origin (except for priming lines)
+    // Toolchangeresult.gcode assumes the wipe tower corner is at the origin
     // We want to rotate and shift all extrusions (gcode postprocessing) and starting and ending position
     float alpha = m_wipe_tower_rotation / 180.f * float(M_PI);
 
@@ -31,13 +31,11 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
 
     Vec2f start_pos = tcr.start_pos;
     Vec2f end_pos = tcr.end_pos;
-    if (! tcr.priming) {
-        start_pos = transform_wt_pt(start_pos);
-        end_pos = transform_wt_pt(end_pos);
-    }
+    start_pos = transform_wt_pt(start_pos);
+    end_pos = transform_wt_pt(end_pos);
 
-    Vec2f wipe_tower_offset = tcr.priming ? Vec2f::Zero() : m_wipe_tower_pos;
-    float wipe_tower_rotation = tcr.priming ? 0.f : alpha;
+    Vec2f wipe_tower_offset = m_wipe_tower_pos;
+    float wipe_tower_rotation = alpha;
 
     std::string tcr_rotated_gcode = post_process_wipe_tower_moves(tcr, wipe_tower_offset, wipe_tower_rotation);
 
@@ -51,8 +49,7 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
     const bool will_go_down = ! is_approx(z, current_z);
     const bool is_ramming = (gcodegen.config().single_extruder_multi_material)
                          || (! gcodegen.config().single_extruder_multi_material && gcodegen.config().filament_multitool_ramming.get_at(tcr.initial_tool));
-    const bool should_travel_to_tower = ! tcr.priming
-                                     && (tcr.force_travel        // wipe tower says so
+    const bool should_travel_to_tower = (tcr.force_travel        // wipe tower says so
                                          || ! needs_toolchange   // this is just finishing the tower with no toolchange
                                          || is_ramming
                                          || will_go_down);       // don't dig into the print
@@ -87,25 +84,28 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
         gcode += gcodegen.writer().unretract();
     }
 
-    std::string toolchange_gcode_str;
+    std::string contour_toolchange_gcode_str;
+    std::string inner_toolchange_gcode_str;
     std::string deretraction_str;
-    if (tcr.priming || (new_extruder_id >= 0 && needs_toolchange)) {
-        if (is_ramming)
-            gcodegen.m_wipe.reset_path(); // We don't want wiping on the ramming lines.
-        toolchange_gcode_str = gcodegen.set_extruder(new_extruder_id, tcr.print_z); // TODO: toolchange_z vs print_z
-        if (gcodegen.config().wipe_tower) {
-            deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer Z");
-            Vec3d position{gcodegen.writer().get_position()};
-            position.z() = z;
-            gcodegen.writer().update_position(position);
-            deretraction_str += gcodegen.unretract();
-        }
+
+    contour_toolchange_gcode_str = gcodegen.set_extruder(tcr.contour_tool, tcr.print_z); // TODO: toolchange_z vs print_z
+    inner_toolchange_gcode_str = gcodegen.set_extruder(tcr.new_tool, tcr.print_z); // TODO: toolchange_z vs print_z
+    if (gcodegen.config().wipe_tower) {
+        deretraction_str += gcodegen.writer().get_travel_to_z_gcode(z, "restore layer      Z");
+        Vec3d position{gcodegen.writer().get_position()};
+        position.z() = z;
+        gcodegen.writer().update_position(position);
+        deretraction_str += gcodegen.unretract();
     }
-    assert(toolchange_gcode_str.empty() || toolchange_gcode_str.back() == '\n');
-    assert(deretraction_str.empty() || deretraction_str.back() == '\n');
+
+    if (contour_toolchange_gcode_str.empty()
+    || inner_toolchange_gcode_str.empty()
+    || deretraction_str.empty())
+        throw;
 
     // Insert the toolchange and deretraction gcode into the generated gcode.
-    boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", toolchange_gcode_str);
+    boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", contour_toolchange_gcode_str);
+    boost::replace_first(tcr_rotated_gcode, "[toolchange_gcode_from_wipe_tower_generator]", inner_toolchange_gcode_str);
     boost::replace_first(tcr_rotated_gcode, "[deretraction_from_wipe_tower_generator]", deretraction_str);
     std::string tcr_gcode;
     unescape_string_cstyle(tcr_rotated_gcode, tcr_gcode);
@@ -122,19 +122,6 @@ std::string WipeTowerIntegration::append_tcr(GCodeGenerator &gcodegen, const Wip
         gcode += gcodegen.writer().retract();
         gcode += gcodegen.writer().travel_to_z(current_z, "Travel back up to the topmost object layer.");
         gcode += gcodegen.writer().unretract();
-    }
-
-    else {
-        // Prepare a future wipe.
-        // Convert to a smooth path.
-        Geometry::ArcWelder::Path path;
-        path.reserve(tcr.wipe_path.size());
-        std::transform(tcr.wipe_path.begin(), tcr.wipe_path.end(), std::back_inserter(path),
-            [&gcodegen, &transform_wt_pt](const Vec2f &wipe_pt) { 
-                return Geometry::ArcWelder::Segment{ wipe_tower_point_to_object_point(gcodegen, transform_wt_pt(wipe_pt)) };
-            });
-        // Pass to the wipe cache.
-        gcodegen.m_wipe.set_path(std::move(path));
     }
 
     // Let the planner know we are traveling between objects.
@@ -240,21 +227,11 @@ std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extr
             if (!(size_t(m_tool_change_idx) < m_tool_changes[m_layer_idx].size()))
                 throw Slic3r::RuntimeError("Wipe tower generation failed, possibly due to empty first layer.");
 
-            // Calculate where the wipe tower layer will be printed. -1 means that print z will not change,
-            // resulting in a wipe tower with sparse layers.
+            // Calculate where the wipe tower layer will be printed. -1 means that print z will not change.
             double wipe_tower_z = -1;
-            bool ignore_sparse = false;
-            if (gcodegen.config().wipe_tower_no_sparse_layers.value) {
-                wipe_tower_z = m_last_wipe_tower_print_z;
-                ignore_sparse = (m_tool_changes[m_layer_idx].size() == 1 && m_tool_changes[m_layer_idx].front().initial_tool == m_tool_changes[m_layer_idx].front().new_tool && m_layer_idx != 0);
-                if (m_tool_change_idx == 0 && !ignore_sparse)
-                    wipe_tower_z = m_last_wipe_tower_print_z + m_tool_changes[m_layer_idx].front().layer_height;
-            }
 
-            if (!ignore_sparse) {
-                gcode += append_tcr(gcodegen, m_tool_changes[m_layer_idx][m_tool_change_idx++], extruder_id, wipe_tower_z);
-                m_last_wipe_tower_print_z = wipe_tower_z;
-            }
+            gcode += append_tcr(gcodegen, m_tool_changes[m_layer_idx][m_tool_change_idx++], extruder_id, wipe_tower_z);
+            m_last_wipe_tower_print_z = wipe_tower_z;
         }
     }
     return gcode;
@@ -264,13 +241,6 @@ std::string WipeTowerIntegration::tool_change(GCodeGenerator &gcodegen, int extr
 std::string WipeTowerIntegration::finalize(GCodeGenerator &gcodegen)
 {
     std::string gcode;
-    const double purge_z{m_final_purge.print_z + gcodegen.config().z_offset.value};
-    if (std::abs(gcodegen.writer().get_position().z() - purge_z) > EPSILON)
-        gcode += gcodegen.generate_travel_gcode(
-            {{gcodegen.last_position->x(), gcodegen.last_position->y(), scaled(purge_z)}},
-            "move to safe place for purging", [](){return "";}
-        );
-    gcode += append_tcr(gcodegen, m_final_purge, -1);
     return gcode;
 }
 

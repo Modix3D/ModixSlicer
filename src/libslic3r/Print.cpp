@@ -157,7 +157,6 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
         "retract_restart_extra",
         "retract_restart_extra_toolchange",
         "retract_speed",
-        "single_extruder_multi_material_priming",
         "slowdown_below_layer_time",
         "solid_infill_acceleration",
         "standby_temperature_delta",
@@ -244,7 +243,6 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "wipe_tower_bridging"
             || opt_key == "wipe_tower_extra_spacing"
             || opt_key == "wipe_tower_extra_flow"
-            || opt_key == "wipe_tower_no_sparse_layers"
             || opt_key == "wipe_tower_extruder"
             || opt_key == "wiping_volumes_matrix"
             || opt_key == "wiping_volumes_use_custom_matrix"
@@ -1261,20 +1259,13 @@ Points Print::first_layer_wipe_tower_corners() const
         double width = m_config.wipe_tower_width + 2*m_wipe_tower_data.brim_width;
         double depth = m_wipe_tower_data.depth + 2*m_wipe_tower_data.brim_width;
         Vec2d pt0(-m_wipe_tower_data.brim_width, -m_wipe_tower_data.brim_width);
-        
+
         // First the corners.
         std::vector<Vec2d> pts = { pt0,
                                    Vec2d(pt0.x()+width, pt0.y()),
                                    Vec2d(pt0.x()+width, pt0.y()+depth),
                                    Vec2d(pt0.x(),pt0.y()+depth)
                                  };
-
-        // Now the stabilization cone.
-        Vec2d center = (pts[0] + pts[2])/2.;
-        const auto [cone_R, cone_x_scale] = WipeTower::get_wipe_tower_cone_base(m_config.wipe_tower_width, m_wipe_tower_data.height, m_wipe_tower_data.depth, m_config.wipe_tower_cone_angle);
-        double r = cone_R + m_wipe_tower_data.brim_width;
-        for (double alpha = 0.; alpha<2*M_PI; alpha += M_PI/20.)
-            pts.emplace_back(center + r*Vec2d(std::cos(alpha)/cone_x_scale, std::sin(alpha)));
 
         for (Vec2d& pt : pts) {
             pt = Eigen::Rotation2Dd(Geometry::deg2rad(m_config.wipe_tower_rotation_angle.value)) * pt;
@@ -1537,14 +1528,11 @@ void Print::_make_wipe_tower()
     this->throw_if_canceled();
 
     // Initialize the wipe tower.
-    WipeTower wipe_tower(m_config, m_default_region_config, wipe_volumes, m_wipe_tower_data.tool_ordering.first_extruder());
+    WipeTower wipe_tower(m_config, m_default_region_config, m_wipe_tower_data.tool_ordering.first_extruder());
 
     // Set the extruder & material properties at the wipe tower object.
     for (size_t i = 0; i < m_config.nozzle_diameter.size(); ++ i)
         wipe_tower.set_extruder(i, m_config);
-
-    m_wipe_tower_data.priming = Slic3r::make_unique<std::vector<WipeTower::ToolChangeResult>>(
-        wipe_tower.prime((float)this->skirt_first_layer_height(), m_wipe_tower_data.tool_ordering.all_extruders(), false));
 
     // Lets go through the wipe tower layers and determine pairs of extruder changes for each
     // to pass to wipe_tower (so that it can use it for planning the layout of the tower)
@@ -1581,33 +1569,14 @@ void Print::_make_wipe_tower()
     // Generate the wipe tower layers.
     m_wipe_tower_data.tool_changes.reserve(m_wipe_tower_data.tool_ordering.layer_tools().size());
     wipe_tower.generate(m_wipe_tower_data.tool_changes);
-    m_wipe_tower_data.depth = wipe_tower.get_depth();
-    m_wipe_tower_data.z_and_depth_pairs = wipe_tower.get_z_and_depth_pairs();
-    m_wipe_tower_data.brim_width = wipe_tower.get_brim_width();
+    m_wipe_tower_data.width = wipe_tower.width();
+    m_wipe_tower_data.depth = wipe_tower.depth();
     m_wipe_tower_data.height = wipe_tower.get_wipe_tower_height();
-
-    // Unload the current filament over the purge tower.
-    coordf_t layer_height = m_objects.front()->config().layer_height.value;
-    if (m_wipe_tower_data.tool_ordering.back().wipe_tower_partitions > 0) {
-        // The wipe tower goes up to the last layer of the print.
-        if (wipe_tower.layer_finished()) {
-            // The wipe tower is printed to the top of the print and it has no space left for the final extruder purge.
-            // Lift Z to the next layer.
-            wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z + layer_height), float(layer_height), 0, false, true);
-        } else {
-            // There is yet enough space at this layer of the wipe tower for the final purge.
-        }
-    } else {
-        // The wipe tower does not reach the last print layer, perform the pruge at the last print layer.
-        assert(m_wipe_tower_data.tool_ordering.back().wipe_tower_partitions == 0);
-        wipe_tower.set_layer(float(m_wipe_tower_data.tool_ordering.back().print_z), float(layer_height), 0, false, true);
-    }
-    m_wipe_tower_data.final_purge = Slic3r::make_unique<WipeTower::ToolChangeResult>(
-        wipe_tower.tool_change((unsigned int)(-1)));
+    //m_wipe_tower_data.z_and_depth_pairs = wipe_tower.get_z_and_depth_pairs();
+    //m_wipe_tower_data.brim_width = wipe_tower.get_brim_width();
 
     m_wipe_tower_data.used_filament_until_layer = wipe_tower.get_used_filament_until_layer();
     m_wipe_tower_data.number_of_toolchanges = wipe_tower.get_number_of_toolchanges();
-    m_wipe_tower_data.width = wipe_tower.width();
     m_wipe_tower_data.first_layer_height = config().first_layer_height;
     m_wipe_tower_data.cone_angle = config().wipe_tower_cone_angle;
 }

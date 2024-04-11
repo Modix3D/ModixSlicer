@@ -769,8 +769,6 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionString,              start_gcode))
     ((ConfigOptionStrings,             start_filament_gcode))
     ((ConfigOptionBool,                single_extruder_multi_material))
-    ((ConfigOptionBool,                single_extruder_multi_material_priming))
-    ((ConfigOptionBool,                wipe_tower_no_sparse_layers))
     ((ConfigOptionString,              toolchange_gcode))
     ((ConfigOptionFloat,               travel_speed))
     ((ConfigOptionFloat,               travel_speed_z))

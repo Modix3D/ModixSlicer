@@ -354,7 +354,7 @@ void Preview::msw_rescale()
 void Preview::sys_color_changed()
 {
 #ifdef _WIN32
-    wxWindowUpdateLocker noUpdates(this);
+    //wxWindowUpdateLocker noUpdates(this);
     wxGetApp().UpdateAllStaticTextDarkUI(m_bottom_toolbar_panel);
 #endif // _WIN32
 

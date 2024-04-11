@@ -3,6 +3,7 @@
 ///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
 ///|/
 #include <unordered_set>
+#include <numeric>
 
 #include <libslic3r/Exception.hpp>
 #include <libslic3r/SLAPrintSteps.hpp>

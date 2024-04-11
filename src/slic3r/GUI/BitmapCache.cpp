@@ -19,6 +19,7 @@
     #include <wx/mstream.h>
     #include <wx/rawbmp.h>
 #endif /* __WXGTK2__ */
+#include <wx/display.h>
 
 #include <nanosvg/nanosvg.h>
 #include <nanosvg/nanosvgrast.h>

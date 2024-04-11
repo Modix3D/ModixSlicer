@@ -15,12 +15,15 @@
 
 #include <wx/app.h>
 #include <wx/colour.h>
+#include <wx/display.h>
 #include <wx/font.h>
 #include <wx/string.h>
 #include <wx/snglinst.h>
 
 #include <mutex>
 #include <stack>
+
+#include <boost/filesystem.hpp>
 
 class wxMenuItem;
 class wxMenuBar;

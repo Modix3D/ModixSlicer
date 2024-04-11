@@ -1,0 +1,24 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2024-04-11 03:45:17.249603932 -0400
++++ b/CMakeLists.txt	2024-04-11 03:45:32.336337657 -0400
+@@ -355,7 +355,7 @@
+ 
+ # packaging
+ if (NOT BLOSC_IS_SUBPROJECT)
+-    include(InstallRequiredSystemLibraries)
++    #include(InstallRequiredSystemLibraries)
+ 
+     set(CPACK_GENERATOR TGZ ZIP)
+     set(CPACK_SOURCE_GENERATOR TGZ ZIP)
+diff -Naur a/internal-complibs/snappy-1.1.1/snappy.h b/internal-complibs/snappy-1.1.1/snappy.h
+--- a/internal-complibs/snappy-1.1.1/snappy.h	2024-04-11 03:45:17.266270673 -0400
++++ b/internal-complibs/snappy-1.1.1/snappy.h	2024-04-11 03:51:01.994417844 -0400
+@@ -47,7 +47,7 @@
+ // Windows does not define ssize_t by default.  This is a workaround.
+ // Please note that this is only defined in the Blosc sources of Snappy.
+ #if defined(_WIN32)  && !defined(__MINGW32__)
+-#include <BaseTsd.h>
++#include <basetsd.h>
+ typedef SSIZE_T ssize_t;
+ #endif
+ 

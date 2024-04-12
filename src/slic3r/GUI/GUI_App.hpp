@@ -99,9 +99,7 @@ enum ConfigMenuIDs {
     ConfigMenuModeAdvanced,
     ConfigMenuModeExpert,
     ConfigMenuLanguage,
-    ConfigMenuFlashFirmware,
     ConfigMenuCnt,
-    ConfigMenuWifiConfigFile
 };
 
 class Tab;
@@ -373,7 +371,6 @@ public:
     // URL download - PrusaSlicer gets system call to open prusaslicer:// URL which should contain address of download
     void            start_download(std::string url);
 
-    void            open_wifi_config_dialog(bool forced, const wxString& drive_path = {});
     bool            get_wifi_config_dialog_shown() const { return m_wifi_config_dialog_shown; }
 private:
     bool            on_init_inner();

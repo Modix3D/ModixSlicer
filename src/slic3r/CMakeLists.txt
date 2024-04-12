@@ -193,8 +193,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/MsgDialog.hpp
     GUI/UpdateDialogs.cpp
     GUI/UpdateDialogs.hpp
-    GUI/WifiConfigDialog.cpp
-    GUI/WifiConfigDialog.hpp
     GUI/Jobs/Job.hpp
     GUI/Jobs/Worker.hpp
     GUI/Jobs/BoostThreadWorker.hpp
@@ -291,8 +289,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/WinRegistry.hpp
     Utils/WxFontUtils.cpp
     Utils/WxFontUtils.hpp
-    Utils/WifiScanner.hpp
-    Utils/WifiScanner.cpp
 )
 
 find_package(NanoSVG REQUIRED)
@@ -302,8 +298,6 @@ if (APPLE)
             Utils/RetinaHelperImpl.mm
             Utils/MacDarkMode.mm
             Utils/MacUtils.mm
-            Utils/WifiScannerMac.h
-            Utils/WifiScannerMac.mm
             GUI/RemovableDriveManagerMM.mm
             GUI/RemovableDriveManagerMM.h
             GUI/Mouse3DHandlerMac.mm

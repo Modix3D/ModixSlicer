@@ -894,7 +894,13 @@ bool PrintObject::invalidate_state_by_config_options(
                opt_key == "wipe_into_infill"
             || opt_key == "wipe_into_objects"
             || opt_key == "infill_speed"
-            || opt_key == "perimeter_speed") {
+            || opt_key == "perimeter_speed"
+            
+            // modix options
+            || opt_key == "wipe_tower_perimeter_speed"
+            || opt_key == "wipe_tower_infill_speed"
+
+            ) {
             invalidated |= m_print->invalidate_step(psWipeTower);
             invalidated |= m_print->invalidate_step(psGCodeExport);
         } else {

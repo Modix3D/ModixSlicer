@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 #include <random>
+#include <optional>
 #include <boost/thread.hpp>
 
 #include <tbb/task_scheduler_observer.h>

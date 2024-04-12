@@ -35,15 +35,15 @@ set(SLIC3R_GUI_SOURCES
     GUI/GLShadersManager.hpp
     GUI/GLShadersManager.cpp
     GUI/GLShader.cpp
-    GUI/GLShader.hpp    
+    GUI/GLShader.hpp
     GUI/GLCanvas3D.hpp
     GUI/GLCanvas3D.cpp
     GUI/SceneRaycaster.hpp
-    GUI/SceneRaycaster.cpp	
+    GUI/SceneRaycaster.cpp
     GUI/OpenGLManager.hpp
     GUI/OpenGLManager.cpp
     GUI/Selection.hpp
-    GUI/Selection.cpp    
+    GUI/Selection.cpp
     GUI/Gizmos/GLGizmosManager.cpp
     GUI/Gizmos/GLGizmosManager.hpp
     GUI/Gizmos/GLGizmosCommon.cpp
@@ -51,7 +51,7 @@ set(SLIC3R_GUI_SOURCES
     GUI/Gizmos/GLGizmoBase.cpp
     GUI/Gizmos/GLGizmoBase.hpp
     GUI/Gizmos/GLGizmoSlaBase.cpp
-    GUI/Gizmos/GLGizmoSlaBase.hpp	
+    GUI/Gizmos/GLGizmoSlaBase.hpp
     GUI/Gizmos/GLGizmoEmboss.cpp
     GUI/Gizmos/GLGizmoEmboss.hpp
     GUI/Gizmos/GLGizmoMove.cpp
@@ -91,7 +91,7 @@ set(SLIC3R_GUI_SOURCES
     GUI/GLToolbar.hpp
     GUI/GLToolbar.cpp
     GUI/GCodeViewer.hpp
-    GUI/GCodeViewer.cpp    
+    GUI/GCodeViewer.cpp
     GUI/Preferences.cpp
     GUI/Preferences.hpp
     GUI/PresetHints.cpp
@@ -181,7 +181,7 @@ set(SLIC3R_GUI_SOURCES
     Config/Snapshot.cpp
     Config/Snapshot.hpp
     Config/Version.cpp
-    Config/Version.hpp    
+    Config/Version.hpp
     Utils/ASCIIFolding.cpp
     Utils/ASCIIFolding.hpp
     Utils/Serial.cpp
@@ -321,9 +321,9 @@ encoding_check(libslic3r_gui)
 target_link_libraries(libslic3r_gui libslic3r libcereal imgui glad OpenGL::GL hidapi ${wxWidgets_LIBRARIES} NanoSVG::nanosvg NanoSVG::nanosvgrast)
 
 if (MSVC)
-    target_link_libraries(libslic3r_gui Setupapi.lib Crypt32.lib)
+    target_link_libraries(libslic3r_gui setupapi.lib crypt32.lib)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(libslic3r_gui ${DBUS_LIBRARIES}) 
+    target_link_libraries(libslic3r_gui ${DBUS_LIBRARIES})
 elseif (APPLE)
     target_link_libraries(libslic3r_gui ${DISKARBITRATION_LIBRARY} ${COREWLAN_LIBRARY})
 endif()

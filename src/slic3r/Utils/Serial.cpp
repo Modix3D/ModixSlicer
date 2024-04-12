@@ -21,8 +21,8 @@
 #include <boost/optional.hpp>
 
 #if _WIN32
-	#include <Windows.h>
-	#include <Setupapi.h>
+	#include <windows.h>
+	#include <setupapi.h>
 	#include <initguid.h>
 	#include <devguid.h>
 	#include <regex>

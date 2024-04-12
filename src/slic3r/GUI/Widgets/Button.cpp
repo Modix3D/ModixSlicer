@@ -279,6 +279,7 @@ void Button::sendButtonEvent()
 }
 
 #ifdef __WIN32__
+#include <windows.h>
 
 WXLRESULT Button::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {

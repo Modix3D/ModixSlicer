@@ -41,7 +41,7 @@
 #ifdef WIN32
 #include <wx/msw/registry.h>
 #include <KnownFolders.h>
-#include <Shlobj_core.h>
+#include <shlobj_core.h>
 #endif // WIN32
 
 #ifdef _MSW_DARK_MODE

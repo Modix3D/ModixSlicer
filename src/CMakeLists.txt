@@ -146,7 +146,7 @@ target_link_libraries(PrusaSlicer libslic3r_gui)
     if (MSVC)
         # Generate debug symbols even in release mode.
         target_link_options(PrusaSlicer PUBLIC "$<$<CONFIG:RELEASE>:/DEBUG>")
-        target_link_libraries(PrusaSlicer user32.lib Setupapi.lib)
+        target_link_libraries(PrusaSlicer user32.lib setupapi.lib)
     elseif (MINGW)
         target_link_libraries(PrusaSlicer ws2_32 uxtheme setupapi)
     elseif (APPLE)
@@ -199,7 +199,7 @@ if (WIN32)
 endif ()
 
 # Link the resources dir to where Slic3r GUI expects it
-if (WIN32)
+if (CMAKE_HOST_WIN32)
     if (CMAKE_CONFIGURATION_TYPES)
         foreach (CONF ${CMAKE_CONFIGURATION_TYPES})
             file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${CONF}" WIN_CONF_OUTPUT_DIR)

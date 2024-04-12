@@ -18,15 +18,15 @@ ButtonsListCtrl::ButtonsListCtrl(wxWindow *parent, bool add_mode_buttons/* = fal
     wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxTAB_TRAVERSAL)
 {
 #ifdef __WINDOWS__
-    SetDoubleBuffered(true);
+    this->SetDoubleBuffered(true);
 #endif //__WINDOWS__
 
-    int em = em_unit(this);// Slic3r::GUI::wxGetApp().em_unit();
+    int em = em_unit((wxWindow*)this);// Slic3r::GUI::wxGetApp().em_unit();
     m_btn_margin  = std::lround(0.3 * em);
     m_line_margin = std::lround(0.1 * em);
 
     m_sizer = new wxBoxSizer(wxHORIZONTAL);
-    this->SetSizer(m_sizer);
+    this->SetSizer((wxSizer*)m_sizer);
 
     m_buttons_sizer = new wxFlexGridSizer(1, m_btn_margin, m_btn_margin);
     m_sizer->Add(m_buttons_sizer, 0, wxALIGN_CENTER_VERTICAL | wxLEFT | wxBOTTOM, m_btn_margin);

@@ -26,6 +26,7 @@
 #endif
 
 #include <wx/stdpaths.h>
+#include <wx/filename.h>
 
 namespace Slic3r {
 namespace GUI {

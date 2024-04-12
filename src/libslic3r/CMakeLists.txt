@@ -533,7 +533,7 @@ cmake_policy(SET CMP0011 NEW)
 find_package(CGAL REQUIRED)
 cmake_policy(POP)
 
-add_library(libslic3r_cgal STATIC 
+add_library(libslic3r_cgal STATIC
     CutSurface.hpp CutSurface.cpp
     Geometry/VoronoiUtilsCgal.hpp Geometry/VoronoiUtilsCgal.cpp
     IntersectionPoints.hpp IntersectionPoints.cpp
@@ -607,7 +607,7 @@ if (TARGET OpenVDB::openvdb)
 endif()
 
 if(WIN32)
-    target_link_libraries(libslic3r Psapi.lib)
+    target_link_libraries(libslic3r psapi.lib)
 endif()
 
 if (APPLE)

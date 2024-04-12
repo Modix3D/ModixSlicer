@@ -5,6 +5,11 @@
 #include "libslic3r/Technologies.hpp"
 #include "WinRegistry.hpp"
 
+#include <vector>
+#include <cassert>
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #ifdef _WIN32
 #include <shlobj.h>
 #include <wincrypt.h>

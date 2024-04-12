@@ -5,6 +5,7 @@
 #include "RemovableDriveManager.hpp"
 #include "libslic3r/Platform.hpp"
 #include <libslic3r/libslic3r.h>
+#include "slic3r/GUI/format.hpp"
 
 #include <boost/nowide/convert.hpp>
 #include <boost/log/trivial.hpp>
@@ -14,17 +15,14 @@
 #include <tchar.h>
 #include <winioctl.h>
 #include <shlwapi.h>
-#include <Dbt.h>
-#include <Setupapi.h>
+#include <dbt.h>
+#include <setupapi.h>
 #include <cfgmgr32.h>
 
 #include <initguid.h>   // include before devpropdef.h
 #include <devpropdef.h>
 #include <devpkey.h>
 #include <usbioctl.h>
-
-#include <atlbase.h>
-#include <atlcom.h>
 #include <shldisp.h>
 #else
 // unix, linux & OSX includes
@@ -601,14 +599,14 @@ bool eject_inner(const std::string& path)
 {
 	std::wstring wpath = boost::nowide::widen(path);
 	CoInitialize(nullptr);
-	CComPtr<IShellDispatch> pShellDisp;
-	HRESULT hr = pShellDisp.CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER);
+	IShellDispatch* pShellDisp;
+	HRESULT hr = CoCreateInstance(CLSID_Shell, nullptr, CLSCTX_INPROC_SERVER, IID_IShellDispatch, (void **)&pShellDisp);
 	if (!SUCCEEDED(hr)) {
 		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to get Shell pointer has failed.", path);
 		CoUninitialize();
 		return false;
 	}
-	CComPtr<Folder> pFolder;
+	Folder* pFolder;
 	VARIANT vtDrives;
 	VariantInit(&vtDrives);
 	vtDrives.vt = VT_I4;
@@ -619,7 +617,7 @@ bool eject_inner(const std::string& path)
 		CoUninitialize();
 		return false;
 	}
-	CComPtr<FolderItem> pItem;
+	FolderItem* pItem;
 	hr = pFolder->ParseName(static_cast<BSTR>(const_cast<wchar_t*>(wpath.c_str())), &pItem);
 	if (!SUCCEEDED(hr)) {
 		BOOST_LOG_TRIVIAL(error) << GUI::format("Ejecting of %1% has failed: Attempt to Parse name has failed.", path);

@@ -23,10 +23,8 @@ deps/build-linux/*
 CMakeUserPresets.json
 
 
-build-debug
-build-release
-deps/build-clang-17
-build-clang-17
+/build-*
+/deps/build-*
 
 *~
 *.swp

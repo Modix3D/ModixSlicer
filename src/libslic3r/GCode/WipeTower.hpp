@@ -143,6 +143,7 @@ public:
 	void tool_change(WipeTowerWriter& writer, int new_tool);
 	void wipetower_contour1(WipeTowerWriter& writer, int loops, float extrude_speed);
 	void wipetower_inner1(WipeTowerWriter& writer, float extrude_speed, float density);
+    void configure_flow(WipeTowerWriter& writer, auto role);
 
     float get_effective_brim_width();
 	std::vector<std::pair<float, float>> get_z_and_depth_pairs() const;
@@ -226,10 +227,13 @@ private:
     size_t m_wipe_tower_perimeters = 0;
 	float  m_density            = 0.5f;
 	float  m_brim_layers        = 0.f;   // Add layers to the brim - (%).
-	int    m_wipe_tower_extruder;
-    size_t m_current_tool  = 0;
+	int    m_wipe_tower_extruder = 0;
+    size_t m_current_tool       = 0;
     const std::vector<double> m_retract_lift;    // Z-HOP parameter.
     const std::vector<double> m_nozzle_diameter; // one for every nozzle
+    const PrintRegionConfig &m_region_config;
+    const PrintConfig       &m_config;
+    float m_current_spacing;
 
     double get_nozzle_diameter(int index)
     {

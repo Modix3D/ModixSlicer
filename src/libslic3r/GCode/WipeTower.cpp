@@ -25,6 +25,7 @@
 #include "Surface.hpp"
 #include "Fill/FillRectilinear.hpp"
 #include "Flow.hpp"
+#include "libslic3r/PrintConfig.hpp"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -511,7 +512,9 @@ WipeTower::WipeTower(const PrintConfig& config, const PrintRegionConfig& default
 	m_brim_layers(float(config.wipe_tower_brim_layers)/100.f),
 	m_wipe_tower_extruder(config.wipe_tower_extruder),
     m_retract_lift(config.retract_lift.values),
-    m_nozzle_diameter(config.nozzle_diameter.values)
+    m_nozzle_diameter(config.nozzle_diameter.values),
+    m_region_config(default_region_config),
+    m_config(config)
 {
     // Read absolute value of first layer speed, if given as percentage,
     // it is taken over following default. Speeds from config are not
@@ -646,10 +649,10 @@ void WipeTower::generate(std::vector<std::vector<WipeTower::ToolChangeResult>> &
 
         float extrude_speed_perimeter, extrude_speed_infill;
         if (is_first_layer()) {
-            extrude_speed_perimeter = extrude_speed_infill = m_first_layer_speed * 60.f;
+            extrude_speed_perimeter = extrude_speed_infill = m_first_layer_speed;
         } else {
-            extrude_speed_perimeter = m_perimeter_speed * 60.f;
-            extrude_speed_infill = m_infill_speed * 60.f;
+            extrude_speed_perimeter = m_perimeter_speed;
+            extrude_speed_infill = m_infill_speed;
         }
 
         unsigned int pc = suggest_perimeters_count();
@@ -778,12 +781,7 @@ WipeTower::tool_change(WipeTowerWriter& writer, int new_tool)
     writer.flush_planner_queue();
     writer.reset_extruder();
 
-
-    auto width = get_current_nozzle_diameter();
-    Slic3r::Flow flow( width, m_layer_height, get_current_nozzle_diameter() );
-
-    writer.set_extrusion_flow( flow.mm3_per_mm() );
-    writer.change_analyzer_line_width( width );
+    configure_flow(writer, FlowRole::frPerimeter);
 
     writer.append(";--  TOOL CHANGE END   \n");
     writer.append(";----------------------\n");
@@ -805,8 +803,7 @@ void WipeTower::wipetower_contour1(WipeTowerWriter& writer, int loops, float ext
     Point c = Point::new_scale(m_wipe_tower_width,m_wipe_tower_depth);
     Point d = Point::new_scale(0,m_wipe_tower_depth);
 
-    // width, height, nozzle_dmr
-    auto flow = Slic3r::Flow(get_current_nozzle_diameter(), m_layer_height, get_current_nozzle_diameter());
+    configure_flow(writer, FlowRole::frPerimeter);
 
     {   // the first loop (always)
         Polygon poly {a,b,c,d};
@@ -815,7 +812,7 @@ void WipeTower::wipetower_contour1(WipeTowerWriter& writer, int loops, float ext
         for (int i=cp+1; true; ++i ) {
             if (i==int(poly.points.size()))
                 i = 0;
-            writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed);
+            writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed * 60.f);
             if (i == cp)
                 break;
         }
@@ -824,13 +821,13 @@ void WipeTower::wipetower_contour1(WipeTowerWriter& writer, int loops, float ext
     {
         Polygon poly {a,b,c,d};
         for (int i = 0; i < loops; i++) {
-            poly = offset(poly, scale_(flow.spacing())).front();
+            poly = offset(poly, scale_( m_current_spacing )).front();
             int cp = poly.closest_point_index(Point::new_scale(writer.x(), writer.y()));
             writer.travel(unscale(poly.points[cp]).cast<float>(), m_travel_speed * 60.f);
             for (int i=cp+1; true; ++i ) {
                 if (i==int(poly.points.size()))
                     i = 0;
-                writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed);
+                writer.extrude(unscale(poly.points[i]).cast<float>(), extrude_speed * 60.f);
                 if (i == cp)
                     break;
             }
@@ -853,19 +850,18 @@ void WipeTower::wipetower_inner1(WipeTowerWriter& writer, float extrude_speed, f
     Point c = Point::new_scale(m_wipe_tower_width,m_wipe_tower_depth);
     Point d = Point::new_scale(0,m_wipe_tower_depth);
 
+    configure_flow(writer, FlowRole::frInfill);
+
     std::unique_ptr<Fill> filler(Fill::new_from_type("monotonic"));
     Slic3r::ExPolygon expolygon({a,b,c,d});
     Polylines polylines;
     Surface surface(stBottom, expolygon);
 
-    // width, height, nozzle_dmr
-    auto flow = Slic3r::Flow(get_current_nozzle_diameter(), m_layer_height, get_current_nozzle_diameter());
-
     static float angle = 45.f;
     angle = -angle;
 
     filler->angle = Geometry::deg2rad(angle);
-    filler->spacing = flow.spacing();
+    filler->spacing = m_current_spacing;   // configure_flow() sets this
     FillParams params;
     params.density = std::max(0.05f, density);
     filler->bounding_box = get_extents(expolygon);
@@ -879,7 +875,8 @@ void WipeTower::wipetower_inner1(WipeTowerWriter& writer, float extrude_speed, f
 
     for (const Polyline& line: polylines) {
         for (auto& point: line.points) {
-            writer.extrude(unscale(point).cast<float>(), extrude_speed);
+            writer.feedrate(extrude_speed * 60.f);
+            writer.extrude(unscale(point).cast<float>(), extrude_speed * 60.f);
         }
     }
 }
@@ -912,6 +909,35 @@ float WipeTower::get_effective_brim_width()
     std::cout << boost::format("WipeTower::get_effective_brim_width %1% %2%\n") % width1 % width2;
 
     return std::max( width1, width2 );
+}
+
+
+void WipeTower::configure_flow(WipeTowerWriter& writer, auto role)
+{
+    ConfigOptionFloatOrPercent config_width;
+    // Get extrusion width from configuration.
+    if (is_first_layer() && m_config.first_layer_extrusion_width.value > 0) {
+        config_width = m_config.first_layer_extrusion_width;
+    } else if (role == FlowRole::frPerimeter) {
+        config_width = m_region_config.perimeter_extrusion_width;
+    } else if (role == FlowRole::frExternalPerimeter) {
+        config_width = m_region_config.external_perimeter_extrusion_width;
+    } else if (role == FlowRole::frInfill) {
+        config_width = m_region_config.infill_extrusion_width;
+    } else {
+        throw Slic3r::InvalidArgument("Unknown role");
+    }
+
+    // if config_width is 0 then Flow() will use a sane default value
+    //
+
+    auto flow = Slic3r::Flow::new_from_config_width(role, config_width, get_current_nozzle_diameter(), m_layer_height);
+    writer.change_analyzer_line_width( flow.width() );
+    m_current_spacing = flow.spacing();
+
+    // The GCode wants linear movement, it doesn't care what the filament's cross-sectional area is, so
+    // we'll divide by the area to get the proper flow parameter.
+    writer.set_extrusion_flow( flow.mm3_per_mm() / (1.7f * 1.7f * M_PI / 4.f) );
 }
 
 } // namespace Slic3r

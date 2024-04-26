@@ -596,6 +596,7 @@ target_link_libraries(libslic3r
     qoi
     LibBGCode::bgcode_convert
     )
+target_link_libraries(libslic3r Blosc::blosc)
 
 if (APPLE)
     # TODO: we need to fix notarization with the separate shared library

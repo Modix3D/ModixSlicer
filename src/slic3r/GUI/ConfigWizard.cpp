@@ -2390,6 +2390,7 @@ void ConfigWizard::priv::on_3rdparty_install(const VendorProfile *vendor, bool i
 bool ConfigWizard::priv::on_bnt_finish()
 {
     wxBusyCursor wait;
+
     /* If some printers were added/deleted, but related MaterialPage wasn't activated,
      * than last changes wouldn't be updated for filaments/materials.
      * SO, do that before check_and_install_missing_materials()

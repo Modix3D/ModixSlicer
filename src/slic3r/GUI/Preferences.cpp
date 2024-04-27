@@ -32,10 +32,6 @@
 #include "DesktopIntegrationDialog.hpp"
 #endif //(__linux__) && defined(SLIC3R_DESKTOP_INTEGRATION)
 
-#if defined(__linux__) && !defined(SLIC3R_DESKTOP_INTEGRATION)
-#include "NotificationManager.hpp"
-#endif //(__linux__) && defined(SLIC3R_DESKTOP_INTEGRATION)
-
 namespace Slic3r {
 
 	static t_config_enum_names enum_names_from_keys_map(const t_config_enum_values& enum_keys_map)

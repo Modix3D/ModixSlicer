@@ -4,6 +4,10 @@
 ///|/
 #ifdef HAS_WIN10SDK
 
+// The standard Windows includes.
+#ifndef WIN32_LEAN_AND_MEAN
+ #define WIN32_LEAN_AND_MEAN
+#endif // WIN32_LEAN_AND_MEAN
 #ifndef NOMINMAX
 # define NOMINMAX
 #endif

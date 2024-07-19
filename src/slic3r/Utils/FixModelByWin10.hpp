@@ -8,6 +8,7 @@
 #include <string>
 
 class wxProgressDialog;
+class wxString;
 
 namespace Slic3r {
 
